@@ -1,10 +1,16 @@
 # Skewed
 
-Generate 3D isometric SVGs.
+Easily create pseudo 3D SVG elements.
 
+- Supports the following styles of pseudo 3D
+- Isometric
+  - Other pseudo styles coming soon. (**TODO**)
+- Built-in standard 3D shapes (**TODO**)
 - Typescript-first package
-- Built-in standard 3D shapes
-- Utility for isometrically transforming 3D points to 2D ones
+- Utilities for
+  - Transform 3D points to 2D ones (**TODO**)
+  - Simple camera model and control scheme for navigating and zooming in/out (**TODO**)
+- React support coming soon, core will be a Vanillar HTML/JS API (unless I change my mind and go React only) (**TODO**)
 
 <img width="50%" src="./docs/images/isometric.png" style="margin: 0px 25%"/>
 
