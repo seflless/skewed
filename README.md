@@ -20,6 +20,10 @@ Easily create pseudo 3D SVG elements.
 npm install skewed
 ```
 
+**Coordinate System**
+
+<img width="256" src="./docs/images/coordinate-system.png"/>
+
 ```ts
 // TBD
 ```

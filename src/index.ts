@@ -1,2 +1,1 @@
-export * from "./svg";
-export * from "./canvas";
+export * from "./Box";
