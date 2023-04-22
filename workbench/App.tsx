@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { Box } from "../src/index";
+import React from "react";
 
 function randomColor() {
   return "#" + Math.floor(Math.random() * 16777215).toString(16);

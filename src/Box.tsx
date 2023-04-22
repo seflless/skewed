@@ -57,30 +57,26 @@ function generatePolygons({
   height,
   depth,
 }: BoxProps): Array<Array<Array<Array<number>>>> {
+  const vertices = [
+    // 0,1,2,3
+    [-width / 2, +height / 2, -depth / 2],
+    [+width / 2, +height / 2, -depth / 2],
+    [+width / 2, +height / 2, +depth / 2],
+    [-width / 2, +height / 2, +depth / 2],
+    // 4,5,6
+    [+width / 2, -height / 2, -depth / 2],
+    [+width / 2, -height / 2, depth / 2],
+    [-width / 2, -height / 2, depth / 2],
+  ];
   return [
     // Faces
     [
       // Top Face
-      [
-        [-width / 2, +height / 2, -depth / 2],
-        [+width / 2, +height / 2, -depth / 2],
-        [+width / 2, +height / 2, +depth / 2],
-        [-width / 2, +height / 2, +depth / 2],
-      ],
+      [vertices[0], vertices[1], vertices[2], vertices[3]],
       // Front Face
-      //   [
-      //     [-width / 2, +height / 2, +depth / 2],
-      //     [+width / 2, +height / 2, +depth / 2],
-      //     [+width / 2, -height / 2, +depth / 2],
-      //     [-width / 2, -height / 2, +depth / 2],
-      //   ],
-      // Right Face
-      [
-        [-width / 2, -height / 2 + 500, -depth / 2],
-        [+width / 2, -height / 2 + 500, -depth / 2],
-        [+width / 2, -height / 2 + 500, +depth / 2],
-        [-width / 2, -height / 2 + 500, +depth / 2],
-      ],
+      [vertices[2], vertices[1], vertices[4], vertices[5]],
+      // Right Face (2,1,4,5)
+      [vertices[3], vertices[2], vertices[5], vertices[6]],
     ],
     // Outline
     [[]],
@@ -90,6 +86,7 @@ function generatePolygons({
 export function Box(props: BoxProps) {
   const polygons = generatePolygons(props);
   const faces = polygons[0];
+  const colors = ["rgb(240,240,240)", "rgb(150,150,150)", "rgb(100,100,100)"];
 
   return (
     <svg width={2000} height={2000}>
@@ -105,10 +102,13 @@ export function Box(props: BoxProps) {
                 vertex[1],
                 vertex[2]
               );
+              console.log(
+                `(${vertex[0]},${vertex[1]},${vertex[2]}) -> (${x},${y})`
+              );
               points += `${Math.floor(x)},${Math.floor(y)} `;
             });
             //   "0,100 50,25 50,75 100,0";
-            return <polygon key={i} points={points} />;
+            return <polygon fill={colors[i]} key={i} points={points} />;
           })
         }
       </g>
