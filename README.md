@@ -41,7 +41,7 @@ cd skewed
 
 ```
 yarn dev
-# Open the workbench page at http://localhost:5173/
+# Open the workbench page at http://localhost:3000/
 ```
 
 #### Building
