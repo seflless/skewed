@@ -91,7 +91,7 @@ export function Cylinder(props: CylinderProps) {
           faces.map((face, i) => {
             let points = "";
             // A face
-            face.forEach((vertex, j) => {
+            face.forEach((vertex) => {
               const { x, y } = point3DToIsometric(
                 vertex[0],
                 vertex[1],
