@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
-import { Box } from "../src/index";
+import { Axii, Box } from "../src/index";
+import { Grid } from "../src/index";
 import React from "react";
 
 function randomColor() {
@@ -12,15 +13,19 @@ export default function App() {
   const onCanvasPointerDown = (e: PointerEvent) => {};
 
   return (
-    <Box
-      x={0}
-      y={0}
-      z={0}
-      width={100}
-      height={100}
-      depth={100}
-      fill={randomColor()}
-      stroke={randomColor()}
-    />
+    <div>
+      <Grid x={0} y={0} z={0} width={4000} depth={4000} />
+      <Box
+        x={0}
+        y={50}
+        z={0}
+        width={100}
+        height={100}
+        depth={100}
+        fill={"rgba(100,100,255,1.0)"}
+        stroke={randomColor()}
+      />
+      <Axii x={0} y={0} z={0} scale={50} />
+    </div>
   );
 }

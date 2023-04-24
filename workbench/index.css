@@ -1,3 +1,7 @@
+html,
+body {
+  overscroll-behavior-x: none;
+}
 body {
   margin: 0;
   width: 100%;

@@ -1,4 +1,8 @@
 export * from "./Box";
+export * from "./Grid";
+export * from "./Vector3";
+export * from "./Mesh";
+export * from "./Axii";
 
 // main.ts
 import { Vector3 } from "./Vector3";

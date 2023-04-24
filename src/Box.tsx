@@ -86,11 +86,15 @@ function generatePolygons({
 export function Box(props: BoxProps) {
   const polygons = generatePolygons(props);
   const faces = polygons[0];
-  const colors = ["rgb(240,240,240)", "rgb(150,150,150)", "rgb(100,100,100)"];
+  const brightness = [255 / 255, 210 / 255, 160 / 255];
 
   return (
-    <svg width={2000} height={2000}>
-      <g transform="translate(500,500)">
+    <svg
+      width={window.innerWidth}
+      height={window.innerHeight}
+      style={{ position: "absolute" }}
+    >
+      <g>
         {
           // All faces
           faces.map((face, i) => {
@@ -98,9 +102,9 @@ export function Box(props: BoxProps) {
             // A face
             face.forEach((vertex) => {
               const { x, y } = point3DToIsometric(
-                vertex[0],
-                vertex[1],
-                vertex[2]
+                vertex[0] + props.x,
+                vertex[1] + props.y,
+                vertex[2] + props.z
               );
               console.log(
                 `(${vertex[0]},${vertex[1]},${vertex[2]}) -> (${x},${y})`
@@ -108,7 +112,14 @@ export function Box(props: BoxProps) {
               points += `${Math.floor(x)},${Math.floor(y)} `;
             });
             //   "0,100 50,25 50,75 100,0";
-            return <polygon fill={colors[i]} key={i} points={points} />;
+            return (
+              <polygon
+                fill={props.fill}
+                style={{ filter: `brightness(${brightness[i]})` }}
+                key={i}
+                points={points}
+              />
+            );
           })
         }
       </g>

@@ -88,6 +88,9 @@ TODO: Do we need to put in a difference command for the CLI?
       - Start with a fixed color per Face and Shape Level
       - Maybe we don't go material style
     - Add more shapes
+      - Floor
+        - Grid, flat, invisible or what modes? Or should a grid be flexible and a Floor not exist or just be a wrapper around a Plane
+        - Special case? Where it's just an infinite texture that we only have to transform 4 points of?
       - Create generators
         - Prismatics
           - Triangular Prism
