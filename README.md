@@ -79,7 +79,11 @@ TODO: Do we need to put in a difference command for the CLI?
 
   - Mesh
     - Points
-    - Face (Indices)
+    - Face
+      - Indices
+      - Fill? (Fallback to using parent's if not provided)
+      - Normal?
+      - Single/double-sided flag
     - How will we do colors or generalized material?
       - Start with a fixed color per Face and Shape Level
       - Maybe we don't go material style
@@ -90,31 +94,36 @@ TODO: Do we need to put in a difference command for the CLI?
           - Cylinder
             - Should we support arcs/donut hole ala what Figma does for ellipses?
         - Flat
-          -
+          - Support rectangle, ellipse at a minimum
+          - Text would be awesome, but should be deffered and be handled at the same time we add prismatic support too.
         - Conics (or is this just a pristmatic with a scalar for the top face's points)
           - Cone
+  - Pick better colors for demoing/screenshots once mesh/face fill si in
   - Bounding primitives (stored in Mesh's coordinate system)
     - BoundingBox first
+  - Basic collision utilities
+    - Ray casting first. Use to demo an object picker
   - Add proper render loop
     - Add render sorting (initially just sort by center depth)
     - Figure out how we cache a Mesh transform?
   - Figure out how stroke/fill will work?
     - Different styles like: outline, wireframe, edges, and none?
   - Matrix and Group (alt name Frame)
-  - How is lighting going to work
-  - Lighting?
-
-  - Camera
   - Viewport (vs default one)
+  - Lighting?
+  - Camera
+
+    - Input ray functionality
+    - Add more projection styles
+      <img src="docs/images/types-of-projection.png"/>
+
   - Quaternion?
 
 - Figure out react basics
+
   - Codevelop react approach with imperative API internals
   - Resolve type naming issues
     - Ie. Can't have Box type used like `<Box/>` and `Box()`. Should we use a built-in like `<box .../>` instead?
-- Add more projection styles
-
-  <img src="docs/images/types-of-projection.png"/>
 
 - Utilities for
   - Transform 3D points to 2D ones (**TODO**)
