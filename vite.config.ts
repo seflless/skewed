@@ -9,8 +9,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "console.draw",
-      fileName: "console.draw",
+      name: "skewed",
+      fileName: "skewed",
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
