@@ -4,6 +4,7 @@ export interface Vector3 {
   z: number;
   add: (vec: Vector3) => Vector3;
   clone: () => Vector3;
+  normalize: () => Vector3;
 }
 
 // Actual implementation of Vector3, we take this approach we becasuse we want a
@@ -27,6 +28,20 @@ const Vector3Proto = {
 
   clone(this: Vector3): Vector3 {
     return create(this.x, this.y, this.z);
+  },
+
+  normalize(this: Vector3): Vector3 {
+    let length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    // Prevent divide by zero
+    if (length === 0) {
+      // A bit of a magic number, should think about this some more.
+      length = 0.0000001;
+    }
+
+    this.x /= length;
+    this.y /= length;
+    this.z /= length;
+    return this;
   },
 };
 

@@ -2,28 +2,26 @@ import { describe, expect, it } from "vitest";
 import { Vector3 } from "./Vector3";
 
 describe("Vector3", () => {
-  it("Factory function variant should work", () => {
-    expect(Vector3(1, 2, 3)).toEqual({ x: 1, y: 2, z: 3 });
-    expect(Vector3([3, 4, 5])).toEqual({ x: 3, y: 4, z: 5 });
-    expect(Vector3(6, 7, 8)).toEqual({ x: 6, y: 7, z: 8 });
+  it("Factory variants should work", () => {
+    expect(Vector3(1, 2, 3)).toEqual(Vector3(1, 2, 3));
+    expect(Vector3([3, 4, 5])).toEqual(Vector3(3, 4, 5));
+    expect(Vector3(6, 7, 8)).toEqual(Vector3(6, 7, 8));
   });
 
   it("Static Vector3s are set correctly", () => {
-    expect(Vector3.Zero()).toEqual({ x: 0, y: 0, z: 0 });
-    expect(Vector3.Up()).toEqual({ x: 0, y: 1, z: 0 });
-    expect(Vector3.Down()).toEqual({ x: 0, y: -1, z: 0 });
-    expect(Vector3.Left()).toEqual({ x: -1, y: 0, z: 0 });
-    expect(Vector3.Right()).toEqual({ x: 1, y: 0, z: 0 });
-    expect(Vector3.Forward()).toEqual({ x: 0, y: 0, z: -1 });
-    expect(Vector3.Backward()).toEqual({ x: 0, y: 0, z: 1 });
+    // Use 3 param
+    expect(Vector3.Zero()).toEqual(Vector3(0, 0, 0));
+    expect(Vector3.Up()).toEqual(Vector3(0, 1, 0));
+    expect(Vector3.Down()).toEqual(Vector3(0, -1, 0));
+    expect(Vector3.Left()).toEqual(Vector3(-1, 0, 0));
+    expect(Vector3.Right()).toEqual(Vector3(1, 0, 0));
+    expect(Vector3.Forward()).toEqual(Vector3(0, 0, -1));
+    expect(Vector3.Backward()).toEqual(Vector3(0, 0, 1));
   });
 
   it("Basic math operations and chaining works", () => {
-    expect(Vector3(1, 2, 3).add(Vector3(4, 5, 6))).toEqual({
-      x: 5,
-      y: 7,
-      z: 9,
-    });
+    expect(Vector3(1, 2, 3).add(Vector3(4, 5, 6))).toEqual(Vector3(5, 7, 9));
+    expect(Vector3(10, 0, 0).normalize()).toEqual(Vector3(1, 0, 0));
   });
 
   it("Chaining style API supported", () => {
@@ -36,10 +34,12 @@ describe("Vector3", () => {
 
     // clone() should return a new object, with the same values
     const d = a.clone().add(Vector3.Zero());
+
     expect(a).not.toBe(d);
+
     expect(a).toEqual(d);
 
     // Mutations in place accumulate effects expected
-    expect(a.add(b).add(b).add(b)).toEqual({ x: 13, y: 17, z: 21 });
+    expect(a.add(b).add(b).add(b)).toEqual(Vector3(13, 17, 21));
   });
 });
