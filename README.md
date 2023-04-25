@@ -74,6 +74,8 @@ TODO: Do we need to put in a difference command for the CLI?
 
 # Todo
 
+- Switch to focusing on imperative core that is react independent
+  - Add sorting first and just of boxes initially
 - Move to using Github project planning
 - Add more core
 
@@ -122,6 +124,7 @@ TODO: Do we need to put in a difference command for the CLI?
 
   - Quaternion?
 
+- Move to pnpm and a monorepo
 - Figure out react basics
 
   - Codevelop react approach with imperative API internals
