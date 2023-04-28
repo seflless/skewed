@@ -53,41 +53,40 @@ export function Cylinder(props: CylinderProps) {
   });
 
   return (
-    <svg width={2000} height={2000} style={{ position: "absolute" }}>
-      <g>
-        {
-          // All faces
-          sortedFaces.map((faceIndex) => {
-            const face = mesh.faces[faceIndex];
-            let points = "";
+    <g>
+      {
+        // All faces
+        sortedFaces.map((faceIndex) => {
+          const face = mesh.faces[faceIndex];
+          let points = "";
 
-            const brightness = Math.min(
-              Math.max(
-                face.normal.dotProduct(directLight) + ambientLight,
-                ambientLight
-              ),
-              1.0
-            );
+          const brightness = Math.min(
+            Math.max(
+              face.normal.dotProduct(directLight) + ambientLight,
+              ambientLight
+            ),
+            1.0
+          );
 
-            face.indices.forEach((index) => {
-              console.log(faceIndex, index);
-              points += `${transformedVertices[index].x},${transformedVertices[index].y} `;
-            });
-            return (
-              <polygon
-                style={{
-                  // translate: `${props.radius},${props.radius}`,
-                  filter: `brightness(${brightness})`,
-                }}
-                fill={face.fill}
-                // stroke={face.stroke}
-                key={faceIndex}
-                points={points}
-              />
-            );
-          })
-        }
-        {/* {transformedVertices.map((vertex, i) => (
+          face.indices.forEach((index) => {
+            console.log(faceIndex, index);
+            points += `${transformedVertices[index].x},${transformedVertices[index].y} `;
+          });
+          return (
+            <polygon
+              style={{
+                // translate: `${props.radius},${props.radius}`,
+                filter: `brightness(${brightness})`,
+              }}
+              fill={face.fill}
+              // stroke={face.stroke}
+              key={faceIndex}
+              points={points}
+            />
+          );
+        })
+      }
+      {/* {transformedVertices.map((vertex, i) => (
           <text
             key={i}
             x={vertex.x.toFixed(2)}
@@ -97,7 +96,6 @@ export function Cylinder(props: CylinderProps) {
             {i}
           </text>
         ))} */}
-      </g>
-    </svg>
+    </g>
   );
 }

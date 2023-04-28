@@ -13,11 +13,7 @@ export function Axii(props: AxiiProps) {
   const thickness = props.scale / 20.0;
 
   return (
-    <svg
-      width={window.innerWidth}
-      height={window.innerHeight}
-      style={{ position: "absolute" }}
-    >
+    <g>
       <Box
         x={props.x}
         y={props.y + props.scale / 2 + thickness / 2}
@@ -48,6 +44,6 @@ export function Axii(props: AxiiProps) {
         fill={"red"}
         stroke={"black"}
       />
-    </svg>
+    </g>
   );
 }

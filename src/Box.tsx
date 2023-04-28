@@ -89,37 +89,31 @@ export function Box(props: BoxProps) {
   const brightness = [255 / 255, 210 / 255, 160 / 255];
 
   return (
-    <svg
-      width={window.innerWidth}
-      height={window.innerHeight}
-      style={{ position: "absolute" }}
-    >
-      <g>
-        {
-          // All faces
-          faces.map((face, i) => {
-            let points = "";
-            // A face
-            face.forEach((vertex) => {
-              const { x, y } = point3DToIsometric(
-                vertex[0] + props.x,
-                vertex[1] + props.y,
-                vertex[2] + props.z
-              );
-              points += `${Math.floor(x)},${Math.floor(y)} `;
-            });
-            //   "0,100 50,25 50,75 100,0";
-            return (
-              <polygon
-                fill={props.fill}
-                style={{ filter: `brightness(${brightness[i]})` }}
-                key={i}
-                points={points}
-              />
+    <g>
+      {
+        // All faces
+        faces.map((face, i) => {
+          let points = "";
+          // A face
+          face.forEach((vertex) => {
+            const { x, y } = point3DToIsometric(
+              vertex[0] + props.x,
+              vertex[1] + props.y,
+              vertex[2] + props.z
             );
-          })
-        }
-      </g>
-    </svg>
+            points += `${Math.floor(x)},${Math.floor(y)} `;
+          });
+          //   "0,100 50,25 50,75 100,0";
+          return (
+            <polygon
+              fill={props.fill}
+              style={{ filter: `brightness(${brightness[i]})` }}
+              key={i}
+              points={points}
+            />
+          );
+        })
+      }
+    </g>
   );
 }
