@@ -19,9 +19,11 @@ describe("Vector3", () => {
     expect(Vector3.Backward()).toEqual(Vector3(0, 0, 1));
   });
 
-  it("Basic math operations and chaining works", () => {
+  it("Basic math operations", () => {
     expect(Vector3(1, 2, 3).add(Vector3(4, 5, 6))).toEqual(Vector3(5, 7, 9));
     expect(Vector3(10, 0, 0).normalize()).toEqual(Vector3(1, 0, 0));
+    expect(Vector3(10, 2, 3).multiply(10)).toEqual(Vector3(100, 20, 30));
+    expect(Vector3(1, 0, 0).dotProduct(Vector3(1, 0, 0))).toEqual(1);
   });
 
   it("Chaining style API supported", () => {
