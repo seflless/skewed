@@ -37,7 +37,7 @@ export type GridProps = {
 
  */
 
-export const GridColor = "#E1E1E1";
+export const GridColor = "#f1f1f1";
 
 export function Grid(props: GridProps) {
   const gridPoints = [
@@ -76,7 +76,7 @@ export function Grid(props: GridProps) {
           height="99"
           viewBox="0 0 173 99"
         >
-          <g strokeWidth="1.2" stroke={GridColor} fill="none">
+          <g strokeWidth="1.7" stroke={GridColor} fill="none">
             <polygon points="87,0 173,50 87,99 0,50" />
           </g>
         </pattern>

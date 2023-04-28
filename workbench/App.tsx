@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Axii, Box, Cylinder, Grid } from "../src/index";
+import { Axii, Box, Cylinder, Grid, Vector3 } from "../src/index";
 import React from "react";
 
 function randomColor() {
@@ -11,6 +11,27 @@ export default function App() {
 
   const onCanvasPointerDown = (e: PointerEvent) => {};
 
+  const cylinders = [
+    {
+      fill: "rgba(40,40,220,1.0)",
+      position: Vector3(0, 50, -300),
+      radius: 74,
+      height: 400,
+    },
+    {
+      fill: "rgba(220,40,40,1.0)",
+      position: Vector3(-200, 0, -10),
+      radius: 140,
+      height: 200,
+    },
+    {
+      fill: "rgba(40,220,40,1.0)",
+      position: Vector3(100, 0, 0),
+      radius: 100,
+      height: 140,
+    },
+  ];
+
   return (
     <div>
       <Grid x={0} y={0} z={0} width={4000} depth={4000} />
@@ -21,27 +42,30 @@ export default function App() {
         style={{ position: "absolute" }}
       >
         <Box
-          x={0}
+          x={500}
           y={50}
-          z={0}
+          z={300}
           width={100}
           height={100}
           depth={100}
-          fill={"rgba(100,100,255,1.0)"}
+          fill={"rgba(255,255,100,1.0)"}
           stroke={randomColor()}
         />
-        <Axii x={0} y={0} z={200} scale={50} />
-        <Cylinder
-          x={100}
-          y={0}
-          z={0}
-          height={100}
-          radius={50}
-          // segments={64}
-          segments={256}
-          fill={"rgba(40,220,40,1.0)"}
-          stroke={"black"}
-        />
+        <Axii x={-100} y={0} z={500} scale={50} />
+        {cylinders.map((cylinder) => (
+          <Cylinder
+            x={cylinder.position.x}
+            y={cylinder.position.y}
+            z={cylinder.position.z}
+            height={cylinder.height}
+            radius={cylinder.radius}
+            // segments={64}
+            // segments={256}
+            segments={128}
+            fill={cylinder.fill}
+            stroke={"black"}
+          />
+        ))}
       </svg>
     </div>
   );

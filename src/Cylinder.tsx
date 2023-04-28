@@ -30,6 +30,8 @@ export function Cylinder(props: CylinderProps) {
     stroke: props.stroke,
   });
 
+  const bottomFace = mesh.faces[1];
+
   const transformedVertices = mesh.vertices.map((vertex) => {
     return point3DToIsometric(vertex.x, vertex.y, vertex.z);
   });
@@ -67,6 +69,11 @@ export function Cylinder(props: CylinderProps) {
             1.0
           );
 
+          const filter =
+            bottomFace === face
+              ? "drop-shadow(0px 0px 7px black)"
+              : `brightness(${brightness})`;
+
           face.indices.forEach((index) => {
             console.log(faceIndex, index);
             points += `${transformedVertices[index].x},${transformedVertices[index].y} `;
@@ -75,10 +82,12 @@ export function Cylinder(props: CylinderProps) {
             <polygon
               style={{
                 // translate: `${props.radius},${props.radius}`,
-                filter: `brightness(${brightness})`,
+                filter,
               }}
               fill={face.fill}
               // stroke={face.stroke}
+              strokeWidth={0.25}
+              stroke={face.fill}
               key={faceIndex}
               points={points}
             />

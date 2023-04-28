@@ -71,12 +71,13 @@ function generatePolygons({
   return [
     // Faces
     [
-      // Top Face
-      [vertices[0], vertices[1], vertices[2], vertices[3]],
-      // Front Face
-      [vertices[2], vertices[1], vertices[4], vertices[5]],
       // Right Face (2,1,4,5)
       [vertices[3], vertices[2], vertices[5], vertices[6]],
+      // Front Face
+      [vertices[2], vertices[1], vertices[4], vertices[5]],
+
+      // Top Face
+      [vertices[0], vertices[1], vertices[2], vertices[3]],
     ],
     // Outline
     [[]],
@@ -86,7 +87,7 @@ function generatePolygons({
 export function Box(props: BoxProps) {
   const polygons = generatePolygons(props);
   const faces = polygons[0];
-  const brightness = [255 / 255, 210 / 255, 160 / 255];
+  const brightness = [160 / 255, 210 / 255, 255 / 255];
 
   return (
     <g>
@@ -107,7 +108,11 @@ export function Box(props: BoxProps) {
           return (
             <polygon
               fill={props.fill}
-              style={{ filter: `brightness(${brightness[i]})` }}
+              style={{
+                filter: `brightness(${brightness[i]}) ${
+                  i !== 2 ? "drop-shadow(0px 0px 5px rgb(0,0,0,0.5))" : ""
+                }`,
+              }}
               key={i}
               points={points}
             />
