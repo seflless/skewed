@@ -3,8 +3,10 @@ export interface Vector3 {
   y: number;
   z: number;
   add: (vec: Vector3) => Vector3;
+  multiply: (scalar: number) => Vector3;
   clone: () => Vector3;
   normalize: () => Vector3;
+  dotProduct: (vec: Vector3) => number;
 }
 
 // Actual implementation of Vector3, we take this approach we becasuse we want a
@@ -26,6 +28,13 @@ const Vector3Proto = {
     return this;
   },
 
+  multiply(this: Vector3, scalar: number): Vector3 {
+    this.x *= scalar;
+    this.y *= scalar;
+    this.z *= scalar;
+    return this;
+  },
+
   clone(this: Vector3): Vector3 {
     return create(this.x, this.y, this.z);
   },
@@ -42,6 +51,10 @@ const Vector3Proto = {
     this.y /= length;
     this.z /= length;
     return this;
+  },
+
+  dotProduct(this: Vector3, vec: Vector3): number {
+    return this.x * vec.x + this.y * vec.y + this.z * vec.z;
   },
 };
 

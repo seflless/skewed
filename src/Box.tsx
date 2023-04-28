@@ -106,9 +106,6 @@ export function Box(props: BoxProps) {
                 vertex[1] + props.y,
                 vertex[2] + props.z
               );
-              console.log(
-                `(${vertex[0]},${vertex[1]},${vertex[2]}) -> (${x},${y})`
-              );
               points += `${Math.floor(x)},${Math.floor(y)} `;
             });
             //   "0,100 50,25 50,75 100,0";

@@ -1,5 +1,8 @@
 import React from "react";
 import { point3DToIsometric } from "./Camera";
+import { generateCylinder } from "./CylinderMesh";
+import { Vector3 } from "./Vector3";
+import { Face } from "./Mesh";
 
 type CylinderProps = {
   x: number;
@@ -9,103 +12,91 @@ type CylinderProps = {
   radius: number;
   fill: string;
   stroke: string;
+  segments: number;
 };
 
-/*
-
-       Coordinate System                              
-               Y                     
-               |                                         
-               |                     
-               |                     
-               |                     
-             /   \                   
-           /       \                
-         Z           \ X
-         
-        Vertices Indices
-
-                0                    
-               /-                    
-             /-  \-                  
-          /--      \-                
-       /--           \-              
-  3  /-                \-  1         
-   --                   --|          
-   |-\               --/  |          
-   |  --\          -/     |          
-   |     --\ 2  --/       |          
-   |        ---/          |          
-   |         |            |          
-   |         |            |          
-   |         |            |          
-   |         |            |          
-  6 -        |            |           
-    \-       |           /  4         
-      \-     |        /-             
-        \-   |     /-                
-          \- | /--                   
-             --                      
-             5                       
-
-
- */
-
-function generatePolygons({
-  height,
-  radius,
-}: CylinderProps): Array<Array<Array<Array<number>>>> {
-  const vertices = [
-    [height, radius, 0],
-    // 0,1,2,3
-    // [-width / 2, +height / 2, -depth / 2],
-    // [+width / 2, +height / 2, -depth / 2],
-    // [+width / 2, +height / 2, +depth / 2],
-    // [-width / 2, +height / 2, +depth / 2],
-    // // 4,5,6
-    // [+width / 2, -height / 2, -depth / 2],
-    // [+width / 2, -height / 2, depth / 2],
-    // [-width / 2, -height / 2, depth / 2],
-  ];
-  return [
-    // Faces
-    [
-      // Top Face
-      [vertices[0], vertices[0], vertices[0], vertices[0]],
-    ],
-    // Outline
-    [[]],
-  ];
-}
+const directLight = Vector3(1, 1, 0).normalize();
+const ambientLight = 0.4;
+const cameraDirection = Vector3(1, 1, 1).normalize();
 
 export function Cylinder(props: CylinderProps) {
-  const polygons = generatePolygons(props);
-  const faces = polygons[0];
-  const colors = ["rgb(240,240,240)", "rgb(150,150,150)", "rgb(100,100,100)"];
+  const mesh = generateCylinder({
+    x: props.x,
+    y: props.y,
+    z: props.z,
+    height: props.height,
+    radius: props.radius,
+    segments: props.segments,
+    fill: props.fill,
+    stroke: props.stroke,
+  });
+
+  const transformedVertices = mesh.vertices.map((vertex) => {
+    return point3DToIsometric(vertex.x, vertex.y, vertex.z);
+  });
+
+  const maxDotPerFace = mesh.faces.map((face) => {
+    let maxDot = cameraDirection.dotProduct(mesh.vertices[face.indices[0]]);
+    for (let i = 1; i < face.indices.length; i++) {
+      maxDot = Math.max(
+        cameraDirection.dotProduct(mesh.vertices[face.indices[i]]),
+        maxDot
+      );
+    }
+    return maxDot;
+  });
+
+  // Sort faces by distance from camera
+  const faceIndices = mesh.faces.map((_, i) => i);
+  const sortedFaces = faceIndices.sort((faceIndexA, faceIndexB) => {
+    return maxDotPerFace[faceIndexA] - maxDotPerFace[faceIndexB];
+  });
 
   return (
-    <svg width={2000} height={2000}>
-      <g transform="translate(500,500)">
+    <svg width={2000} height={2000} style={{ position: "absolute" }}>
+      <g>
         {
           // All faces
-          faces.map((face, i) => {
+          sortedFaces.map((faceIndex) => {
+            const face = mesh.faces[faceIndex];
             let points = "";
-            // A face
-            face.forEach((vertex) => {
-              const { x, y } = point3DToIsometric(
-                vertex[0],
-                vertex[1],
-                vertex[2]
-              );
-              console.log(
-                `(${vertex[0]},${vertex[1]},${vertex[2]}) -> (${x},${y})`
-              );
-              points += `${Math.floor(x)},${Math.floor(y)} `;
+
+            const brightness = Math.min(
+              Math.max(
+                face.normal.dotProduct(directLight) + ambientLight,
+                ambientLight
+              ),
+              1.0
+            );
+
+            face.indices.forEach((index) => {
+              console.log(faceIndex, index);
+              points += `${transformedVertices[index].x},${transformedVertices[index].y} `;
             });
-            //   "0,100 50,25 50,75 100,0";
-            return <polygon fill={colors[i]} key={i} points={points} />;
+            return (
+              <polygon
+                style={{
+                  // translate: `${props.radius},${props.radius}`,
+                  filter: `brightness(${brightness})`,
+                }}
+                fill={face.fill}
+                // stroke={face.stroke}
+                key={faceIndex}
+                points={points}
+              />
+            );
           })
         }
+        {/* {transformedVertices.map((vertex, i) => (
+          <text
+            key={i}
+            x={vertex.x.toFixed(2)}
+            y={vertex.y.toFixed(2)}
+            filter={"drop-shadow(0px 0px 1px white)"}
+          >
+            {i}
+          </text>
+        ))} */}
       </g>
     </svg>
   );

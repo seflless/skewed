@@ -55,7 +55,6 @@ export function Grid(props: GridProps) {
       vertex[1] + props.y,
       vertex[2] + props.z
     );
-    console.log(`(${vertex[0]},${vertex[1]},${vertex[2]}) -> (${x},${y})`);
     points += `${Math.floor(x)},${Math.floor(y)} `;
   });
 

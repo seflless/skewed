@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Axii, Box } from "../src/index";
-import { Grid } from "../src/index";
+import { Axii, Box, Cylinder, Grid } from "../src/index";
 import React from "react";
 
 function randomColor() {
@@ -25,7 +24,18 @@ export default function App() {
         fill={"rgba(100,100,255,1.0)"}
         stroke={randomColor()}
       />
-      <Axii x={0} y={0} z={0} scale={50} />
+      <Axii x={0} y={0} z={200} scale={50} />
+      <Cylinder
+        x={100}
+        y={0}
+        z={0}
+        height={100}
+        radius={50}
+        // segments={64}
+        segments={256}
+        fill={"rgba(40,220,40,1.0)"}
+        stroke={"black"}
+      />
     </div>
   );
 }
