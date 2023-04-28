@@ -1,5 +1,4 @@
 import React from "react";
-import { point3DToIsometric } from "./Camera";
 import { Box } from "./Box";
 
 export type AxiiProps = {

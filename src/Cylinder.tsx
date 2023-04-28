@@ -2,7 +2,6 @@ import React from "react";
 import { point3DToIsometric } from "./Camera";
 import { generateCylinder } from "./CylinderMesh";
 import { Vector3 } from "./Vector3";
-import { Face } from "./Mesh";
 
 type CylinderProps = {
   x: number;
