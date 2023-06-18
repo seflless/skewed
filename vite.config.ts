@@ -2,7 +2,7 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
-import react from "@vitejs/plugin-react";
+// import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/guide/build.html#library-mode
 export default defineConfig({
@@ -15,7 +15,7 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ["react", "react-dom", "@types/react", "@types/react-dom"],
+      // external: ["react", "react-dom", "@types/react", "@types/react-dom"],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
@@ -26,5 +26,8 @@ export default defineConfig({
     },
   },
 
-  plugins: [react(), dts()],
+  plugins: [
+    // react(),
+    dts(),
+  ],
 });

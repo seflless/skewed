@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Axii, Box, Cylinder, Grid, Vector3 } from "../src/index";
+
 import React from "react";
 
 function randomColor() {

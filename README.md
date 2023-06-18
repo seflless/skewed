@@ -28,22 +28,26 @@ npm install skewed
 
 #### Setup
 
-```
-git clone git@github.com:seflless/skewed.git
-cd skewed
-```
+1. Install dependencies
+1. Node.js
+1. pnpm
+1. Clone and go into the folder
+   ```
+   git clone git@github.com:seflless/skewed.git
+   cd skewed
+   ```
 
 #### Watching
 
 ```
-yarn dev
+pnpm dev
 # Open the workbench page at http://localhost:3000/
 ```
 
 #### Building
 
 ```
-yarn build
+pnpm build
 ```
 
 #### Testing
@@ -65,7 +69,7 @@ npm publish
 Using vitest, the test are rerun whenever you change related code.
 
 ```
-yarn test
+pnpm test
 ```
 
 #### Watch Tests
@@ -102,7 +106,8 @@ TODO: Do we need to put in a difference command for the CLI?
           - Support rectangle, ellipse at a minimum
           - Text would be awesome, but should be deffered and be handled at the same time we add prismatic support too.
         - Conics (or is this just a pristmatic with a scalar for the top face's points)
-          - Cone
+          - Cones. (Do cones similarly to below)
+            - https://twitter.com/kaihenthoiwane/status/1667122834060242945?s=46
   - Pick better colors for demoing/screenshots once mesh/face fill si in
   - Bounding primitives (stored in Mesh's coordinate system)
     - BoundingBox first
