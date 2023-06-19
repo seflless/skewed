@@ -1,5 +1,5 @@
-import { Shape } from "./Shape";
+import { Shape } from "./shapes/Shape";
 
-export type Scene {
-    shapes: Shape[];
-}
+export type Scene = {
+  shapes: Shape[];
+};
