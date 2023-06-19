@@ -4,7 +4,7 @@ export type Color = {
   b: number;
 };
 
-function Color(r: number, g: number, b: number): Color {
+export function Color(r: number, g: number, b: number): Color {
   return { r, g, b };
 }
 

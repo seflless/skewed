@@ -62,12 +62,12 @@ export function render(
         directionalLight.dotProduct(face.normal)
       );
       //   polygon.setAttribute("fill", shape.fill);
-      polygon.setAttribute(
-        "fill",
-        `rgb(${shape.fill.r * brightness}, ${shape.fill.g * brightness}, ${
-          shape.fill.b * brightness
-        })`
-      );
+      const fill = `rgb(${shape.fill.r * brightness}, ${
+        shape.fill.g * brightness
+      }, ${shape.fill.b * brightness})`;
+      polygon.setAttribute("fill", fill);
+      polygon.setAttribute("stroke", fill);
+      polygon.setAttribute("stroke-width", "0.25");
 
       //   console.log(face.normal);
       //   console.log(brightness);
