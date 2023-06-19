@@ -1,7 +1,7 @@
 import { Vector3 } from "../Vector3";
 import { extrude } from "./Extrude";
 
-const segments = 360 / 8;
+const segments = 360 / 2;
 const height = 300;
 const radius = 100;
 

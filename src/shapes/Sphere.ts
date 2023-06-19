@@ -1,12 +1,11 @@
 import { Shape } from "./Shape";
 import { Vector3 } from "../Vector3";
-import { CylinderMesh } from "../meshes/CylinderMesh";
 import { Color } from "../colors/Color";
 
-export function Cylinder(position: Vector3, fill: Color): Shape {
+export function Sphere(position: Vector3, radius: number, fill: Color): Shape {
   return {
-    type: "mesh",
-    mesh: CylinderMesh,
+    type: "sphere",
+    radius,
     position,
     fill,
   } as Shape;

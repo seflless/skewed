@@ -5,6 +5,7 @@ import { Color } from "../colors/Color";
 
 export function Box(position: Vector3, fill: Color): Shape {
   return {
+    type: "mesh",
     mesh: BoxMesh,
     position,
     fill,

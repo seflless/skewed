@@ -1,10 +1,20 @@
-import { type } from "os";
 import { Mesh } from "../meshes/Mesh";
 import { Vector3 } from "../Vector3";
 import { Color } from "../colors/Color";
 
-export type Shape = {
-  mesh: Mesh;
+export type BasicShapeProperties = {
   position: Vector3;
   fill: Color;
 };
+
+export type MeshShape = {
+  type: "mesh";
+  mesh: Mesh;
+} & BasicShapeProperties;
+
+export type SphereShape = {
+  type: "sphere";
+  radius: number;
+} & BasicShapeProperties;
+
+export type Shape = MeshShape | SphereShape;

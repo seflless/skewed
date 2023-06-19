@@ -29,8 +29,8 @@ npm install skewed
 #### Setup
 
 1. Install dependencies
-1. Node.js
-1. pnpm
+   1. Node.js
+   1. pnpm
 1. Clone and go into the folder
    ```
    git clone git@github.com:seflless/skewed.git
