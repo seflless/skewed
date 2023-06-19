@@ -1,4 +1,4 @@
-import { point3DToIsometric } from "./Camera";
+import { point3DToCabinet, point3DToIsometric } from "./Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "./Vector3";
 import { Viewport } from "./Viewport";
@@ -29,6 +29,7 @@ export function render(
     // Transform the shape's mesh's points to screen space
     const vertices = shape.mesh.vertices.map((vertex) =>
       point3DToIsometric(
+        //   point3DToCabinet(
         vertex.x + shape.position.x,
         vertex.y + shape.position.y,
         vertex.z + shape.position.z,
