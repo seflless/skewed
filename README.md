@@ -80,23 +80,26 @@ TODO: Do we need to put in a difference command for the CLI?
 
 Here are some cool existing project I found after starting this. In no particular order:
 
-- [ZDog](https://zzz.dog/)
-  - I found this one when looking for ideas about how to light 3D spheres.
-  - Love the cool art style in the demos that it's well suited too
-  - There's no lighting support, but that really simplifies things for this art style.
-    - Here's an example [mini town](https://codepen.io/desandro/pen/vdwMyW) where stylistic lighting (really just contrasting planes) is used
-  - This influenced me into focusing on toon shading style lighting/graphics too (As allow specifying an amount of shades gradients)
-  - The documentation is great
-    - The style is fun and matches the engines aesthetic
-    - Love the coverage of topics like [z-fighting, how it works, and how to work with it](https://zzz.dog/extras#z-fighting)
-  - It's making me consider supporting a canvas renderer
-    - Would be better for mixing into other canvas rendering (Is this true for WebGL, or is copying from canvas to WebGL textures slow?)
-    - Read: [Canvas or SVG?](https://zzz.dog/extras#canvas-or-svg)
-  - [Rendering with SVG without Illustration](https://zzz.dog/extras#rendering-without-illustration-rendering-with-svg-without-illustration)
-    - I'd been thinking about doing this same approach, allowing people to take control of rendering order to mix
-      compositions into other HTML/SVG
-  - See some of the [Feature Requests and discussions](https://zzz.dog/extras#feature-requests)
-    - [Supporting Perspective cameras, not just ortho](https://github.com/metafizzy/zdog/issues/2)
-      - I like encouraging ortho only (and variants like oblique/cabinet)
-      - It should be more performant when only translating camera and objects, that's a good thing
-      - I'm with this [comment](https://github.com/metafizzy/zdog/issues/2#issuecomment-497310823), it doesn't play well with SVG curve capabilities.
+## ZDog
+
+- [Project Website](https://zzz.dog/)
+- [Github repo](https://github.com/metafizzy/zdog)
+- I found this one when looking for ideas about how to light 3D spheres.
+- Love the cool art style in the demos that it's well suited too
+- There's no lighting support, but that really simplifies things for this art style.
+  - Here's an example [mini town](https://codepen.io/desandro/pen/vdwMyW) where stylistic lighting (really just contrasting planes) is used
+- This influenced me into focusing on toon shading style lighting/graphics too (As allow specifying an amount of shades gradients)
+- The documentation is great
+  - The style is fun and matches the engines aesthetic
+  - Love the coverage of topics like [z-fighting, how it works, and how to work with it](https://zzz.dog/extras#z-fighting)
+- It's making me consider supporting a canvas renderer
+  - Would be better for mixing into other canvas rendering (Is this true for WebGL, or is copying from canvas to WebGL textures slow?)
+  - Read: [Canvas or SVG?](https://zzz.dog/extras#canvas-or-svg)
+- [Rendering with SVG without Illustration](https://zzz.dog/extras#rendering-without-illustration-rendering-with-svg-without-illustration)
+  - I'd been thinking about doing this same approach, allowing people to take control of rendering order to mix
+    compositions into other HTML/SVG
+- See some of the [Feature Requests and discussions](https://zzz.dog/extras#feature-requests)
+  - [Supporting Perspective cameras, not just ortho](https://github.com/metafizzy/zdog/issues/2)
+    - I like encouraging ortho only (and variants like oblique/cabinet)
+    - It should be more performant when only translating camera and objects, that's a good thing
+    - I'm with this [comment](https://github.com/metafizzy/zdog/issues/2#issuecomment-497310823), it doesn't play well with SVG curve capabilities.
