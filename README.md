@@ -84,6 +84,7 @@ Here are some cool existing project I found after starting this. In no particula
 
 - [Project Website](https://zzz.dog/)
 - [Github repo](https://github.com/metafizzy/zdog)
+- Great article covering it: https://css-tricks.com/zdog/
 - I found this one when looking for ideas about how to light 3D spheres.
 - Love the cool art style in the demos that it's well suited too
 - There's no lighting support, but that really simplifies things for this art style.
