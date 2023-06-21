@@ -16,7 +16,9 @@ _Todo: Move to using Linear or Github project to track tasks_
   - Support more projections from
     - Cabinet for sure and maybe even the untilted version like in the Twitter thread I responded to recently
 - V3
-- Get serializing in early. Make basic tool to serialize a scene or object and make it easy to load in whole scenes, viewports, or object-level snapshots.
+   - Get serializing in early. Make basic tool to serialize a scene or object and make it easy to load in whole scenes, viewports, or object-level snapshots.
+- Future versions
+- create react renderer. ensure it works as a server component. 
 
 ## Basic Architecture
 
