@@ -43,7 +43,7 @@ _Todo: Move to using Linear or Github project to track tasks_
     - Clip/mask
     - Built in organizers/containers
       - Group (the usual)
-      - Splat-likes (way to attach 2D/3D objects to other ones, maybe limited to only convex)
+      - Splat-likes (way to attach 2D/3D objects to other ones, maybe limited to only convex so that sort order is intuitive/easy-to-implement/performant)
       - Layers (container for 2D objects that you want to control the render order of as a group)
     - Basic 3D file format importer (with limits like only supporting flat shaded materials)
   - Great documentation
