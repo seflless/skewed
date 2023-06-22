@@ -84,8 +84,10 @@ Here are some cool existing project I found after starting this. In no particula
 
 - [Project Website](https://zzz.dog/)
 - [Github repo](https://github.com/metafizzy/zdog)
+- Great article covering it: https://css-tricks.com/zdog/
 - I found this one when looking for ideas about how to light 3D spheres.
-- Love the cool art style in the demos that it's well suited too
+- Love the cool art style in the demos that it's well suited too.
+- Finding a good artist/art-style to use as guodance (and demos) will go really far. The homepage demo is based on this 2D art: https://www.robindavey.co.uk/#/nippu/
 - There's no lighting support, but that really simplifies things for this art style.
   - Here's an example [mini town](https://codepen.io/desandro/pen/vdwMyW) where stylistic lighting (really just contrasting planes) is used
 - This influenced me into focusing on toon shading style lighting/graphics too (As allow specifying an amount of shades gradients)
