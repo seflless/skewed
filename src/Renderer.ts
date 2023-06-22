@@ -28,10 +28,18 @@ export function render(
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
   svg.appendChild(defs);
 
-  //   svg.style.position = "absolute";
+  // Sort shapes back to front
+  let sortedShapesByIndex = scene.shapes.map((_, index) => index);
+  sortedShapesByIndex.sort((aIndex, bIndex) => {
+    const a = cameraDirection.dotProduct(scene.shapes[aIndex].position);
+    const b = cameraDirection.dotProduct(scene.shapes[bIndex].position);
+
+    return a - b;
+  });
 
   // For each shape in the scene
-  for (let shape of scene.shapes) {
+  for (let shapeIndex of sortedShapesByIndex) {
+    const shape = scene.shapes[shapeIndex];
     switch (shape.type) {
       case "mesh":
         renderMesh(svg, shape, viewport);
