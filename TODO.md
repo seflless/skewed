@@ -16,9 +16,9 @@ _Todo: Move to using Linear or Github project to track tasks_
   - Support more projections from
     - Cabinet for sure and maybe even the untilted version like in the Twitter thread I responded to recently
 - V3
-   - Get serializing in early. Make basic tool to serialize a scene or object and make it easy to load in whole scenes, viewports, or object-level snapshots.
+  - Get serializing in early. Make basic tool to serialize a scene or object and make it easy to load in whole scenes, viewports, or object-level snapshots.
 - Future versions
-- create react renderer. ensure it works as a server component. 
+- create react renderer. ensure it works as a server component.
 
 ## Design Goals
 
@@ -42,6 +42,18 @@ _Todo: Move to using Linear or Github project to track tasks_
       - Easy way to attached
       - Billboards
       - Speech bubbles (type of billboard or 2D AND 3D?)
+    - Cameras (orthographic only)
+      - Cabinet
+      - Isometric
+    - Event system
+    - Simple math utils
+      - Vector3
+      - Matrix
+      - Bezier
+      - etc
+      - Basic ray intersect at a minimum
+    - Viewports
+    - Board (Container of Viewports/Scenes? Maybe just use <Skewed>)
     - Clip/mask
     - Built in organizers/containers
       - Group (the usual)
