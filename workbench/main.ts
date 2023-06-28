@@ -15,15 +15,12 @@ import {
 } from "../src/index";
 import { pathParser } from "../src/utils/svgPathParser";
 
-console.log(
-  "M99.99 50C101.239 78.75 74.9678 100 49.9785 100C22.3762 100 0 75 0 50C0 22.3857 26.6552 -1.24592e-09 49.9785 0C77.5808 0 99.99 22.9167 99.99 50Z"
-);
-console.log(
-  pathParser(
-    "M99.99 50C101.239 78.75 74.9678 100 49.9785 100C22.3762 100 0 75 0 50C0 22.3857 26.6552 -1.24592e-09 49.9785 0C77.5808 0 99.99 22.9167 99.99 50Z",
-    true
-  )
-);
+// From this shape in Figma, exported as an SVG file, then copy/pasting out the path string
+// https://www.figma.com/file/735rFnz0E5ib3rq4ha5MMF/Figma-Experiments?type=design&node-id=1312-16&mode=design&t=w03Fbw0ybh430M6y-4
+const pathFromFigmaCircle =
+  "M99.9571 50C101.207 78.75 74.9678 100 49.9785 100C22.3762 100 0 75 0 50C0 22.3857 26.6552 -1.24592e-09 49.9785 0C77.5808 0 99.9571 22.9167 99.9571 50Z";
+console.log(pathFromFigmaCircle);
+console.log(pathParser(pathFromFigmaCircle, true));
 
 const sphere = Sphere(Vector3(300, 100, 300), 75, Color(255, 255, 0));
 
