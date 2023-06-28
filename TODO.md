@@ -12,7 +12,7 @@ _Todo: Move to using Linear or Github project to track tasks_
 
   - Make Meshes dynamic and not shared
     - ~~BoxMesh takes width/height/depth~~
-    - CylinderMesh
+    - ~~CylinderMesh~~
   - Add basic 3D arrow (arch like Tldraw)
   - Pause on worrying about lighting, just add strokes to add more clarity of shape
 

@@ -1,6 +1,7 @@
 export * from "./Scene";
 export * from "./Viewport";
 export * from "./Renderer";
+export * from "./colors/Color";
 export * from "./Camera";
 export * from "./shapes/Shape";
 export * from "./shapes/Box";

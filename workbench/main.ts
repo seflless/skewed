@@ -8,8 +8,22 @@ import {
   render,
   Sphere,
   Shape,
+  Blue,
+  Green,
+  Red,
+  Color,
 } from "../src/index";
-import { Blue, Green, Red, Color } from "../src/colors/Color";
+import { pathParser } from "../src/utils/svgPathParser";
+
+console.log(
+  "M99.99 50C101.239 78.75 74.9678 100 49.9785 100C22.3762 100 0 75 0 50C0 22.3857 26.6552 -1.24592e-09 49.9785 0C77.5808 0 99.99 22.9167 99.99 50Z"
+);
+console.log(
+  pathParser(
+    "M99.99 50C101.239 78.75 74.9678 100 49.9785 100C22.3762 100 0 75 0 50C0 22.3857 26.6552 -1.24592e-09 49.9785 0C77.5808 0 99.99 22.9167 99.99 50Z",
+    true
+  )
+);
 
 const sphere = Sphere(Vector3(300, 100, 300), 75, Color(255, 255, 0));
 
