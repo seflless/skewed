@@ -41,13 +41,14 @@ import { extrude } from "./Extrude";
 
  */
 
-const size = 100;
-export const BoxMesh = extrude(
-  [
-    Vector3(-size / 2, 0, -size / 2),
-    Vector3(size / 2, 0, -size / 2),
-    Vector3(size / 2, 0, size / 2),
-    Vector3(-size / 2, 0, size / 2),
-  ],
-  size
-);
+export function BoxMesh(width: number, height: number, depth: number) {
+  return extrude(
+    [
+      Vector3(-width / 2, 0, -depth / 2),
+      Vector3(width / 2, 0, -depth / 2),
+      Vector3(width / 2, 0, depth / 2),
+      Vector3(-width / 2, 0, depth / 2),
+    ],
+    height
+  );
+}

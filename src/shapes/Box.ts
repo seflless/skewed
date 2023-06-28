@@ -3,11 +3,19 @@ import { Vector3 } from "../Vector3";
 import { BoxMesh } from "../meshes/BoxMesh";
 import { Color } from "../colors/Color";
 
-export function Box(position: Vector3, fill: Color): Shape {
+export type BoxProps = {
+  position: Vector3;
+  fill: Color;
+  width: number;
+  height: number;
+  depth: number;
+};
+
+export function Box(props: BoxProps): Shape {
   return {
     type: "mesh",
-    mesh: BoxMesh,
-    position,
-    fill,
+    mesh: BoxMesh(props.width, props.height, props.depth),
+    position: props.position,
+    fill: props.fill,
   } as Shape;
 }

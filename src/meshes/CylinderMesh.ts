@@ -1,19 +1,20 @@
 import { Vector3 } from "../Vector3";
 import { extrude } from "./Extrude";
 
-const segments = 360 / 2;
-const height = 300;
-const radius = 100;
-
-const indices: Vector3[] = [];
-for (let i = 0; i < segments; i++) {
-  indices.push(
-    Vector3(
-      (Math.cos((i / segments) * 2 * Math.PI) * radius) / 2,
-      0,
-      (Math.sin((i / segments) * 2 * Math.PI) * radius) / 2
-    )
-  );
+function circlePolyline(radius: number, segments: number): Vector3[] {
+  const vertices: Vector3[] = [];
+  for (let i = 0; i < segments; i++) {
+    vertices.push(
+      Vector3(
+        Math.cos((i / segments) * 2 * Math.PI) * radius,
+        0,
+        Math.sin((i / segments) * 2 * Math.PI) * radius
+      )
+    );
+  }
+  return vertices;
 }
 
-export const CylinderMesh = extrude(indices, height);
+export function CylinderMesh(radius: number, height: number, segments: number) {
+  return extrude(circlePolyline(radius, segments), height);
+}

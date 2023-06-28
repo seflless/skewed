@@ -56,14 +56,73 @@ function randomRange(min: number, max: number) {
 //   sphere.position.z = event.clientY - window.innerHeight / 2;
 // });
 
+const Axii_Thickness = 4;
+const Axii_Length = 100;
+function Axii(position: Vector3) {
+  return [
+    Box({
+      position: Vector3(Axii_Thickness / 2 + Axii_Length / 2, 0, 0).add(
+        position
+      ),
+      width: Axii_Length,
+      height: Axii_Thickness,
+      depth: Axii_Thickness,
+      fill: Red,
+    }),
+    Box({
+      position: Vector3(0, Axii_Thickness / 2 + Axii_Length / 2, 0).add(
+        position
+      ),
+      width: Axii_Thickness,
+      height: Axii_Length,
+      depth: Axii_Thickness,
+      fill: Green,
+    }),
+    Box({
+      position: Vector3(0, 0, Axii_Thickness / 2 + Axii_Length / 2).add(
+        position
+      ),
+      width: Axii_Thickness,
+      height: Axii_Thickness,
+      depth: Axii_Length,
+      fill: Blue,
+    }),
+  ];
+}
+
 const scene: Scene = {
   shapes: [
-    Box(Vector3(0, 50, 0), Red),
-    Box(Vector3(150, 50, 0), Green),
-    Box(Vector3(300, 50, 0), Blue),
-    Cylinder(Vector3(0, 100, 300), Color(255, 0, 255)),
+    Box({
+      position: Vector3(0, 50, 0),
+      width: 100,
+      height: 100,
+      depth: 100,
+      fill: Red,
+    }),
+    Box({
+      position: Vector3(150, 50, 0),
+      width: 100,
+      height: 100,
+      depth: 100,
+      fill: Green,
+    }),
+    Box({
+      position: Vector3(300, 50, 0),
+      width: 100,
+      height: 100,
+      depth: 100,
+      fill: Blue,
+    }),
+    Cylinder({
+      position: Vector3(0, 100, 300),
+      radius: 50,
+      height: 300,
+      segments: 180,
+      fill: Color(255, 0, 255),
+    }),
     sphere,
     ...particles,
+    ...Axii(Vector3(-500, 0, 0)),
   ],
 };
 

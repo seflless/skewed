@@ -1,20 +1,34 @@
 _Todo: Move to using Linear or Github project to track tasks_
 
-- Flush out basics
-  - Shape
-    - Start with no matrix, just a position
-  - Scene
-  - Renderer
-    - Render sorted by position
-    - Use existing Camera -> point3DToIsometric for projection
-    - Time willing, add Cabinet projection support
+- ~~Flush out basics~~
+  - ~~Shape~~
+    - ~~Start with no matrix, just a position~~
+  - ~~Scene~~
+  - ~~Renderer~~
+    - ~~Render sorted by position~~
+    - ~~Use existing Camera -> point3DToIsometric for projection~~
+    - ~~Time willing, add Cabinet projection support~~
 - V2
+
+  - Make Meshes dynamic and not shared
+    - ~~BoxMesh takes width/height/depth~~
+    - CylinderMesh
+  - Add basic 3D arrow (arch like Tldraw)
+  - Pause on worrying about lighting, just add strokes to add more clarity of shape
+
   - Figure out the Typescript generics to get my new-free style working for all classes like I do for Vector3
     - Started conversation with GPT-4 [here](https://chat.openai.com/c/8123a35d-6a57-4529-b274-533849ace3f6), copy/pasted the first suggestion into utils/Newless.ts, but haven't tested it out
   - Matrix Class
     - Should we have a Matrix4x4 AND Matrix4x3 or just one?
+  - Add hierarchy support (Create Group class, let's distinguish between containers and elements)
+  - Create a better example, like an office scene made out of all the components we have now (computer screen, keyboard), and etc
+  - Flush out camera more
+    - Proper projections of points
+    - Get basic camera controls in (zoom/pan for fun)
+    - RayCast basics
   - Support more projections from
     - Cabinet for sure and maybe even the untilted version like in the Twitter thread I responded to recently
+
 - V3
   - Get serializing in early. Make basic tool to serialize a scene or object and make it easy to load in whole scenes, viewports, or object-level snapshots.
 - Future versions
@@ -31,6 +45,10 @@ _Todo: Move to using Linear or Github project to track tasks_
     - Built in shapes
       - Rect (with rounded corners)
       - Box
+      - Arrows (3D and 2D)
+        - Curved like Tldraw's
+        - I'm interested in like surface sticking ones or even ones that hug walls like tape. Maybe Tape should be a type of thing.
+      - Stickies
       - Cylinder
       - Cone
       - Sphere
@@ -46,6 +64,8 @@ _Todo: Move to using Linear or Github project to track tasks_
       - Cabinet
       - Isometric
     - Event system
+    - Controls utils
+      - Make a screen relative utility (make it easy to control characters relative to screen orientation, making 3D feel like 2D)
     - Simple math utils
       - Vector3
       - Matrix
