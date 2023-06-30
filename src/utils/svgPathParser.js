@@ -1,53 +1,12 @@
 /*
-    Based off of svg.js' path parser: 
+    Based off of svg.js' svg path parser: 
      - https://github.com/svgdotjs/svg.js/blob/03322672782a6318b019eff33fe44ec800d6f12c/src/utils/pathParser.js
      - https://github.com/svgdotjs/svg.js/blob/03322672782a6318b019eff33fe44ec800d6f12c/src/modules/core/regex.js
-     - https://github.com/svgdotjs/svg.js/blob/03322672782a6318b019eff33fe44ec800d6f12c/src/types/Point.js
     License: https://github.com/svgdotjs/svg.js/blob/master/LICENSE.txt
 */
 
-// import { isPathLetter } from "../modules/core/regex.js";
-// import Point from "../types/Point.js";
-
 // Test for path letter
 const isPathLetter = /[MLHVCSQTAZ]/i;
-
-class Point {
-  // Initialize
-  constructor(...args) {
-    this.init(...args);
-  }
-
-  // Clone point
-  clone() {
-    return new Point(this);
-  }
-
-  init(x, y) {
-    const base = { x: 0, y: 0 };
-
-    // ensure source as object
-    const source = Array.isArray(x)
-      ? { x: x[0], y: x[1] }
-      : typeof x === "object"
-      ? { x: x.x, y: x.y }
-      : { x: x, y: y };
-
-    // merge source
-    this.x = source.x == null ? base.x : source.x;
-    this.y = source.y == null ? base.y : source.y;
-
-    return this;
-  }
-
-  toArray() {
-    return [this.x, this.y];
-  }
-}
-
-export function point(x, y) {
-  return new Point(x, y).transformO(this.screenCTM().inverseO());
-}
 
 const segmentParameters = {
   M: 2,
@@ -200,7 +159,7 @@ function isExponential(parser) {
   return parser.lastToken.toUpperCase() === "E";
 }
 
-export function pathParser(d, toAbsolute = true) {
+export function svgPathParser(d, toAbsolute = true) {
   let index = 0;
   let token = "";
   const parser = {
@@ -213,8 +172,8 @@ export function pathParser(d, toAbsolute = true) {
     pointSeen: false,
     hasExponent: false,
     absolute: toAbsolute,
-    p0: new Point(),
-    p: new Point(),
+    p0: { x: 0, y: 0 },
+    p: { x: 0, y: 0 },
   };
 
   while (((parser.lastToken = token), (token = d.charAt(index++)))) {

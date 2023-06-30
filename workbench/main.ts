@@ -13,14 +13,20 @@ import {
   Red,
   Color,
 } from "../src/index";
-import { pathParser } from "../src/utils/svgPathParser";
+import { svgPathParser } from "../src/utils/svgPathParser";
+import { svgPathToSvg3DCommands } from "../src/utils/svg3d";
 
-// From this shape in Figma, exported as an SVG file, then copy/pasting out the path string
+// From this 1 diameter circle flattened into a path in Figma, exported as an SVG file, then copy/pasting out the path string
+// Press 2 to zoom into the circle as it's 1x1 pixel by default and impossible to see until you zoom
 // https://www.figma.com/file/735rFnz0E5ib3rq4ha5MMF/Figma-Experiments?type=design&node-id=1312-16&mode=design&t=w03Fbw0ybh430M6y-4
 const pathFromFigmaCircle =
-  "M99.9571 50C101.207 78.75 74.9678 100 49.9785 100C22.3762 100 0 75 0 50C0 22.3857 26.6552 -1.24592e-09 49.9785 0C77.5808 0 99.9571 22.9167 99.9571 50Z";
+  "M1 0.5C1 0.776142 0.776142 1 0.5 1C0.223858 1 0 0.776142 0 0.5C0 0.223858 0.223858 0 0.5 0C0.776142 0 1 0.223858 1 0.5Z";
 console.log(pathFromFigmaCircle);
-console.log(pathParser(pathFromFigmaCircle, true));
+
+const pathSegments = svgPathParser(pathFromFigmaCircle, true);
+console.log(pathSegments);
+const svg3DCommands = svgPathToSvg3DCommands(pathSegments);
+console.log(svg3DCommands);
 
 const sphere = Sphere(Vector3(300, 100, 300), 75, Color(255, 255, 0));
 
