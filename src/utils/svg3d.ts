@@ -5,17 +5,17 @@ import invariant from "invariant";
 // Full set of SVG path commands:
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#path_commands
 
-type SVG3DMoveCommand = { command: "move"; points: [Vector3] };
-type SVG3DLineCommand = { command: "line"; points: [Vector3] };
-type SVG3DCloseCommand = { command: "closePath" };
-type SVG3DCubicBezierCommand = {
+export type SVG3DMoveCommand = { command: "move"; points: [Vector3] };
+export type SVG3DLineCommand = { command: "line"; points: [Vector3] };
+export type SVG3DCloseCommand = { command: "closePath" };
+export type SVG3DCubicBezierCommand = {
   command: "cubicBezier";
 
   // Control point 1, control point 2, end point
   points: [Vector3, Vector3, Vector3];
 };
 
-type SVG3DQuadraticBezierCommand = {
+export type SVG3DQuadraticBezierCommand = {
   command: "cubicBezier";
 
   // Control point 1, control point 2, end point
@@ -23,7 +23,7 @@ type SVG3DQuadraticBezierCommand = {
 };
 
 // No support for elliptical arc yet
-type SVG3DCommand =
+export type SVG3DCommand =
   | SVG3DMoveCommand
   | SVG3DLineCommand
   | SVG3DCloseCommand

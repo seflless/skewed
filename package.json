@@ -44,6 +44,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/invariant": "^2.2.35",
     "@types/node": "^18.11.3",
     "@vitejs/plugin-react": "^3.0.0",
     "ts-node": "^10.9.1",
