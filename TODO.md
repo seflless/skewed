@@ -32,7 +32,11 @@ _Todo: Move to using Linear or Github project to track tasks_
 - V3
   - Get serializing in early. Make basic tool to serialize a scene or object and make it easy to load in whole scenes, viewports, or object-level snapshots.
 - Future versions
-- create react renderer. ensure it works as a server component.
+  - create react renderer. ensure it works as a server component.
+- Demo ideas
+  - Legos (make a sequence animation of adding pieces to create a design)
+  - Instructions from a manual
+  - Car parts exploded
 
 ## Design Goals
 
