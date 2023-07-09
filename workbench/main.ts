@@ -12,6 +12,7 @@ import {
   Green,
   Red,
   Color,
+  Matrix4x4,
 } from "../src/index";
 import { svgPathParser } from "../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../src/svg/svg3d";
@@ -193,3 +194,8 @@ function renderLoop() {
   requestAnimationFrame(renderLoop);
 }
 renderLoop();
+
+const matrix = Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+
+matrix.makeTranslation(100, 200, 300);
+console.log(matrix);

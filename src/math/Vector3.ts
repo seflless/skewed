@@ -2,6 +2,7 @@ export interface Vector3 {
   x: number;
   y: number;
   z: number;
+  set: (vec: Vector3) => Vector3;
   add: (vec: Vector3) => Vector3;
   subtract: (vec: Vector3) => Vector3;
   multiply: (scalar: number) => Vector3;
@@ -16,6 +17,13 @@ export interface Vector3 {
 // This is based on a conversation with GPT-4 that helped meet my requirements
 // https://chat.openai.com/c/f22bc4d6-2cc3-44c1-8b91-28c2708f2c17
 const Vector3Proto = {
+  set(this: Vector3, vec: Vector3): Vector3 {
+    this.x = vec.x;
+    this.y = vec.y;
+    this.z = vec.z;
+    return this;
+  },
+
   /**
    * Adds a vector to this vector, mutating it in place. It
    * returns this vector, so that API chaining is possible (ie: `v.add(v2).add(v3)`)

@@ -23,13 +23,44 @@ export interface Matrix4x4 {
   identity: () => Matrix4x4;
   clone: () => Matrix4x4;
   copy(matrix: Matrix4x4): Matrix4x4;
-  copyPosition(matrix: Matrix4x4):Matrix4x4;
-  extractBasis(xAxis:Vector3, yAxis:Vector3, zAxis:Vector3): Matrix4x4;
-  extractRotation(matrix:Matrix4x4):Matrix4x4;
+  copyPosition(matrix: Matrix4x4): Matrix4x4;
+  extractBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4x4;
+  extractRotation(matrix: Matrix4x4): Matrix4x4;
+  multiply(matrix: Matrix4x4): Matrix4x4;
+  premultiply(matrix: Matrix4x4): Matrix4x4;
+  multiplyMatrices(a: Matrix4x4, b: Matrix4x4): Matrix4x4;
+  determinant(): number;
+  transpose(): Matrix4x4;
+  setPosition(x: number, y: number, z: number): Matrix4x4;
+  invert(): Matrix4x4;
+  scale(v: Vector3): Matrix4x4;
 
-  fromArray(array: number[], offset:number): Matrix4x4;
+  makeTranslation(x: number, y: number, z: number): Matrix4x4;
+  makeRotationX(theta: number): Matrix4x4;
+  makeRotationY(theta: number): Matrix4x4;
+  makeRotationZ(theta: number): Matrix4x4;
+  makeScale(x: number, y: number, z: number): Matrix4x4;
+  makeShear(
+    xy: number,
+    xz: number,
+    yx: number,
+    yz: number,
+    zx: number,
+    zy: number
+  ): Matrix4x4;
+  makeOrthographic(
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    near: number,
+    far: number
+  ): Matrix4x4;
+
+  equals(matrix: Matrix4x4): boolean;
+
+  fromArray(array: number[], offset: number): Matrix4x4;
 }
-
 
 export function Matrix4x4(
   n11: number,
@@ -49,10 +80,28 @@ export function Matrix4x4(
   n43: number,
   n44: number
 ): Matrix4x4 {
-  return createMatrix4x4(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44);
+  return createMatrix4x4(
+    n11,
+    n12,
+    n13,
+    n14,
+    n21,
+    n22,
+    n23,
+    n24,
+    n31,
+    n32,
+    n33,
+    n34,
+    n41,
+    n42,
+    n43,
+    n44
+  );
 }
 
-function createMatrix4x4(n11: number,
+function createMatrix4x4(
+  n11: number,
   n12: number,
   n13: number,
   n14: number,
@@ -67,13 +116,33 @@ function createMatrix4x4(n11: number,
   n41: number,
   n42: number,
   n43: number,
-  n44: number): Matrix4x4 {
-  return Object.assign(Object.create(Matrix4x4Proto), { n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 });
+  n44: number
+): Matrix4x4 {
+  return Object.assign(Object.create(Matrix4x4Proto), {
+    elements: [
+      n11,
+      n12,
+      n13,
+      n14,
+      n21,
+      n22,
+      n23,
+      n24,
+      n31,
+      n32,
+      n33,
+      n34,
+      n41,
+      n42,
+      n43,
+      n44,
+    ],
+  });
 }
 
 const Matrix4x4Proto = {
   set(
-    this: Matrix4x4, 
+    this: Matrix4x4,
     n11: number,
     n12: number,
     n13: number,
@@ -120,7 +189,10 @@ const Matrix4x4Proto = {
   },
 
   clone(this: Matrix4x4) {
-    return Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).fromArray(this.elements, 0);
+    return Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).fromArray(
+      this.elements,
+      0
+    );
   },
 
   copy(this: Matrix4x4, matrix: Matrix4x4) {
@@ -183,7 +255,12 @@ const Matrix4x4Proto = {
   //   return this;
   // }
 
-  extractBasis(this: Matrix4x4, xAxis:Vector3, yAxis:Vector3, zAxis:Vector3) {
+  extractBasis(
+    this: Matrix4x4,
+    xAxis: Vector3,
+    yAxis: Vector3,
+    zAxis: Vector3
+  ) {
     setVector3FromMatrixElements(xAxis, this.elements, 0);
     setVector3FromMatrixElements(xAxis, this.elements, 4);
     setVector3FromMatrixElements(xAxis, this.elements, 8);
@@ -191,7 +268,7 @@ const Matrix4x4Proto = {
     return this;
   },
 
-  makeBasis(this: Matrix4x4, xAxis:Vector3, yAxis:Vector3, zAxis:Vector3) {
+  makeBasis(this: Matrix4x4, xAxis: Vector3, yAxis: Vector3, zAxis: Vector3) {
     this.set(
       xAxis.x,
       yAxis.x,
@@ -214,15 +291,18 @@ const Matrix4x4Proto = {
     return this;
   },
 
-  extractRotation(this:Matrix4x4, matrix:Matrix4x4) {
+  extractRotation(this: Matrix4x4, matrix: Matrix4x4) {
     // this method does not support reflection matrices
 
     const te = this.elements;
     const me = matrix.elements;
 
-    const scaleX = 1 / setVector3FromMatrixElements(_v1, matrix.elements, 0).length();
-    const scaleY = 1 / setVector3FromMatrixElements(_v1, matrix.elements, 4).length();
-    const scaleZ = 1 / setVector3FromMatrixElements(_v1, matrix.elements, 8).length();
+    const scaleX =
+      1 / setVector3FromMatrixElements(_v1, matrix.elements, 0).length();
+    const scaleY =
+      1 / setVector3FromMatrixElements(_v1, matrix.elements, 4).length();
+    const scaleZ =
+      1 / setVector3FromMatrixElements(_v1, matrix.elements, 8).length();
 
     te[0] = me[0] * scaleX;
     te[1] = me[1] * scaleX;
@@ -382,58 +462,58 @@ const Matrix4x4Proto = {
   //   return this.compose(_zero, q, _one);
   // }
 
-  lookAt(this:Matrix4x4, eye:Vector3, target:Vector3, up:Vector3) {
-    const te = this.elements;
+  // lookAt(this:Matrix4x4, eye:Vector3, target:Vector3, up:Vector3) {
+  //   const te = this.elements;
 
-    _z.subVectors(eye, target);
+  //   _z.subVectors(eye, target);
 
-    if (_z.lengthSq() === 0) {
-      // eye and target are in the same position
+  //   if (_z.lengthSq() === 0) {
+  //     // eye and target are in the same position
 
-      _z.z = 1;
-    }
+  //     _z.z = 1;
+  //   }
 
-    _z.normalize();
-    _x.crossVectors(up, _z);
+  //   _z.normalize();
+  //   _x.crossVectors(up, _z);
 
-    if (_x.lengthSq() === 0) {
-      // up and z are parallel
+  //   if (_x.lengthSq() === 0) {
+  //     // up and z are parallel
 
-      if (Math.abs(up.z) === 1) {
-        _z.x += 0.0001;
-      } else {
-        _z.z += 0.0001;
-      }
+  //     if (Math.abs(up.z) === 1) {
+  //       _z.x += 0.0001;
+  //     } else {
+  //       _z.z += 0.0001;
+  //     }
 
-      _z.normalize();
-      _x.crossVectors(up, _z);
-    }
+  //     _z.normalize();
+  //     _x.crossVectors(up, _z);
+  //   }
 
-    _x.normalize();
-    _y.crossVectors(_z, _x);
+  //   _x.normalize();
+  //   _y.crossVectors(_z, _x);
 
-    te[0] = _x.x;
-    te[4] = _y.x;
-    te[8] = _z.x;
-    te[1] = _x.y;
-    te[5] = _y.y;
-    te[9] = _z.y;
-    te[2] = _x.z;
-    te[6] = _y.z;
-    te[10] = _z.z;
+  //   te[0] = _x.x;
+  //   te[4] = _y.x;
+  //   te[8] = _z.x;
+  //   te[1] = _x.y;
+  //   te[5] = _y.y;
+  //   te[9] = _z.y;
+  //   te[2] = _x.z;
+  //   te[6] = _y.z;
+  //   te[10] = _z.z;
 
-    return this;
-  }
+  //   return this;
+  // }
 
-  multiply(m) {
-    return this.multiplyMatrices(this, m);
-  }
+  multiply(this: Matrix4x4, matrix: Matrix4x4) {
+    return this.multiplyMatrices(this, matrix);
+  },
 
-  premultiply(m) {
-    return this.multiplyMatrices(m, this);
-  }
+  premultiply(this: Matrix4x4, matrix: Matrix4x4) {
+    return this.multiplyMatrices(matrix, this);
+  },
 
-  multiplyMatrices(a, b) {
+  multiplyMatrices(this: Matrix4x4, a: Matrix4x4, b: Matrix4x4) {
     const ae = a.elements;
     const be = b.elements;
     const te = this.elements;
@@ -493,32 +573,32 @@ const Matrix4x4Proto = {
     te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
 
     return this;
-  }
+  },
 
-  multiplyScalar(s) {
-    const te = this.elements;
+  // multiplyScalar(s) {
+  //   const te = this.elements;
 
-    te[0] *= s;
-    te[4] *= s;
-    te[8] *= s;
-    te[12] *= s;
-    te[1] *= s;
-    te[5] *= s;
-    te[9] *= s;
-    te[13] *= s;
-    te[2] *= s;
-    te[6] *= s;
-    te[10] *= s;
-    te[14] *= s;
-    te[3] *= s;
-    te[7] *= s;
-    te[11] *= s;
-    te[15] *= s;
+  //   te[0] *= s;
+  //   te[4] *= s;
+  //   te[8] *= s;
+  //   te[12] *= s;
+  //   te[1] *= s;
+  //   te[5] *= s;
+  //   te[9] *= s;
+  //   te[13] *= s;
+  //   te[2] *= s;
+  //   te[6] *= s;
+  //   te[10] *= s;
+  //   te[14] *= s;
+  //   te[3] *= s;
+  //   te[7] *= s;
+  //   te[11] *= s;
+  //   te[15] *= s;
 
-    return this;
-  }
+  //   return this;
+  // }
 
-  determinant() {
+  determinant(this: Matrix4x4): number {
     const te = this.elements;
 
     const n11 = te[0],
@@ -571,9 +651,9 @@ const Matrix4x4Proto = {
           n12 * n21 * n33 +
           n12 * n23 * n31)
     );
-  }
+  },
 
-  transpose() {
+  transpose(this: Matrix4x4) {
     const te = this.elements;
     let tmp;
 
@@ -598,25 +678,25 @@ const Matrix4x4Proto = {
     te[14] = tmp;
 
     return this;
-  }
+  },
 
-  setPosition(x, y, z) {
+  setPosition(this: Matrix4x4, x: number, y: number, z: number) {
     const te = this.elements;
 
-    if (x.isVector3) {
-      te[12] = x.x;
-      te[13] = x.y;
-      te[14] = x.z;
-    } else {
-      te[12] = x;
-      te[13] = y;
-      te[14] = z;
-    }
+    // if (x.isVector3) {
+    //   te[12] = x.x;
+    //   te[13] = x.y;
+    //   te[14] = x.z;
+    // } else {
+    te[12] = x;
+    te[13] = y;
+    te[14] = z;
+    // }
 
     return this;
-  }
+  },
 
-  invert() {
+  invert(this: Matrix4x4) {
     // based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
     const te = this.elements,
       n11 = te[0],
@@ -776,9 +856,9 @@ const Matrix4x4Proto = {
       detInv;
 
     return this;
-  }
+  },
 
-  scale(v) {
+  scale(this: Matrix4x4, v: Vector3) {
     const te = this.elements;
     const x = v.x,
       y = v.y,
@@ -798,235 +878,251 @@ const Matrix4x4Proto = {
     te[11] *= z;
 
     return this;
-  }
+  },
 
-  getMaxScaleOnAxis() {
-    const te = this.elements;
+  // getMaxScaleOnAxis() {
+  //   const te = this.elements;
 
-    const scaleXSq = te[0] * te[0] + te[1] * te[1] + te[2] * te[2];
-    const scaleYSq = te[4] * te[4] + te[5] * te[5] + te[6] * te[6];
-    const scaleZSq = te[8] * te[8] + te[9] * te[9] + te[10] * te[10];
+  //   const scaleXSq = te[0] * te[0] + te[1] * te[1] + te[2] * te[2];
+  //   const scaleYSq = te[4] * te[4] + te[5] * te[5] + te[6] * te[6];
+  //   const scaleZSq = te[8] * te[8] + te[9] * te[9] + te[10] * te[10];
 
-    return Math.sqrt(Math.max(scaleXSq, scaleYSq, scaleZSq));
-  }
+  //   return Math.sqrt(Math.max(scaleXSq, scaleYSq, scaleZSq));
+  // }
 
-  makeTranslation(x, y, z) {
-    if (x.isVector3) {
-      this.set(1, 0, 0, x.x, 0, 1, 0, x.y, 0, 0, 1, x.z, 0, 0, 0, 1);
-    } else {
-      this.set(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
-    }
+  makeTranslation(this: Matrix4x4, x: number, y: number, z: number) {
+    // if (x.isVector3) {
+    //   this.set(1, 0, 0, x.x, 0, 1, 0, x.y, 0, 0, 1, x.z, 0, 0, 0, 1);
+    // } else {
+    this.set(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
+    // }
 
     return this;
-  }
+  },
 
-  makeRotationX(theta) {
+  makeRotationX(this: Matrix4x4, theta: number) {
     const c = Math.cos(theta),
       s = Math.sin(theta);
 
     this.set(1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1);
 
     return this;
-  }
+  },
 
-  makeRotationY(theta) {
+  makeRotationY(this: Matrix4x4, theta: number) {
     const c = Math.cos(theta),
       s = Math.sin(theta);
 
     this.set(c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1);
 
     return this;
-  }
+  },
 
-  makeRotationZ(theta) {
+  makeRotationZ(this: Matrix4x4, theta: number) {
     const c = Math.cos(theta),
       s = Math.sin(theta);
 
     this.set(c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
     return this;
-  }
+  },
 
-  makeRotationAxis(axis, angle) {
-    // Based on http://www.gamedev.net/reference/articles/article1199.asp
+  // makeRotationAxis(axis, angle) {
+  //   // Based on http://www.gamedev.net/reference/articles/article1199.asp
 
-    const c = Math.cos(angle);
-    const s = Math.sin(angle);
-    const t = 1 - c;
-    const x = axis.x,
-      y = axis.y,
-      z = axis.z;
-    const tx = t * x,
-      ty = t * y;
+  //   const c = Math.cos(angle);
+  //   const s = Math.sin(angle);
+  //   const t = 1 - c;
+  //   const x = axis.x,
+  //     y = axis.y,
+  //     z = axis.z;
+  //   const tx = t * x,
+  //     ty = t * y;
 
-    this.set(
-      tx * x + c,
-      tx * y - s * z,
-      tx * z + s * y,
-      0,
-      tx * y + s * z,
-      ty * y + c,
-      ty * z - s * x,
-      0,
-      tx * z - s * y,
-      ty * z + s * x,
-      t * z * z + c,
-      0,
-      0,
-      0,
-      0,
-      1
-    );
+  //   this.set(
+  //     tx * x + c,
+  //     tx * y - s * z,
+  //     tx * z + s * y,
+  //     0,
+  //     tx * y + s * z,
+  //     ty * y + c,
+  //     ty * z - s * x,
+  //     0,
+  //     tx * z - s * y,
+  //     ty * z + s * x,
+  //     t * z * z + c,
+  //     0,
+  //     0,
+  //     0,
+  //     0,
+  //     1
+  //   );
 
-    return this;
-  }
+  //   return this;
+  // }
 
-  makeScale(x, y, z) {
+  makeScale(this: Matrix4x4, x: number, y: number, z: number) {
     this.set(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
 
     return this;
-  }
+  },
 
-  makeShear(xy, xz, yx, yz, zx, zy) {
+  makeShear(
+    this: Matrix4x4,
+    xy: number,
+    xz: number,
+    yx: number,
+    yz: number,
+    zx: number,
+    zy: number
+  ) {
     this.set(1, yx, zx, 0, xy, 1, zy, 0, xz, yz, 1, 0, 0, 0, 0, 1);
 
     return this;
-  }
+  },
 
-  compose(position, quaternion, scale) {
-    const te = this.elements;
+  // compose(position, quaternion, scale) {
+  //   const te = this.elements;
 
-    const x = quaternion._x,
-      y = quaternion._y,
-      z = quaternion._z,
-      w = quaternion._w;
-    const x2 = x + x,
-      y2 = y + y,
-      z2 = z + z;
-    const xx = x * x2,
-      xy = x * y2,
-      xz = x * z2;
-    const yy = y * y2,
-      yz = y * z2,
-      zz = z * z2;
-    const wx = w * x2,
-      wy = w * y2,
-      wz = w * z2;
+  //   const x = quaternion._x,
+  //     y = quaternion._y,
+  //     z = quaternion._z,
+  //     w = quaternion._w;
+  //   const x2 = x + x,
+  //     y2 = y + y,
+  //     z2 = z + z;
+  //   const xx = x * x2,
+  //     xy = x * y2,
+  //     xz = x * z2;
+  //   const yy = y * y2,
+  //     yz = y * z2,
+  //     zz = z * z2;
+  //   const wx = w * x2,
+  //     wy = w * y2,
+  //     wz = w * z2;
 
-    const sx = scale.x,
-      sy = scale.y,
-      sz = scale.z;
+  //   const sx = scale.x,
+  //     sy = scale.y,
+  //     sz = scale.z;
 
-    te[0] = (1 - (yy + zz)) * sx;
-    te[1] = (xy + wz) * sx;
-    te[2] = (xz - wy) * sx;
-    te[3] = 0;
+  //   te[0] = (1 - (yy + zz)) * sx;
+  //   te[1] = (xy + wz) * sx;
+  //   te[2] = (xz - wy) * sx;
+  //   te[3] = 0;
 
-    te[4] = (xy - wz) * sy;
-    te[5] = (1 - (xx + zz)) * sy;
-    te[6] = (yz + wx) * sy;
-    te[7] = 0;
+  //   te[4] = (xy - wz) * sy;
+  //   te[5] = (1 - (xx + zz)) * sy;
+  //   te[6] = (yz + wx) * sy;
+  //   te[7] = 0;
 
-    te[8] = (xz + wy) * sz;
-    te[9] = (yz - wx) * sz;
-    te[10] = (1 - (xx + yy)) * sz;
-    te[11] = 0;
+  //   te[8] = (xz + wy) * sz;
+  //   te[9] = (yz - wx) * sz;
+  //   te[10] = (1 - (xx + yy)) * sz;
+  //   te[11] = 0;
 
-    te[12] = position.x;
-    te[13] = position.y;
-    te[14] = position.z;
-    te[15] = 1;
+  //   te[12] = position.x;
+  //   te[13] = position.y;
+  //   te[14] = position.z;
+  //   te[15] = 1;
 
-    return this;
-  }
+  //   return this;
+  // }
 
-  decompose(position, quaternion, scale) {
-    const te = this.elements;
+  // decompose(position, quaternion, scale) {
+  //   const te = this.elements;
 
-    let sx = _v1.set(te[0], te[1], te[2]).length();
-    const sy = _v1.set(te[4], te[5], te[6]).length();
-    const sz = _v1.set(te[8], te[9], te[10]).length();
+  //   let sx = _v1.set(te[0], te[1], te[2]).length();
+  //   const sy = _v1.set(te[4], te[5], te[6]).length();
+  //   const sz = _v1.set(te[8], te[9], te[10]).length();
 
-    // if determine is negative, we need to invert one scale
-    const det = this.determinant();
-    if (det < 0) sx = -sx;
+  //   // if determine is negative, we need to invert one scale
+  //   const det = this.determinant();
+  //   if (det < 0) sx = -sx;
 
-    position.x = te[12];
-    position.y = te[13];
-    position.z = te[14];
+  //   position.x = te[12];
+  //   position.y = te[13];
+  //   position.z = te[14];
 
-    // scale the rotation part
-    _m1.copy(this);
+  //   // scale the rotation part
+  //   _m1.copy(this);
 
-    const invSX = 1 / sx;
-    const invSY = 1 / sy;
-    const invSZ = 1 / sz;
+  //   const invSX = 1 / sx;
+  //   const invSY = 1 / sy;
+  //   const invSZ = 1 / sz;
 
-    _m1.elements[0] *= invSX;
-    _m1.elements[1] *= invSX;
-    _m1.elements[2] *= invSX;
+  //   _m1.elements[0] *= invSX;
+  //   _m1.elements[1] *= invSX;
+  //   _m1.elements[2] *= invSX;
 
-    _m1.elements[4] *= invSY;
-    _m1.elements[5] *= invSY;
-    _m1.elements[6] *= invSY;
+  //   _m1.elements[4] *= invSY;
+  //   _m1.elements[5] *= invSY;
+  //   _m1.elements[6] *= invSY;
 
-    _m1.elements[8] *= invSZ;
-    _m1.elements[9] *= invSZ;
-    _m1.elements[10] *= invSZ;
+  //   _m1.elements[8] *= invSZ;
+  //   _m1.elements[9] *= invSZ;
+  //   _m1.elements[10] *= invSZ;
 
-    quaternion.setFromRotationMatrix(_m1);
+  //   quaternion.setFromRotationMatrix(_m1);
 
-    scale.x = sx;
-    scale.y = sy;
-    scale.z = sz;
+  //   scale.x = sx;
+  //   scale.y = sy;
+  //   scale.z = sz;
 
-    return this;
-  }
+  //   return this;
+  // }
 
-  makePerspective(left, right, top, bottom, near, far) {
-    const te = this.elements;
-    const x = (2 * near) / (right - left);
-    const y = (2 * near) / (top - bottom);
+  // makePerspective(left, right, top, bottom, near, far) {
+  //   const te = this.elements;
+  //   const x = (2 * near) / (right - left);
+  //   const y = (2 * near) / (top - bottom);
 
-    const a = (right + left) / (right - left);
-    const b = (top + bottom) / (top - bottom);
+  //   const a = (right + left) / (right - left);
+  //   const b = (top + bottom) / (top - bottom);
 
-    let c, d;
+  //   let c, d;
 
-    // if (coordinateSystem === WebGLCoordinateSystem) {
-    c = -(far + near) / (far - near);
-    d = (-2 * far * near) / (far - near);
-    // } else if (coordinateSystem === WebGPUCoordinateSystem) {
-    //   c = -far / (far - near);
-    //   d = (-far * near) / (far - near);
-    // } else {
-    //   throw new Error(
-    //     "Matrix.makePerspective(): Invalid coordinate system: " +
-    //       coordinateSystem
-    //   );
-    // }
+  //   // if (coordinateSystem === WebGLCoordinateSystem) {
+  //   c = -(far + near) / (far - near);
+  //   d = (-2 * far * near) / (far - near);
+  //   // } else if (coordinateSystem === WebGPUCoordinateSystem) {
+  //   //   c = -far / (far - near);
+  //   //   d = (-far * near) / (far - near);
+  //   // } else {
+  //   //   throw new Error(
+  //   //     "Matrix.makePerspective(): Invalid coordinate system: " +
+  //   //       coordinateSystem
+  //   //   );
+  //   // }
 
-    te[0] = x;
-    te[4] = 0;
-    te[8] = a;
-    te[12] = 0;
-    te[1] = 0;
-    te[5] = y;
-    te[9] = b;
-    te[13] = 0;
-    te[2] = 0;
-    te[6] = 0;
-    te[10] = c;
-    te[14] = d;
-    te[3] = 0;
-    te[7] = 0;
-    te[11] = -1;
-    te[15] = 0;
+  //   te[0] = x;
+  //   te[4] = 0;
+  //   te[8] = a;
+  //   te[12] = 0;
+  //   te[1] = 0;
+  //   te[5] = y;
+  //   te[9] = b;
+  //   te[13] = 0;
+  //   te[2] = 0;
+  //   te[6] = 0;
+  //   te[10] = c;
+  //   te[14] = d;
+  //   te[3] = 0;
+  //   te[7] = 0;
+  //   te[11] = -1;
+  //   te[15] = 0;
 
-    return this;
-  }
+  //   return this;
+  // }
 
-  makeOrthographic(left, right, top, bottom, near, far) {
+  makeOrthographic(
+    this: Matrix4x4,
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    near: number,
+    far: number
+  ) {
     const te = this.elements;
     const w = 1.0 / (right - left);
     const h = 1.0 / (top - bottom);
@@ -1068,9 +1164,9 @@ const Matrix4x4Proto = {
     te[15] = 1;
 
     return this;
-  }
+  },
 
-  equals(matrix) {
+  equals(this: Matrix4x4, matrix: Matrix4x4) {
     const te = this.elements;
     const me = matrix.elements;
 
@@ -1081,42 +1177,46 @@ const Matrix4x4Proto = {
     return true;
   },
 
-  fromArray(this: Matrix4x4, array: number[], offset:number = 0) {
+  fromArray(this: Matrix4x4, array: number[], offset: number = 0) {
     for (let i = 0; i < 16; i++) {
       this.elements[i] = array[i + offset];
     }
 
     return this;
-  }
+  },
 
-  toArray(array = [], offset = 0) {
-    const te = this.elements;
+  // toArray(array = [], offset = 0) {
+  //   const te = this.elements;
 
-    array[offset] = te[0];
-    array[offset + 1] = te[1];
-    array[offset + 2] = te[2];
-    array[offset + 3] = te[3];
+  //   array[offset] = te[0];
+  //   array[offset + 1] = te[1];
+  //   array[offset + 2] = te[2];
+  //   array[offset + 3] = te[3];
 
-    array[offset + 4] = te[4];
-    array[offset + 5] = te[5];
-    array[offset + 6] = te[6];
-    array[offset + 7] = te[7];
+  //   array[offset + 4] = te[4];
+  //   array[offset + 5] = te[5];
+  //   array[offset + 6] = te[6];
+  //   array[offset + 7] = te[7];
 
-    array[offset + 8] = te[8];
-    array[offset + 9] = te[9];
-    array[offset + 10] = te[10];
-    array[offset + 11] = te[11];
+  //   array[offset + 8] = te[8];
+  //   array[offset + 9] = te[9];
+  //   array[offset + 10] = te[10];
+  //   array[offset + 11] = te[11];
 
-    array[offset + 12] = te[12];
-    array[offset + 13] = te[13];
-    array[offset + 14] = te[14];
-    array[offset + 15] = te[15];
+  //   array[offset + 12] = te[12];
+  //   array[offset + 13] = te[13];
+  //   array[offset + 14] = te[14];
+  //   array[offset + 15] = te[15];
 
-    return array;
-  }
-}
+  //   return array;
+  // },
+};
 
-function setVector3FromMatrixElements(v: Vector3, array: number[], offset: number):Vector3 {
+function setVector3FromMatrixElements(
+  v: Vector3,
+  array: number[],
+  offset: number
+): Vector3 {
   v.x = array[offset];
   v.y = array[offset + 1];
   v.z = array[offset + 2];
@@ -1124,7 +1224,24 @@ function setVector3FromMatrixElements(v: Vector3, array: number[], offset: numbe
 }
 
 const _v1 = /*@__PURE__*/ Vector3.Zero();
-const _m1 = /*@__PURE__*/ Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+const _m1 = /*@__PURE__*/ Matrix4x4(
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  1
+);
 const _zero = /*@__PURE__*/ Vector3(0, 0, 0);
 const _one = /*@__PURE__*/ Vector3(1, 1, 1);
 const _x = /*@__PURE__*/ Vector3.Zero();
