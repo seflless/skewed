@@ -1,6 +1,6 @@
 import { n } from "vitest/dist/index-761e769b";
 import { Mesh } from "./Mesh";
-import { Vector3 } from "../Vector3";
+import { Vector3 } from "../math/Vector3";
 
 // export type Face = {
 //     indices: number[];

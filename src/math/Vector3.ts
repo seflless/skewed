@@ -3,13 +3,15 @@ export interface Vector3 {
   y: number;
   z: number;
   add: (vec: Vector3) => Vector3;
+  subtract: (vec: Vector3) => Vector3;
   multiply: (scalar: number) => Vector3;
   clone: () => Vector3;
   normalize: () => Vector3;
+  length: () => number;
   dotProduct: (vec: Vector3) => number;
 }
 
-// Actual implementation of Vector3, we take this approach we becasuse we want a
+// Actual implementation of Vector3, we take this approach we because we want a
 // 'new' free API. Ie: `v = Vector3()` instead of `v = new Vector3()`.
 // This is based on a conversation with GPT-4 that helped meet my requirements
 // https://chat.openai.com/c/f22bc4d6-2cc3-44c1-8b91-28c2708f2c17
@@ -28,6 +30,13 @@ const Vector3Proto = {
     return this;
   },
 
+  subtract(this: Vector3, vec: Vector3): Vector3 {
+    this.x -= vec.x;
+    this.y -= vec.y;
+    this.z -= vec.z;
+    return this;
+  },
+
   multiply(this: Vector3, scalar: number): Vector3 {
     this.x *= scalar;
     this.y *= scalar;
@@ -36,7 +45,7 @@ const Vector3Proto = {
   },
 
   clone(this: Vector3): Vector3 {
-    return create(this.x, this.y, this.z);
+    return createVector3(this.x, this.y, this.z);
   },
 
   normalize(this: Vector3): Vector3 {
@@ -53,12 +62,16 @@ const Vector3Proto = {
     return this;
   },
 
+  length(this: Vector3): number {
+    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  },
+
   dotProduct(this: Vector3, vec: Vector3): number {
     return this.x * vec.x + this.y * vec.y + this.z * vec.z;
   },
 };
 
-function create(x: number, y: number, z: number): Vector3 {
+function createVector3(x: number, y: number, z: number): Vector3 {
   return Object.assign(Object.create(Vector3Proto), { x, y, z });
 }
 
@@ -110,16 +123,16 @@ export function Vector3(
 ): Vector3 {
   if (typeof x === "object") {
     if (Array.isArray(x)) {
-      return create(x[0], x[1], x[2]);
+      return createVector3(x[0], x[1], x[2]);
     } else {
-      return create(x.x, x.y, x.z);
+      return createVector3(x.x, x.y, x.z);
     }
   } else if (
     typeof x === "number" &&
     typeof y === "number" &&
     typeof z === "number"
   ) {
-    return create(x, y, z);
+    return createVector3(x, y, z);
   }
   {
     throw new Error("Invalid arguments to Vector3 factory");

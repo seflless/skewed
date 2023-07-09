@@ -1,8 +1,8 @@
-import { point3DToCabinet, point3DToIsometric } from "./Camera";
+import { point3DToCabinet, point3DToIsometric } from "../Camera";
 import { Scene } from "./Scene";
-import { Vector3 } from "./Vector3";
+import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
-import { MeshShape, Shape, SphereShape } from "./shapes/Shape";
+import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
 
 const directionalLight = Vector3(1, 0.75, 0).normalize();
 const cameraDirection = Vector3(1, 1, 1).normalize();

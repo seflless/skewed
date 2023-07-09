@@ -1,6 +1,6 @@
-export * from "./Scene";
-export * from "./Viewport";
-export * from "./Renderer";
+export * from "./renderer/Scene";
+export * from "./renderer/Viewport";
+export * from "./renderer/Renderer";
 export * from "./colors/Color";
 export * from "./Camera";
 export * from "./shapes/Shape";
@@ -10,4 +10,4 @@ export * from "./shapes/Sphere";
 export * from "./meshes/Mesh";
 export * from "./meshes/BoxMesh";
 export * from "./meshes/CylinderMesh";
-export * from "./Vector3";
+export * from "./math/Vector3";

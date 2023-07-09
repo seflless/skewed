@@ -1,4 +1,4 @@
-import { Vector3 } from "../Vector3";
+import { Vector3 } from "../math/Vector3";
 import { extrude } from "./Extrude";
 
 function circlePolyline(radius: number, segments: number): Vector3[] {

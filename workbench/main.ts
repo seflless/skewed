@@ -13,8 +13,8 @@ import {
   Red,
   Color,
 } from "../src/index";
-import { svgPathParser } from "../src/utils/svgPathParser";
-import { svgPathToSvg3DCommands } from "../src/utils/svg3d";
+import { svgPathParser } from "../src/svg/svgPathParser";
+import { svgPathToSvg3DCommands } from "../src/svg/svg3d";
 
 // From this 1 diameter circle flattened into a path in Figma, exported as an SVG file, then copy/pasting out the path string
 // Press 2 to zoom into the circle as it's 1x1 pixel by default and impossible to see until you zoom

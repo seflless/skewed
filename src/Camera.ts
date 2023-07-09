@@ -1,4 +1,4 @@
-import { Viewport } from "./Viewport";
+import { Viewport } from "./renderer/Viewport";
 
 export function point3DToIsometric(
   x: number,

@@ -1,5 +1,5 @@
 import path from "path";
-import { Vector3 } from "../Vector3";
+import { Vector3 } from "../math/Vector3";
 import invariant from "invariant";
 
 // Full set of SVG path commands:
