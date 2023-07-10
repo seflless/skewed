@@ -1,8 +1,14 @@
-import { point3DToCabinet, point3DToIsometric } from "../Camera";
+import {
+  Camera,
+  point3DToCabinet,
+  point3DToIsometric,
+} from "../cameras/Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
 import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
+import { M } from "vitest/dist/types-bae746aa";
+import { Matrix4x4 } from "../math/Matrix4x4";
 
 const directionalLight = Vector3(1, 0.75, 0).normalize();
 const cameraDirection = Vector3(1, 1, 1).normalize();
@@ -11,8 +17,14 @@ const strokeSize = 0.5;
 export function render(
   container: HTMLElement,
   scene: Scene,
-  viewport: Viewport
+  viewport: Viewport,
+  camera: Camera
 ) {
+  const inverseCameraMatrix = camera.matrix.clone().invert();
+  const inverseAndProjectionMatrix = camera.projectionMatrix
+    .clone()
+    .multiply(inverseCameraMatrix);
+
   // Clear the container of all children
   // TODO: Change API to make it so we reuse created elements
   container.innerHTML = "";
@@ -42,7 +54,7 @@ export function render(
     const shape = scene.shapes[shapeIndex];
     switch (shape.type) {
       case "mesh":
-        renderMesh(svg, shape, viewport);
+        renderMesh(svg, shape, viewport, inverseAndProjectionMatrix);
         break;
       case "sphere":
         renderSphere(svg, defs, shape, viewport);
@@ -55,17 +67,20 @@ export function render(
   container.appendChild(svg);
 }
 
-function renderMesh(svg: SVGElement, shape: MeshShape, viewport: Viewport) {
+function renderMesh(
+  svg: SVGElement,
+  shape: MeshShape,
+  viewport: Viewport,
+  inverseAndProjectionMatrix: Matrix4x4
+) {
   // Transform the shape's mesh's points to screen space
-  const vertices = shape.mesh.vertices.map((vertex) =>
-    point3DToIsometric(
-      //   point3DToCabinet(
-      vertex.x + shape.position.x,
-      vertex.y + shape.position.y,
-      vertex.z + shape.position.z,
+  const vertices = shape.mesh.vertices.map((vertex) => {
+    return projectToScreenCoordinate(
+      vertex,
+      inverseAndProjectionMatrix,
       viewport
-    )
-  );
+    );
+  });
 
   // Render each face of the shape
   // TODO: Add in backface culling
@@ -170,6 +185,18 @@ function renderSphere(
   // const circle = document.createElementNS(
 
   svg.appendChild(circle);
+}
+
+function projectToScreenCoordinate(
+  vertex: Vector3,
+  inverseAndProjectionMatrix: Matrix4x4,
+  viewport: Viewport
+): Vector3 {
+  const v = Vector3(vertex);
+  inverseAndProjectionMatrix.applyToVector3(v);
+  v.x = (v.x * viewport.width) / 2 + viewport.width;
+  v.y = (v.y * viewport.height) / 2;
+  return v;
 }
 
 // <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0" y="0" width="500" height="500"><script xmlns=""/>

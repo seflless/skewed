@@ -35,6 +35,8 @@ export interface Matrix4x4 {
   invert(): Matrix4x4;
   scale(v: Vector3): Matrix4x4;
 
+  applyToVector3(v: Vector3): void;
+
   makeTranslation(x: number, y: number, z: number): Matrix4x4;
   makeRotationX(theta: number): Matrix4x4;
   makeRotationY(theta: number): Matrix4x4;
@@ -62,6 +64,7 @@ export interface Matrix4x4 {
   fromArray(array: number[], offset: number): Matrix4x4;
 }
 
+export function Matrix4x4(): Matrix4x4;
 export function Matrix4x4(
   n11: number,
   n12: number,
@@ -79,25 +82,50 @@ export function Matrix4x4(
   n42: number,
   n43: number,
   n44: number
+): Matrix4x4;
+
+export function Matrix4x4(
+  n11?: number,
+  n12?: number,
+  n13?: number,
+  n14?: number,
+  n21?: number,
+  n22?: number,
+  n23?: number,
+  n24?: number,
+  n31?: number,
+  n32?: number,
+  n33?: number,
+  n34?: number,
+  n41?: number,
+  n42?: number,
+  n43?: number,
+  n44?: number
 ): Matrix4x4 {
-  return createMatrix4x4(
-    n11,
-    n12,
-    n13,
-    n14,
-    n21,
-    n22,
-    n23,
-    n24,
-    n31,
-    n32,
-    n33,
-    n34,
-    n41,
-    n42,
-    n43,
-    n44
-  );
+  if (arguments.length === 0) {
+    return Matrix4x4.identity();
+  } else if (arguments.length === 16) {
+    return createMatrix4x4(
+      n11!,
+      n12!,
+      n13!,
+      n14!,
+      n21!,
+      n22!,
+      n23!,
+      n24!,
+      n31!,
+      n32!,
+      n33!,
+      n34!,
+      n41!,
+      n42!,
+      n43!,
+      n44!
+    );
+  } else {
+    throw new Error("Invalid arguments to Matrix4x4 constructor");
+  }
 }
 
 function createMatrix4x4(
@@ -880,6 +908,19 @@ const Matrix4x4Proto = {
     return this;
   },
 
+  applyToVector3(this: Matrix4x4, v: Vector3) {
+    const x = v.x,
+      y = v.y,
+      z = v.z;
+    const e = this.elements;
+
+    const w = 1 / (e[3] * x + e[7] * y + e[11] * z + e[15]);
+
+    v.x = (e[0] * x + e[4] * y + e[8] * z + e[12]) * w;
+    v.y = (e[1] * x + e[5] * y + e[9] * z + e[13]) * w;
+    v.z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * w;
+  },
+
   // getMaxScaleOnAxis() {
   //   const te = this.elements;
 
@@ -1212,6 +1253,10 @@ const Matrix4x4Proto = {
   // },
 };
 
+Matrix4x4.identity = function () {
+  return Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+};
+
 function setVector3FromMatrixElements(
   v: Vector3,
   array: number[],
@@ -1223,25 +1268,9 @@ function setVector3FromMatrixElements(
   return v;
 }
 
+// The following are used in implementation to reduce memory allocation
 const _v1 = /*@__PURE__*/ Vector3.Zero();
-const _m1 = /*@__PURE__*/ Matrix4x4(
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-  0,
-  0,
-  0,
-  0,
-  1
-);
+const _m1 = /*@__PURE__*/ Matrix4x4.identity();
 const _zero = /*@__PURE__*/ Vector3(0, 0, 0);
 const _one = /*@__PURE__*/ Vector3(1, 1, 1);
 const _x = /*@__PURE__*/ Vector3.Zero();

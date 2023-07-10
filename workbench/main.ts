@@ -13,6 +13,7 @@ import {
   Red,
   Color,
   Matrix4x4,
+  Camera,
 } from "../src/index";
 import { svgPathParser } from "../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../src/svg/svg3d";
@@ -32,7 +33,8 @@ console.log(svg3DCommands);
 const sphere = Sphere(Vector3(300, 100, 300), 75, Color(255, 255, 0));
 
 const Particle_Speed_Max = 500;
-const Particle_Count = 20;
+// const Particle_Count = 20;
+const Particle_Count = 0;
 const Particle_Invisible_Wall_Distance = 500;
 const particles: Shape[] = [];
 const particleVelocities: Vector3[] = [];
@@ -117,32 +119,34 @@ const scene: Scene = {
       depth: 100,
       fill: Red,
     }),
-    Box({
-      position: Vector3(150, 50, 0),
-      width: 100,
-      height: 100,
-      depth: 100,
-      fill: Green,
-    }),
-    Box({
-      position: Vector3(300, 50, 0),
-      width: 100,
-      height: 100,
-      depth: 100,
-      fill: Blue,
-    }),
-    Cylinder({
-      position: Vector3(0, 100, 300),
-      radius: 50,
-      height: 300,
-      segments: 180,
-      fill: Color(255, 0, 255),
-    }),
-    sphere,
+    // Box({
+    //   position: Vector3(150, 50, 0),
+    //   width: 100,
+    //   height: 100,
+    //   depth: 100,
+    //   fill: Green,
+    // }),
+    // Box({
+    //   position: Vector3(300, 50, 0),
+    //   width: 100,
+    //   height: 100,
+    //   depth: 100,
+    //   fill: Blue,
+    // }),
+    // Cylinder({
+    //   position: Vector3(0, 100, 300),
+    //   radius: 50,
+    //   height: 300,
+    //   segments: 180,
+    //   fill: Color(255, 0, 255),
+    // }),
+    // sphere,
     ...particles,
     ...Axii(Vector3(-500, 0, 0)),
   ],
 };
+
+const camera = Camera();
 
 const viewport: Viewport = {
   left: 0,
@@ -150,6 +154,29 @@ const viewport: Viewport = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
+
+function resize() {
+  viewport.left = 0;
+  viewport.top = 0;
+  viewport.width = window.innerWidth;
+  viewport.height = window.innerHeight;
+
+  camera.projectionMatrix.makeOrthographic(
+    0,
+    viewport.width,
+    0,
+    viewport.height,
+    0,
+    10000
+  );
+
+  console.log("resize");
+}
+resize();
+
+camera.matrix.makeTranslation(500, 0, 0);
+
+window.addEventListener("resize", resize);
 
 let lastRenderTime = performance.now() / 1000;
 function renderLoop() {
@@ -190,7 +217,7 @@ function renderLoop() {
       velocity.z *= -1;
     }
   }
-  render(document.body, scene, viewport);
+  render(document.body, scene, viewport, camera);
   requestAnimationFrame(renderLoop);
 }
 renderLoop();
