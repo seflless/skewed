@@ -1,13 +1,8 @@
-import {
-  Camera,
-  point3DToCabinet,
-  point3DToIsometric,
-} from "../cameras/Camera";
+import { Camera, point3DToIsometric } from "../cameras/Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
 import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
-import { M } from "vitest/dist/types-bae746aa";
 import { Matrix4x4 } from "../math/Matrix4x4";
 
 const directionalLight = Vector3(1, 0.75, 0).normalize();
@@ -76,7 +71,11 @@ function renderMesh(
   // Transform the shape's mesh's points to screen space
   const vertices = shape.mesh.vertices.map((vertex) => {
     return projectToScreenCoordinate(
-      vertex,
+      Vector3(
+        vertex.x + shape.position.x,
+        vertex.y + shape.position.y,
+        vertex.z + shape.position.z
+      ),
       inverseAndProjectionMatrix,
       viewport
     );

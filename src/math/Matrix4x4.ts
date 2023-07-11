@@ -290,8 +290,8 @@ const Matrix4x4Proto = {
     zAxis: Vector3
   ) {
     setVector3FromMatrixElements(xAxis, this.elements, 0);
-    setVector3FromMatrixElements(xAxis, this.elements, 4);
-    setVector3FromMatrixElements(xAxis, this.elements, 8);
+    setVector3FromMatrixElements(yAxis, this.elements, 4);
+    setVector3FromMatrixElements(zAxis, this.elements, 8);
 
     return this;
   },
@@ -1270,9 +1270,9 @@ function setVector3FromMatrixElements(
 
 // The following are used in implementation to reduce memory allocation
 const _v1 = /*@__PURE__*/ Vector3.Zero();
-const _m1 = /*@__PURE__*/ Matrix4x4.identity();
-const _zero = /*@__PURE__*/ Vector3(0, 0, 0);
-const _one = /*@__PURE__*/ Vector3(1, 1, 1);
-const _x = /*@__PURE__*/ Vector3.Zero();
-const _y = /*@__PURE__*/ Vector3.Zero();
-const _z = /*@__PURE__*/ Vector3.Zero();
+// const _m1 = /*@__PURE__*/ Matrix4x4.identity();
+// const _zero = /*@__PURE__*/ Vector3(0, 0, 0);
+// const _one = /*@__PURE__*/ Vector3(1, 1, 1);
+// const _x = /*@__PURE__*/ Vector3.Zero();
+// const _y = /*@__PURE__*/ Vector3.Zero();
+// const _z = /*@__PURE__*/ Vector3.Zero();

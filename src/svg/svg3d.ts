@@ -1,4 +1,4 @@
-import path from "path";
+// import path from "path";
 import { Vector3 } from "../math/Vector3";
 import invariant from "invariant";
 

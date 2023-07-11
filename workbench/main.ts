@@ -112,8 +112,15 @@ function Axii(position: Vector3) {
 
 const scene: Scene = {
   shapes: [
+    // Box({
+    //   position: Vector3(-100, 150, 0),
+    //   width: 100,
+    //   height: 100,
+    //   depth: 100,
+    //   fill: Blue,
+    // }),
     Box({
-      position: Vector3(0, 50, 0),
+      position: Vector3(0, 0, 0),
       width: 100,
       height: 100,
       depth: 100,
@@ -142,7 +149,7 @@ const scene: Scene = {
     // }),
     // sphere,
     ...particles,
-    ...Axii(Vector3(-500, 0, 0)),
+    // ...Axii(Vector3(-500, 0, 0)),
   ],
 };
 
@@ -169,12 +176,10 @@ function resize() {
     0,
     10000
   );
-
-  console.log("resize");
 }
 resize();
 
-camera.matrix.makeTranslation(500, 0, 0);
+camera.matrix.makeTranslation(0, 0, 0);
 
 window.addEventListener("resize", resize);
 

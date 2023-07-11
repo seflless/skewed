@@ -1,4 +1,3 @@
-import { n } from "vitest/dist/index-761e769b";
 import { Mesh } from "./Mesh";
 import { Vector3 } from "../math/Vector3";
 
@@ -38,7 +37,7 @@ export function extrude(polyline: Vector3[], thickness: number): Mesh {
   );
 
   // Fill top/bottom face vertices
-  polyline.forEach((point, index) => {
+  polyline.forEach((_, index) => {
     mesh.faces[0].indices.push(index);
     mesh.faces[1].indices.push(polyline.length + index);
 
