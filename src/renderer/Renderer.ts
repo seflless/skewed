@@ -101,15 +101,15 @@ function renderMesh(
 
     polygon.setAttribute("points", points);
 
-    // const brightness = Math.max(0.5, directionalLight.dotProduct(face.normal));
-    const brightness = 1.0;
+    const brightness = Math.max(0.5, directionalLight.dotProduct(face.normal));
+    // const brightness = 1.0;
     //   polygon.setAttribute("fill", shape.fill);
     const fill = `rgb(${shape.fill.r * brightness}, ${
       shape.fill.g * brightness
     }, ${shape.fill.b * brightness})`;
     polygon.setAttribute("fill", fill);
-    // polygon.setAttribute("stroke", fill);
-    // polygon.setAttribute("stroke-width", strokeSize.toString());
+    polygon.setAttribute("stroke", fill);
+    polygon.setAttribute("stroke-width", strokeSize.toString());
 
     //   console.log(face.normal);
     //   console.log(brightness);
