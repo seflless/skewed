@@ -37,8 +37,8 @@ npm install skewed
    cd skewed
    ```
 
-#### Watching
-
+#### Dev
+To host up the workbench page (see `workbench/main.ts`, run the following. It will watch for changes and hot reload.
 ```
 pnpm dev
 # Open the workbench page at http://localhost:3000/
