@@ -38,7 +38,7 @@ npm install skewed
    ```
 
 #### Dev
-To serv up the workbench web-page and rebuild on code changes run the following.
+To serve up the workbench web-page and rebuild on code changes run the following.
 ```
 pnpm dev
 # Open the workbench page at http://localhost:3000/
