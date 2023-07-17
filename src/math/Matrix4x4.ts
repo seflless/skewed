@@ -26,6 +26,8 @@ export interface Matrix4x4 {
   copyPosition(matrix: Matrix4x4): Matrix4x4;
   extractBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4x4;
   extractRotation(matrix: Matrix4x4): Matrix4x4;
+  lookAt(eye: Vector3, target: Vector3, up: Vector3): Matrix4x4;
+
   multiply(matrix: Matrix4x4): Matrix4x4;
   premultiply(matrix: Matrix4x4): Matrix4x4;
   multiplyMatrices(a: Matrix4x4, b: Matrix4x4): Matrix4x4;
@@ -490,48 +492,48 @@ const Matrix4x4Proto = {
   //   return this.compose(_zero, q, _one);
   // }
 
-  // lookAt(this:Matrix4x4, eye:Vector3, target:Vector3, up:Vector3) {
-  //   const te = this.elements;
+  lookAt(this: Matrix4x4, eye: Vector3, target: Vector3, up: Vector3) {
+    const te = this.elements;
 
-  //   _z.subVectors(eye, target);
+    _z.set(eye).subtract(target);
 
-  //   if (_z.lengthSq() === 0) {
-  //     // eye and target are in the same position
+    if (_z.lengthSquared() === 0) {
+      // eye and target are in the same position
 
-  //     _z.z = 1;
-  //   }
+      _z.z = 1;
+    }
 
-  //   _z.normalize();
-  //   _x.crossVectors(up, _z);
+    _z.normalize();
+    _x.set(up).crossProduct(_z);
 
-  //   if (_x.lengthSq() === 0) {
-  //     // up and z are parallel
+    if (_x.lengthSquared() === 0) {
+      // up and z are parallel
 
-  //     if (Math.abs(up.z) === 1) {
-  //       _z.x += 0.0001;
-  //     } else {
-  //       _z.z += 0.0001;
-  //     }
+      if (Math.abs(up.z) === 1) {
+        _z.x += 0.0001;
+      } else {
+        _z.z += 0.0001;
+      }
 
-  //     _z.normalize();
-  //     _x.crossVectors(up, _z);
-  //   }
+      _z.normalize();
+      _x.set(up).crossProduct(_z);
+    }
 
-  //   _x.normalize();
-  //   _y.crossVectors(_z, _x);
+    _x.normalize();
+    _y.set(_z).crossProduct(_x);
 
-  //   te[0] = _x.x;
-  //   te[4] = _y.x;
-  //   te[8] = _z.x;
-  //   te[1] = _x.y;
-  //   te[5] = _y.y;
-  //   te[9] = _z.y;
-  //   te[2] = _x.z;
-  //   te[6] = _y.z;
-  //   te[10] = _z.z;
+    te[0] = _x.x;
+    te[4] = _y.x;
+    te[8] = _z.x;
+    te[1] = _x.y;
+    te[5] = _y.y;
+    te[9] = _z.y;
+    te[2] = _x.z;
+    te[6] = _y.z;
+    te[10] = _z.z;
 
-  //   return this;
-  // }
+    return this;
+  },
 
   multiply(this: Matrix4x4, matrix: Matrix4x4) {
     return this.multiplyMatrices(this, matrix);
@@ -1273,6 +1275,6 @@ const _v1 = /*@__PURE__*/ Vector3.Zero();
 // const _m1 = /*@__PURE__*/ Matrix4x4.identity();
 // const _zero = /*@__PURE__*/ Vector3(0, 0, 0);
 // const _one = /*@__PURE__*/ Vector3(1, 1, 1);
-// const _x = /*@__PURE__*/ Vector3.Zero();
-// const _y = /*@__PURE__*/ Vector3.Zero();
-// const _z = /*@__PURE__*/ Vector3.Zero();
+const _x = /*@__PURE__*/ Vector3.Zero();
+const _y = /*@__PURE__*/ Vector3.Zero();
+const _z = /*@__PURE__*/ Vector3.Zero();

@@ -179,7 +179,12 @@ function resize() {
 }
 resize();
 
-camera.matrix.makeTranslation(0, 0, 0);
+// Front view
+// camera.matrix.makeTranslation(0, 0, 0);
+
+// Isometric view
+// camera.matrix.makeTranslation(20, 20, 20);
+camera.matrix.lookAt(Vector3(20, 20, 20), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 window.addEventListener("resize", resize);
 

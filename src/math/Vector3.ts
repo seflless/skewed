@@ -2,14 +2,16 @@ export interface Vector3 {
   x: number;
   y: number;
   z: number;
-  set: (vec: Vector3) => Vector3;
-  add: (vec: Vector3) => Vector3;
-  subtract: (vec: Vector3) => Vector3;
-  multiply: (scalar: number) => Vector3;
-  clone: () => Vector3;
-  normalize: () => Vector3;
-  length: () => number;
-  dotProduct: (vec: Vector3) => number;
+  set(vec: Vector3): Vector3;
+  add(vec: Vector3): Vector3;
+  subtract(vec: Vector3): Vector3;
+  multiply(scalar: number): Vector3;
+  clone(): Vector3;
+  normalize(): Vector3;
+  length(): number;
+  lengthSquared(): number;
+  dotProduct(vec: Vector3): number;
+  crossProduct(vec: Vector3): Vector3;
 }
 
 // Actual implementation of Vector3, we take this approach we because we want a
@@ -74,8 +76,27 @@ const Vector3Proto = {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
   },
 
+  lengthSquared(this: Vector3): number {
+    return this.x * this.x + this.y * this.y + this.z * this.z;
+  },
+
   dotProduct(this: Vector3, vec: Vector3): number {
     return this.x * vec.x + this.y * vec.y + this.z * vec.z;
+  },
+
+  crossProduct(this: Vector3, vec: Vector3) {
+    const ax = this.x,
+      ay = this.y,
+      az = this.z;
+    const bx = vec.x,
+      by = vec.y,
+      bz = vec.z;
+
+    this.x = ay * bz - az * by;
+    this.y = az * bx - ax * bz;
+    this.z = ax * by - ay * bx;
+
+    return this;
   },
 };
 
