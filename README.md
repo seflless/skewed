@@ -1,6 +1,8 @@
 # Skewed
 
-Easily create 3D SVG elements.
+Skewed is a Typescript package for generating SVG of 3D graphics in real-time or offline files. 
+
+Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files for importing into vector editors like Figma/Illustrator (Ie. make 3D icons). 
 
 - Camera Projections
   - Isometric
@@ -37,8 +39,8 @@ npm install skewed
    cd skewed
    ```
 
-#### Watching
-
+#### Dev
+To serve up the workbench web-page and rebuild on code changes run the following.
 ```
 pnpm dev
 # Open the workbench page at http://localhost:3000/
