@@ -5,6 +5,8 @@ import { Color } from "../colors/Color";
 export type BasicShapeProperties = {
   position: Vector3;
   fill: Color;
+  stroke: Color;
+  strokeWidth: number;
 };
 
 export type MeshShape = {

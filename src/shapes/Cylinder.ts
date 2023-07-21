@@ -1,15 +1,13 @@
-import { Shape } from "./Shape";
+import { BasicShapeProperties, Shape } from "./Shape";
 import { Vector3 } from "../math/Vector3";
 import { CylinderMesh } from "../meshes/CylinderMesh";
 import { Color } from "../colors/Color";
 
 export type CylinderProps = {
-  position: Vector3;
   segments: number;
   radius: number;
   height: number;
-  fill: Color;
-};
+} & BasicShapeProperties;
 
 export function Cylinder(props: CylinderProps): Shape {
   const cylinder: Shape = {
@@ -17,6 +15,8 @@ export function Cylinder(props: CylinderProps): Shape {
     mesh: CylinderMesh(props.radius, props.height, props.segments),
     position: props.position,
     fill: props.fill,
+    stroke: props.stroke,
+    strokeWidth: props.strokeWidth,
   };
 
   return cylinder;

@@ -1,21 +1,23 @@
-import { Shape } from "./Shape";
+import { BasicShapeProperties, Shape } from "./Shape";
 import { Vector3 } from "../math/Vector3";
 import { BoxMesh } from "../meshes/BoxMesh";
 import { Color } from "../colors/Color";
 
 export type BoxProps = {
-  position: Vector3;
-  fill: Color;
   width: number;
   height: number;
   depth: number;
-};
+} & BasicShapeProperties;
 
 export function Box(props: BoxProps): Shape {
-  return {
+  const box: Shape = {
     type: "mesh",
     mesh: BoxMesh(props.width, props.height, props.depth),
     position: props.position,
     fill: props.fill,
-  } as Shape;
+    stroke: props.stroke,
+    strokeWidth: props.strokeWidth,
+  };
+
+  return box;
 }

@@ -108,8 +108,20 @@ function renderMesh(
       shape.fill.g * brightness
     }, ${shape.fill.b * brightness})`;
     polygon.setAttribute("fill", fill);
-    polygon.setAttribute("stroke", fill);
-    polygon.setAttribute("stroke-width", strokeSize.toString());
+
+    // polygon.setAttribute("stroke-linecap", "round");
+    polygon.setAttribute("stroke-linejoin", "round");
+
+    if (shape.strokeWidth > 0) {
+      polygon.setAttribute(
+        "stroke",
+        `rgb(${shape.stroke.r},${shape.stroke.g},${shape.stroke.b})`
+      );
+      polygon.setAttribute("stroke-width", shape.strokeWidth.toString());
+    } else {
+      polygon.setAttribute("stroke", fill);
+      polygon.setAttribute("stroke-width", strokeSize.toString());
+    }
 
     //   console.log(face.normal);
     //   console.log(brightness);
@@ -140,8 +152,10 @@ function renderSphere(
   radialGradient.setAttribute("cx", "50%");
   radialGradient.setAttribute("cy", "50%");
   radialGradient.setAttribute("r", "50%");
-  radialGradient.setAttribute("fx", "25%");
+  radialGradient.setAttribute("fx", "75%");
   radialGradient.setAttribute("fy", "25%");
+  // radialGradient.setAttribute("fx", "50%");
+  // radialGradient.setAttribute("fy", "50%");
 
   // Create 'stop' elements for the gradient
   const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
@@ -181,6 +195,13 @@ function renderSphere(
   circle.setAttribute("cy", y.toString());
   circle.setAttribute("r", sphere.radius.toString());
   circle.setAttribute("fill", `url(#${radialGradientId})`);
+
+  circle.setAttribute(
+    "stroke",
+    `rgb(${sphere.stroke.r},${sphere.stroke.g},${sphere.stroke.b})`
+  );
+  circle.setAttribute("stroke-width", sphere.strokeWidth.toString());
+
   // Add circle
   // <circle cx="250" cy="250" r="200" style="fill:url(#radialGradient)"/>
   // const circle = document.createElementNS(

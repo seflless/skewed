@@ -30,7 +30,13 @@ console.log(pathSegments);
 const svg3DCommands = svgPathToSvg3DCommands(pathSegments);
 console.log(svg3DCommands);
 
-const sphere = Sphere(Vector3(300, 100, 300), 75, Color(255, 255, 0));
+const sphere = Sphere({
+  position: Vector3(300, 100, 300),
+  radius: 50,
+  fill: Color(255, 255, 0),
+  stroke: Color(0, 0, 0),
+  strokeWidth: 2,
+});
 
 const Particle_Speed_Max = 500;
 // const Particle_Count = 20;
@@ -39,8 +45,8 @@ const Particle_Invisible_Wall_Distance = 500;
 const particles: Shape[] = [];
 const particleVelocities: Vector3[] = [];
 for (let i = 0; i < Particle_Count; i++) {
-  const particle = Sphere(
-    Vector3(
+  const particle = Sphere({
+    position: Vector3(
       randomRange(
         -Particle_Invisible_Wall_Distance,
         Particle_Invisible_Wall_Distance
@@ -52,9 +58,11 @@ for (let i = 0; i < Particle_Count; i++) {
         Particle_Invisible_Wall_Distance
       )
     ),
-    20,
-    Color(Math.random() * 255, Math.random() * 255, Math.random() * 255)
-  );
+    radius: 20,
+    fill: Color(Math.random() * 255, Math.random() * 255, Math.random() * 255),
+    stroke: Color(0, 0, 0),
+    strokeWidth: 0,
+  });
   particles.push(particle);
 
   particleVelocities.push(
@@ -79,6 +87,7 @@ function randomRange(min: number, max: number) {
 const Axii_Thickness = 4;
 const Axii_Length = 100;
 function Axii(position: Vector3) {
+  const strokeWidth = 0.5;
   return [
     Box({
       position: Vector3(Axii_Thickness / 2 + Axii_Length / 2, 0, 0).add(
@@ -88,6 +97,8 @@ function Axii(position: Vector3) {
       height: Axii_Thickness,
       depth: Axii_Thickness,
       fill: Red,
+      stroke: Color(0, 0, 0),
+      strokeWidth,
     }),
     Box({
       position: Vector3(0, Axii_Thickness / 2 + Axii_Length / 2, 0).add(
@@ -97,6 +108,8 @@ function Axii(position: Vector3) {
       height: Axii_Length,
       depth: Axii_Thickness,
       fill: Green,
+      stroke: Color(0, 0, 0),
+      strokeWidth,
     }),
     Box({
       position: Vector3(0, 0, Axii_Thickness / 2 + Axii_Length / 2).add(
@@ -106,6 +119,8 @@ function Axii(position: Vector3) {
       height: Axii_Thickness,
       depth: Axii_Length,
       fill: Blue,
+      stroke: Color(0, 0, 0),
+      strokeWidth,
     }),
   ];
 }
@@ -120,35 +135,43 @@ const scene: Scene = {
     //   fill: Blue,
     // }),
     Box({
-      position: Vector3(0, 0, 0),
+      position: Vector3(0, 50, 150),
       width: 100,
       height: 100,
       depth: 100,
+      fill: Red,
+      stroke: Color(0, 0, 0),
+      strokeWidth: 3,
+    }),
+    Box({
+      position: Vector3(0, 100, 0),
+      width: 100,
+      height: 200,
+      depth: 100,
       fill: Green,
+      stroke: Color(0, 0, 0),
+      strokeWidth: 3,
     }),
-    // Box({
-    //   position: Vector3(150, 50, 0),
-    //   width: 100,
-    //   height: 100,
-    //   depth: 100,
-    //   fill: Green,
-    // }),
-    // Box({
-    //   position: Vector3(300, 50, 0),
-    //   width: 100,
-    //   height: 100,
-    //   depth: 100,
-    //   fill: Blue,
-    // }),
-    Cylinder({
-      position: Vector3(0, 100, 300),
-      radius: 50,
-      height: 300,
-      segments: 180,
-      fill: Color(255, 0, 255),
+    Box({
+      position: Vector3(0, 200, -150),
+      width: 100,
+      height: 400,
+      depth: 100,
+      fill: Blue,
+      stroke: Color(0, 0, 0),
+      strokeWidth: 3,
     }),
-    // sphere,
-    ...particles,
+    // Cylinder({
+    //   position: Vector3(0, 100, 300),
+    //   radius: 50,
+    //   height: 300,
+    //   segments: 180,
+    //   fill: Color(255, 0, 255),
+    //   stroke: Color(0, 0, 0),
+    //   strokeWidth: 0,
+    // }),
+    sphere,
+    // ...particles,
     // ...Axii(Vector3(-500, 0, 0)),
   ],
 };
@@ -193,6 +216,11 @@ function renderLoop() {
   const now = performance.now() / 1000;
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
+
+  const sphereSpeed = 0.45;
+  sphere.position.x = Math.sin(now * Math.PI * 2 * sphereSpeed) * 300;
+  sphere.position.z = Math.cos(now * Math.PI * 2 * sphereSpeed) * 300;
+
   for (let i = 0; i < Particle_Count; i++) {
     const particle = particles[i];
     const velocity = particleVelocities[i];
