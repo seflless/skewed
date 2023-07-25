@@ -35,7 +35,7 @@ const sphere = Sphere({
   radius: 50,
   fill: Color(255, 255, 0),
   stroke: Color(0, 0, 0),
-  strokeWidth: 2,
+  strokeWidth: 3,
 });
 
 const Particle_Speed_Max = 500;
@@ -125,6 +125,7 @@ function Axii(position: Vector3) {
   ];
 }
 
+const boxStrokeWidth = 3;
 const scene: Scene = {
   shapes: [
     // Box({
@@ -141,7 +142,7 @@ const scene: Scene = {
       depth: 100,
       fill: Red,
       stroke: Color(0, 0, 0),
-      strokeWidth: 3,
+      strokeWidth: boxStrokeWidth,
     }),
     Box({
       position: Vector3(0, 100, 0),
@@ -150,7 +151,7 @@ const scene: Scene = {
       depth: 100,
       fill: Green,
       stroke: Color(0, 0, 0),
-      strokeWidth: 3,
+      strokeWidth: boxStrokeWidth,
     }),
     Box({
       position: Vector3(0, 200, -150),
@@ -159,7 +160,7 @@ const scene: Scene = {
       depth: 100,
       fill: Blue,
       stroke: Color(0, 0, 0),
-      strokeWidth: 3,
+      strokeWidth: boxStrokeWidth,
     }),
     // Cylinder({
     //   position: Vector3(0, 100, 300),
