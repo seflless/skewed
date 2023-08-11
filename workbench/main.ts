@@ -80,7 +80,7 @@ function randomRange(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
 const cylinder = Cylinder({
-  position: Vector3(-10000, 150, 300),
+  position: Vector3(0, 150, 300),
   radius: 50,
   height: 300,
   segments: 180,
