@@ -4,8 +4,9 @@ import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
 import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
+import { Color } from "../colors/Color";
 
-const directionalLight = Vector3(1, 0.75, 0).normalize();
+export const directionalLight = Vector3(1, 0.75, 0).normalize();
 const cameraDirection = Vector3(1, 1, 1).normalize();
 const strokeSize = 0.5;
 
@@ -62,6 +63,14 @@ export function render(
   container.appendChild(svg);
 }
 
+function stringifyFill(color: Color) {
+  if (color.a !== 1.0) {
+    return `rgba(${color.r},${color.g},${color.b},${color.a})`;
+  } else {
+    return `rgb(${color.r},${color.g},${color.b})`;
+  }
+}
+
 function renderMesh(
   svg: SVGElement,
   shape: MeshShape,
@@ -102,21 +111,21 @@ function renderMesh(
     polygon.setAttribute("points", points);
 
     const brightness = Math.max(0.5, directionalLight.dotProduct(face.normal));
-    // const brightness = 1.0;
-    //   polygon.setAttribute("fill", shape.fill);
-    const fill = `rgb(${shape.fill.r * brightness}, ${
-      shape.fill.g * brightness
-    }, ${shape.fill.b * brightness})`;
+    const fill = stringifyFill(
+      Color(
+        shape.fill.r * brightness,
+        shape.fill.g * brightness,
+        shape.fill.b * brightness,
+        shape.fill.a
+      )
+    );
     polygon.setAttribute("fill", fill);
 
     // polygon.setAttribute("stroke-linecap", "round");
     polygon.setAttribute("stroke-linejoin", "round");
 
     if (shape.strokeWidth > 0) {
-      polygon.setAttribute(
-        "stroke",
-        `rgb(${shape.stroke.r},${shape.stroke.g},${shape.stroke.b})`
-      );
+      polygon.setAttribute("stroke", stringifyFill(shape.stroke));
       polygon.setAttribute("stroke-width", shape.strokeWidth.toString());
     } else {
       polygon.setAttribute("stroke", fill);
@@ -166,9 +175,9 @@ function renderSphere(
   const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
   stop2.setAttribute("offset", "100%");
   const darker = 0.5;
-  stop2.style.stopColor = `rgb(${sphere.fill.r * darker},${
+  stop2.style.stopColor = `rgba(${sphere.fill.r * darker},${
     sphere.fill.g * darker
-  },${sphere.fill.b * darker})`;
+  },${sphere.fill.b * darker}, ${sphere.fill.a})`;
   stop2.style.stopOpacity = "1";
 
   // Append 'stop' elements to the 'radialGradient'
@@ -194,11 +203,12 @@ function renderSphere(
   circle.setAttribute("cx", x.toString());
   circle.setAttribute("cy", y.toString());
   circle.setAttribute("r", sphere.radius.toString());
-  circle.setAttribute("fill", `url(#${radialGradientId})`);
+  // circle.setAttribute("fill", `url(#${radialGradientId})`);
+  circle.setAttribute("fill", stringifyFill(sphere.fill));
 
   circle.setAttribute(
     "stroke",
-    `rgb(${sphere.stroke.r},${sphere.stroke.g},${sphere.stroke.b})`
+    `rgba(${sphere.stroke.r},${sphere.stroke.g},${sphere.stroke.b},${sphere.stroke.a})`
   );
   circle.setAttribute("stroke-width", sphere.strokeWidth.toString());
 

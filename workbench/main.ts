@@ -14,6 +14,7 @@ import {
   Color,
   Matrix4x4,
   Camera,
+  directionalLight,
 } from "../src/index";
 import { svgPathParser } from "../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../src/svg/svg3d";
@@ -32,10 +33,10 @@ console.log(svg3DCommands);
 
 const sphere = Sphere({
   position: Vector3(300, 100, 300),
-  radius: 50,
+  radius: 30,
   fill: Color(255, 255, 0),
-  stroke: Color(0, 0, 0),
-  strokeWidth: 3,
+  stroke: Color(0, 0, 0, 0),
+  strokeWidth: 4,
 });
 
 const Particle_Speed_Max = 500;
@@ -78,11 +79,20 @@ for (let i = 0; i < Particle_Count; i++) {
 function randomRange(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
+const cylinder = Cylinder({
+  position: Vector3(-10000, 150, 300),
+  radius: 50,
+  height: 300,
+  segments: 180,
+  fill: Color(255, 0, 255),
+  stroke: Color(0, 0, 0),
+  strokeWidth: 0,
+});
 
-// document.addEventListener("pointermove", (event) => {
-//   sphere.position.x = event.clientX - window.innerWidth / 2;
-//   sphere.position.z = event.clientY - window.innerHeight / 2;
-// });
+document.addEventListener("pointermove", (event) => {
+  // cylinder.position.x = event.clientX - window.innerWidth / 2;
+  // cylinder.position.z = event.clientY - window.innerHeight / 2;
+});
 
 const Axii_Thickness = 4;
 const Axii_Length = 100;
@@ -125,6 +135,58 @@ function Axii(position: Vector3) {
   ];
 }
 
+const shadows = [
+  {
+    center: Vector3(0, 0, 300),
+    shape: Cylinder({
+      position: Vector3(0, 0, 300),
+      radius: 55,
+      height: 1,
+      segments: 180,
+      fill: Color(0, 0, 0, 0.5),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 0.1,
+    }),
+  },
+  {
+    center: Vector3(0, 0, 150),
+    shape: Box({
+      position: Vector3(0, 0, 150),
+      width: 120,
+      height: 1,
+      depth: 120,
+      fill: Color(0, 0, 0, 0.5),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 0.1,
+    }),
+  },
+  {
+    center: Vector3(0, 0, 0),
+    shape: Box({
+      position: Vector3(0, 0, 0),
+      width: 120,
+      height: 1,
+      depth: 120,
+      fill: Color(0, 0, 0, 0.5),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 0.1,
+    }),
+  },
+  {
+    center: Vector3(0, 0, -150),
+    shape: Box({
+      position: Vector3(0, 0, -150),
+      width: 120,
+      height: 1,
+      depth: 120,
+      fill: Color(0, 0, 0, 0.5),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 0.1,
+    }),
+  },
+];
+const shadowShapes = shadows.map((shadow) => shadow.shape);
+
 const boxStrokeWidth = 3;
 const scene: Scene = {
   shapes: [
@@ -162,17 +224,10 @@ const scene: Scene = {
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     }),
-    // Cylinder({
-    //   position: Vector3(0, 100, 300),
-    //   radius: 50,
-    //   height: 300,
-    //   segments: 180,
-    //   fill: Color(255, 0, 255),
-    //   stroke: Color(0, 0, 0),
-    //   strokeWidth: 0,
-    // }),
+    cylinder,
     sphere,
-    // ...particles,
+    ...shadowShapes,
+    ...particles,
     // ...Axii(Vector3(-500, 0, 0)),
   ],
 };
@@ -218,9 +273,20 @@ function renderLoop() {
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
-  const sphereSpeed = 0.45;
-  sphere.position.x = Math.sin(now * Math.PI * 2 * sphereSpeed) * 300;
-  sphere.position.z = Math.cos(now * Math.PI * 2 * sphereSpeed) * 300;
+  const sphereSpeed = 0.35;
+  sphere.position.x = Math.sin(now * Math.PI * 2 * sphereSpeed) * 350;
+  sphere.position.z = Math.cos(now * Math.PI * 2 * sphereSpeed) * 350;
+
+  const lightSpeed = 0.25;
+  directionalLight.x = Math.sin(now * Math.PI * 2 * sphereSpeed);
+  directionalLight.y = 0.75;
+  directionalLight.z = Math.cos(now * Math.PI * 2 * sphereSpeed);
+  directionalLight.normalize();
+
+  for (let shadow of shadows) {
+    shadow.shape.position.x = shadow.center.x + directionalLight.x * -10;
+    shadow.shape.position.z = shadow.center.z + directionalLight.z * -10;
+  }
 
   for (let i = 0; i < Particle_Count; i++) {
     const particle = particles[i];
