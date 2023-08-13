@@ -315,7 +315,7 @@ function renderLoop() {
   lastRenderTime = now;
 
   const sphereSpeed = 0.55;
-  const spherePathRadius = 400;
+  const spherePathRadius = 520;
   sphere.position.x =
     Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
   sphere.position.y = 100;
