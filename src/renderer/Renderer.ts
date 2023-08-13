@@ -110,7 +110,7 @@ function renderMesh(
 
     polygon.setAttribute("points", points);
 
-    const brightness = Math.max(0.5, directionalLight.dotProduct(face.normal));
+    const brightness = Math.max(0.4, directionalLight.dotProduct(face.normal));
     const fill = stringifyFill(
       Color(
         shape.fill.r * brightness,

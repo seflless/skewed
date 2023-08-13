@@ -173,9 +173,9 @@ const shadows = [
     }),
   },
   {
-    center: Vector3(0, 0, -150),
+    center: Vector3(0, 0, -180),
     shape: Box({
-      position: Vector3(0, 0, -150),
+      position: Vector3(0, 0, -180),
       width: 120,
       height: 1,
       depth: 120,
@@ -186,6 +186,46 @@ const shadows = [
   },
 ];
 const shadowShapes = shadows.map((shadow) => shadow.shape);
+
+const gridCount = 8;
+const grid: Shape[] = [];
+const gridSpacing = 100;
+const gridLineThickness = 2;
+const gridLineFill = Color(128, 128, 128, 0.5);
+
+for (let i = 0; i <= gridCount; i++) {
+  const zAxisLine = Box({
+    position: Vector3(
+      0,
+      0,
+      i * gridSpacing - (gridSpacing * gridCount) / 2 /*+ gridSpacing / 2*/
+    ),
+    width: gridCount * gridSpacing,
+    height: gridLineThickness,
+    depth: gridLineThickness,
+    fill: gridLineFill,
+    stroke: Color(0, 0, 0),
+    strokeWidth: 0,
+  });
+
+  grid.push(zAxisLine);
+
+  const xAxisLine = Box({
+    position: Vector3(
+      i * gridSpacing - (gridSpacing * gridCount) / 2,
+      0,
+      0 /*+ gridSpacing / 2*/
+    ),
+    width: gridLineThickness,
+    height: gridLineThickness,
+    depth: gridCount * gridSpacing,
+    fill: gridLineFill,
+    stroke: Color(0, 0, 0),
+    strokeWidth: 0,
+  });
+
+  grid.push(xAxisLine);
+}
 
 const boxStrokeWidth = 3;
 const scene: Scene = {
@@ -216,7 +256,7 @@ const scene: Scene = {
       strokeWidth: boxStrokeWidth,
     }),
     Box({
-      position: Vector3(0, 200, -150),
+      position: Vector3(1, 200, -180),
       width: 100,
       height: 400,
       depth: 100,
@@ -228,6 +268,7 @@ const scene: Scene = {
     sphere,
     ...shadowShapes,
     ...particles,
+    ...grid,
     // ...Axii(Vector3(-500, 0, 0)),
   ],
 };
@@ -273,19 +314,25 @@ function renderLoop() {
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
-  const sphereSpeed = 0.35;
-  sphere.position.x = Math.sin(now * Math.PI * 2 * sphereSpeed) * 350;
-  sphere.position.z = Math.cos(now * Math.PI * 2 * sphereSpeed) * 350;
+  const sphereSpeed = 0.55;
+  const spherePathRadius = 400;
+  sphere.position.x =
+    Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
+  sphere.position.y = 100;
+  sphere.position.z =
+    Math.cos(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
 
-  const lightSpeed = 0.25;
   directionalLight.x = Math.sin(now * Math.PI * 2 * sphereSpeed);
   directionalLight.y = 0.75;
   directionalLight.z = Math.cos(now * Math.PI * 2 * sphereSpeed);
   directionalLight.normalize();
 
+  const shadowOffset = 40;
   for (let shadow of shadows) {
-    shadow.shape.position.x = shadow.center.x + directionalLight.x * -10;
-    shadow.shape.position.z = shadow.center.z + directionalLight.z * -10;
+    shadow.shape.position.x =
+      shadow.center.x + directionalLight.x * -shadowOffset;
+    shadow.shape.position.z =
+      shadow.center.z + directionalLight.z * -shadowOffset;
   }
 
   for (let i = 0; i < Particle_Count; i++) {
