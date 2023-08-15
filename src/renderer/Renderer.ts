@@ -91,6 +91,22 @@ function renderMesh(
     );
   });
 
+  // Figure out bounding box and wrap shape in a group
+  let left = Infinity;
+  let right = -Infinity;
+  let top = -Infinity;
+  let bottom = -Infinity;
+
+  vertices.forEach((vertex) => {
+    left = Math.min(left, vertex.x);
+    right = Math.max(right, vertex.x);
+    top = Math.max(top, vertex.y);
+    bottom = Math.min(bottom, vertex.y);
+  });
+
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.setAttribute("transform", `translate(${left},${top})`);
+
   // Render each face of the shape
   // TODO: Add in backface culling
   for (let face of shape.mesh.faces) {
@@ -100,7 +116,7 @@ function renderMesh(
     let points = "";
     // A face
     face.indices.forEach((index) => {
-      points += `${vertices[index].x},${vertices[index].y} `;
+      points += `${vertices[index].x - left},${vertices[index].y - top} `;
     });
 
     const polygon = document.createElementNS(
@@ -137,7 +153,8 @@ function renderMesh(
 
     //   svg.style.filter = `brightness(${brightness})`;
 
-    svg.appendChild(polygon);
+    g.appendChild(polygon);
+    svg.appendChild(g);
   }
 }
 
