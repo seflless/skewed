@@ -1,16 +1,12 @@
 # Skewed
 
-Skewed is a Typescript package for generating SVG of 3D graphics in real-time or offline files.
+Skewed is a Typescript package for generating SVG of 3D graphics in real-time or offline files. It has an opionated default look and orthographic projection only camera support, isometric by default.
 
 Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files for importing into vector editors like Figma/Illustrator (Ie. make 3D icons).
 
-- Camera Projections
-  - Isometric
-- Built in shapes:
-  - Box
-  - Cylinder
+[Live demo](https://codesandbox.io/s/skewed-demo-vgyf3c?file=/index.html)
 
-<img width="50%" src="./docs/images/isometric.png" style="margin: 0px 25%"/>
+<img width="50%" src="./docs/images/skewed-screen-capture.gif" style="margin: 0px 25%"/>
 
 # Usage
 
