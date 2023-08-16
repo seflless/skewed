@@ -65,9 +65,13 @@ export function render(
 
 function stringifyFill(color: Color) {
   if (color.a !== 1.0) {
-    return `rgba(${color.r},${color.g},${color.b},${color.a})`;
+    return `rgba(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(
+      color.b
+    )},${color.a.toFixed(1)})`;
   } else {
-    return `rgb(${color.r},${color.g},${color.b})`;
+    return `rgb(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(
+      color.b
+    )})`;
   }
 }
 

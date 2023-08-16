@@ -251,7 +251,7 @@ const scene: Scene = {
       width: 100,
       height: 200,
       depth: 100,
-      fill: Green,
+      fill: Color(0, 255, 0, 0.9),
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     }),
@@ -266,7 +266,7 @@ const scene: Scene = {
     }),
     cylinder,
     sphere,
-    ...shadowShapes,
+    // ...shadowShapes,
     ...particles,
     ...grid,
     // ...Axii(Vector3(-500, 0, 0)),
@@ -327,7 +327,7 @@ function renderLoop() {
   directionalLight.z = Math.cos(now * Math.PI * 2 * sphereSpeed);
   directionalLight.normalize();
 
-  const shadowOffset = 40;
+  const shadowOffset = 20;
   for (let shadow of shadows) {
     shadow.shape.position.x =
       shadow.center.x + directionalLight.x * -shadowOffset;
