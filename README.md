@@ -14,10 +14,6 @@ Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files fo
 npm install skewed
 ```
 
-**Coordinate System**
-
-<img width="256" src="./docs/images/coordinate-system.png"/>
-
 ```ts
 // TBD
 ```
