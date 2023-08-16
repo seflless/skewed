@@ -6,7 +6,7 @@ Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files fo
 
 [Live demo](https://codesandbox.io/s/skewed-demo-vgyf3c?file=/index.html)
 
-<img width="50%" src="./docs/images/skewed-screen-capture.gif" style="margin: 0px 25%"/>
+<img width="50%" src="./docs/images/skewed-screen-capture.gif"/>
 
 # Usage
 
