@@ -1,7 +1,5 @@
 import { BasicShapeProperties, Shape } from "./Shape";
-import { Vector3 } from "../math/Vector3";
 import { BoxMesh } from "../meshes/BoxMesh";
-import { Color } from "../colors/Color";
 
 export type BoxProps = {
   width: number;

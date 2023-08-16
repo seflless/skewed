@@ -1,7 +1,5 @@
 import { BasicShapeProperties, Shape } from "./Shape";
-import { Vector3 } from "../math/Vector3";
 import { CylinderMesh } from "../meshes/CylinderMesh";
-import { Color } from "../colors/Color";
 
 export type CylinderProps = {
   segments: number;
