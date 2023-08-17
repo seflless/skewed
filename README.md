@@ -7,7 +7,7 @@ Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files fo
 [Live demo](https://vgyf3c.csb.app/)
 
 
-<img width="50%" src="./docs/images/skewed-screen-capture.gif"/>
+<img width="100%" src="./docs/images/skewed-screen-capture.gif"/>
 
 # Usage
 
