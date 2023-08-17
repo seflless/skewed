@@ -12,7 +12,7 @@ Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files fo
 # Usage
 
  1. `npm install skewed`
- 1. Reference the [live demo]()'s [source code]()More API examples coming soon. In the meantime
+ 1. Reference the [live demo](https://vgyf3c.csb.app/)'s [source code](https://codesandbox.io/s/skewed-demo-vgyf3c?file=/src/index.ts). More API examples coming soon. In the meantime
 
 ## Contributing
 
