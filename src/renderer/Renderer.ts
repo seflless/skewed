@@ -7,7 +7,6 @@ import { Matrix4x4 } from "../math/Matrix4x4";
 import { Color } from "../colors/Color";
 
 export const directionalLight = Vector3(1, 0.75, 0).normalize();
-const cameraDirection = Vector3(1, 1, 1).normalize();
 const strokeSize = 0.5;
 
 export function render(
