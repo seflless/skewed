@@ -25,7 +25,7 @@ export interface Matrix4x4 {
   copy(matrix: Matrix4x4): Matrix4x4;
   copyPosition(matrix: Matrix4x4): Matrix4x4;
   extractBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4x4;
-  extractRotation(matrix: Matrix4x4): Matrix4x4;
+  extractRotation(): Matrix4x4;
   lookAt(eye: Vector3, target: Vector3, up: Vector3): Matrix4x4;
 
   multiply(matrix: Matrix4x4): Matrix4x4;
@@ -321,40 +321,40 @@ const Matrix4x4Proto = {
     return this;
   },
 
-  extractRotation(this: Matrix4x4, matrix: Matrix4x4) {
+  extractRotation(this: Matrix4x4): Matrix4x4 {
     // this method does not support reflection matrices
-
-    const te = this.elements;
-    const me = matrix.elements;
+    const destination = Matrix4x4();
+    const destinationElements = destination.elements;
+    const sourceElements = this.elements;
 
     const scaleX =
-      1 / setVector3FromMatrixElements(_v1, matrix.elements, 0).length();
+      1 / setVector3FromMatrixElements(_v1, sourceElements, 0).length();
     const scaleY =
-      1 / setVector3FromMatrixElements(_v1, matrix.elements, 4).length();
+      1 / setVector3FromMatrixElements(_v1, sourceElements, 4).length();
     const scaleZ =
-      1 / setVector3FromMatrixElements(_v1, matrix.elements, 8).length();
+      1 / setVector3FromMatrixElements(_v1, sourceElements, 8).length();
 
-    te[0] = me[0] * scaleX;
-    te[1] = me[1] * scaleX;
-    te[2] = me[2] * scaleX;
-    te[3] = 0;
+    destinationElements[0] = sourceElements[0] * scaleX;
+    destinationElements[1] = sourceElements[1] * scaleX;
+    destinationElements[2] = sourceElements[2] * scaleX;
+    destinationElements[3] = 0;
 
-    te[4] = me[4] * scaleY;
-    te[5] = me[5] * scaleY;
-    te[6] = me[6] * scaleY;
-    te[7] = 0;
+    destinationElements[4] = sourceElements[4] * scaleY;
+    destinationElements[5] = sourceElements[5] * scaleY;
+    destinationElements[6] = sourceElements[6] * scaleY;
+    destinationElements[7] = 0;
 
-    te[8] = me[8] * scaleZ;
-    te[9] = me[9] * scaleZ;
-    te[10] = me[10] * scaleZ;
-    te[11] = 0;
+    destinationElements[8] = sourceElements[8] * scaleZ;
+    destinationElements[9] = sourceElements[9] * scaleZ;
+    destinationElements[10] = sourceElements[10] * scaleZ;
+    destinationElements[11] = 0;
 
-    te[12] = 0;
-    te[13] = 0;
-    te[14] = 0;
-    te[15] = 1;
+    destinationElements[12] = 0;
+    destinationElements[13] = 0;
+    destinationElements[14] = 0;
+    destinationElements[15] = 1;
 
-    return this;
+    return destination;
   },
 
   // makeRotationFromEuler(euler) {

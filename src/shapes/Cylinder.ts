@@ -12,6 +12,8 @@ export function Cylinder(props: CylinderProps): Shape {
     type: "mesh",
     mesh: CylinderMesh(props.radius, props.height, props.segments),
     position: props.position,
+    rotation: props.rotation,
+    scale: props.scale,
     fill: props.fill,
     stroke: props.stroke,
     strokeWidth: props.strokeWidth,

@@ -26,3 +26,18 @@ canvas {
   width: 128px;
   height: 128px;
 }
+
+#copy-svg {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 180px;
+  height: 40px;
+  margin: 10px;
+  z-index: 10;
+  font-size: 18px;
+  border-radius: 10px;
+  outline: none;
+  border: thin solid rgb(180, 180, 180);
+  cursor: pointer;
+}

@@ -4,6 +4,8 @@ import { Color } from "../colors/Color";
 
 export type BasicShapeProperties = {
   position: Vector3;
+  rotation: Vector3;
+  scale: number;
   fill: Color;
   stroke: Color;
   strokeWidth: number;

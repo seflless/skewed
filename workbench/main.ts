@@ -33,6 +33,8 @@ console.log(svg3DCommands);
 
 const sphere = Sphere({
   position: Vector3(300, 100, 300),
+  rotation: Vector3(0, 0, 0),
+  scale: 1.0,
   radius: 30,
   fill: Color(255, 255, 0),
   stroke: Color(0, 0, 0, 0),
@@ -59,6 +61,8 @@ for (let i = 0; i < Particle_Count; i++) {
         Particle_Invisible_Wall_Distance
       )
     ),
+    rotation: Vector3(0, 0, 0),
+    scale: 1.0,
     radius: 20,
     fill: Color(Math.random() * 255, Math.random() * 255, Math.random() * 255),
     stroke: Color(0, 0, 0),
@@ -81,6 +85,8 @@ function randomRange(min: number, max: number) {
 }
 const cylinder = Cylinder({
   position: Vector3(0, 150, 300),
+  rotation: Vector3(0, 0, 0),
+  scale: 1.0,
   radius: 50,
   height: 300,
   segments: 180,
@@ -103,6 +109,8 @@ function Axii(position: Vector3) {
       position: Vector3(Axii_Thickness / 2 + Axii_Length / 2, 0, 0).add(
         position
       ),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       width: Axii_Length,
       height: Axii_Thickness,
       depth: Axii_Thickness,
@@ -114,6 +122,8 @@ function Axii(position: Vector3) {
       position: Vector3(0, Axii_Thickness / 2 + Axii_Length / 2, 0).add(
         position
       ),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       width: Axii_Thickness,
       height: Axii_Length,
       depth: Axii_Thickness,
@@ -125,6 +135,8 @@ function Axii(position: Vector3) {
       position: Vector3(0, 0, Axii_Thickness / 2 + Axii_Length / 2).add(
         position
       ),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       width: Axii_Thickness,
       height: Axii_Thickness,
       depth: Axii_Length,
@@ -140,6 +152,8 @@ const shadows = [
     center: Vector3(0, 0, 300),
     shape: Cylinder({
       position: Vector3(0, 0, 300),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       radius: 55,
       height: 1,
       segments: 180,
@@ -152,6 +166,8 @@ const shadows = [
     center: Vector3(0, 0, 150),
     shape: Box({
       position: Vector3(0, 0, 150),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       width: 120,
       height: 1,
       depth: 120,
@@ -164,6 +180,8 @@ const shadows = [
     center: Vector3(0, 0, 0),
     shape: Box({
       position: Vector3(0, 0, 0),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       width: 120,
       height: 1,
       depth: 120,
@@ -176,6 +194,8 @@ const shadows = [
     center: Vector3(0, 0, -180),
     shape: Box({
       position: Vector3(0, 0, -180),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       width: 120,
       height: 1,
       depth: 120,
@@ -200,6 +220,8 @@ for (let i = 0; i <= gridCount; i++) {
       0,
       i * gridSpacing - (gridSpacing * gridCount) / 2 /*+ gridSpacing / 2*/
     ),
+    rotation: Vector3(0, 0, 0),
+    scale: 1.0,
     width: gridCount * gridSpacing,
     height: gridLineThickness,
     depth: gridLineThickness,
@@ -216,6 +238,8 @@ for (let i = 0; i <= gridCount; i++) {
       0,
       0 /*+ gridSpacing / 2*/
     ),
+    rotation: Vector3(0, 0, 0),
+    scale: 1.0,
     width: gridLineThickness,
     height: gridLineThickness,
     depth: gridCount * gridSpacing,
@@ -228,17 +252,35 @@ for (let i = 0; i <= gridCount; i++) {
 }
 
 const boxStrokeWidth = 3;
+
+const transparentBox = Box({
+  position: Vector3(0, 100, 0),
+  rotation: Vector3(0, 0, 0),
+  scale: 1.0,
+  width: 100,
+  height: 200,
+  depth: 100,
+  fill: Color(0, 255, 0, 0.9),
+  stroke: Color(0, 0, 0),
+  strokeWidth: boxStrokeWidth,
+});
+const tallBlueBox = Box({
+  position: Vector3(1, 200, -180),
+  rotation: Vector3(0, 0, 0),
+  scale: 1.0,
+  width: 100,
+  height: 400,
+  depth: 100,
+  fill: Blue,
+  stroke: Color(0, 0, 0),
+  strokeWidth: boxStrokeWidth,
+});
 const scene: Scene = {
   shapes: [
-    // Box({
-    //   position: Vector3(-100, 150, 0),
-    //   width: 100,
-    //   height: 100,
-    //   depth: 100,
-    //   fill: Blue,
-    // }),
     Box({
       position: Vector3(0, 50, 150),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
       width: 100,
       height: 100,
       depth: 100,
@@ -246,24 +288,8 @@ const scene: Scene = {
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     }),
-    Box({
-      position: Vector3(0, 100, 0),
-      width: 100,
-      height: 200,
-      depth: 100,
-      fill: Color(0, 255, 0, 0.9),
-      stroke: Color(0, 0, 0),
-      strokeWidth: boxStrokeWidth,
-    }),
-    Box({
-      position: Vector3(1, 200, -180),
-      width: 100,
-      height: 400,
-      depth: 100,
-      fill: Blue,
-      stroke: Color(0, 0, 0),
-      strokeWidth: boxStrokeWidth,
-    }),
+    transparentBox,
+    tallBlueBox,
     cylinder,
     sphere,
     ...shadowShapes,
@@ -304,7 +330,11 @@ resize();
 
 // Isometric view
 // camera.matrix.makeTranslation(20, 20, 20);
-camera.matrix.lookAt(Vector3(20, 20, 20), Vector3(0, 0, 0), Vector3(0, 1, 0));
+const eye = Vector3(20, 20, 20);
+camera.matrix[3] = eye.x;
+camera.matrix[7] = eye.y;
+camera.matrix[11] = eye.z;
+camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 window.addEventListener("resize", resize);
 
@@ -326,6 +356,24 @@ function renderLoop() {
   directionalLight.y = 0.75;
   directionalLight.z = Math.cos(now * Math.PI * 2 * sphereSpeed);
   directionalLight.normalize();
+
+  const cylinderRotationSpeed = 0.25;
+  const cylinderScaleSpeed = 0.25;
+  const cylinderTranslationSpeed = 1;
+  cylinder.rotation.x = 90;
+  cylinder.rotation.y = now * 360 * cylinderRotationSpeed;
+
+  const boxRotationSpeed = 0.25;
+  // transparentBox.rotation.y = now * 360 * boxRotationSpeed;
+  transparentBox.rotation.x = 90;
+
+  const boxScalingSpeed = 0.25;
+  tallBlueBox.scale =
+    (1 + Math.sin(now * Math.PI * 2 * boxScalingSpeed) * 0.5) / 2.0;
+  // console.log((now * cylinderRotationSpeed) % 1);
+  // cylinder.position.x = ((now * cylinderRotationSpeed) % 1) * 500;
+
+  // cylinder.scale = 1 + Math.sin(now * Math.PI * 2 * cylinderScaleSpeed) * 0.5;
 
   const shadowOffset = 10;
   for (let shadow of shadows) {
@@ -369,12 +417,15 @@ function renderLoop() {
       velocity.z *= -1;
     }
   }
-  render(document.body, scene, viewport, camera);
+  render(document.getElementById("root")!, scene, viewport, camera);
   requestAnimationFrame(renderLoop);
 }
 renderLoop();
 
-const matrix = Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-
-matrix.makeTranslation(100, 200, 300);
-console.log(matrix);
+document
+  .getElementById("copy-svg")
+  ?.addEventListener("pointerdown", (event: PointerEvent) => {
+    event.stopPropagation();
+    const svg = document.querySelector("svg");
+    navigator.clipboard.writeText(svg!.outerHTML);
+  });

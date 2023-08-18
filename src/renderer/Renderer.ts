@@ -36,6 +36,14 @@ export function render(
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
   svg.appendChild(defs);
 
+  const cameraRotationMatrix = camera.matrix.extractRotation();
+  const cameraDirection = Vector3(0, 0, 0);
+  cameraRotationMatrix.extractBasis(
+    Vector3(0, 0, 0),
+    Vector3(0, 0, 0),
+    cameraDirection
+  );
+
   // Sort shapes back to front
   let sortedShapesByIndex = scene.shapes.map((_, index) => index);
   sortedShapesByIndex.sort((aIndex, bIndex) => {
@@ -50,7 +58,13 @@ export function render(
     const shape = scene.shapes[shapeIndex];
     switch (shape.type) {
       case "mesh":
-        renderMesh(svg, shape, viewport, inverseAndProjectionMatrix);
+        renderMesh(
+          svg,
+          shape,
+          viewport,
+          inverseAndProjectionMatrix,
+          cameraDirection
+        );
         break;
       case "sphere":
         renderSphere(svg, defs, shape, viewport);
@@ -79,17 +93,54 @@ function renderMesh(
   svg: SVGElement,
   shape: MeshShape,
   viewport: Viewport,
-  inverseAndProjectionMatrix: Matrix4x4
+  inverseAndProjectionMatrix: Matrix4x4,
+  cameraDirection: Vector3
 ) {
+  const translateMatrix = Matrix4x4().makeTranslation(
+    shape.position.x,
+    shape.position.y,
+    shape.position.z
+  );
+  const scaleMatrix = Matrix4x4().makeScale(
+    shape.scale,
+    shape.scale,
+    shape.scale
+  );
+  const rotationXMatrix = Matrix4x4().makeRotationX(
+    (shape.rotation.x * Math.PI) / 180
+  );
+  const rotationYMatrix = Matrix4x4().makeRotationY(
+    (shape.rotation.y * Math.PI) / 180
+  );
+  const rotationZMatrix = Matrix4x4().makeRotationZ(
+    (shape.rotation.z * Math.PI) / 180
+  );
+
+  const shapeMatrix = translateMatrix
+    .multiply(scaleMatrix)
+    .multiply(rotationZMatrix)
+    .multiply(rotationYMatrix)
+    .multiply(rotationXMatrix);
+  const shapeInverseRotationMatrix = shapeMatrix.extractRotation().invert();
+
+  const cameraDirectionInShapeSpaceAndInverted = cameraDirection.clone();
+  shapeInverseRotationMatrix.applyToVector3(
+    cameraDirectionInShapeSpaceAndInverted
+  );
+
+  const directionalLightInShapeSpaceAndInverted = directionalLight.clone();
+  shapeInverseRotationMatrix.applyToVector3(
+    directionalLightInShapeSpaceAndInverted
+  );
+
   // Transform the shape's mesh's points to screen space
   const vertices = shape.mesh.vertices.map((vertex) => {
+    vertex = vertex.clone();
+    shapeMatrix.applyToVector3(vertex);
     // return point3DToIsometric(vertex.x, vertex.y, vertex.z, viewport);
+
     return projectToScreenCoordinate(
-      Vector3(
-        vertex.x + shape.position.x,
-        vertex.y + shape.position.y,
-        vertex.z + shape.position.z
-      ),
+      vertex,
       inverseAndProjectionMatrix,
       viewport
     );
@@ -111,10 +162,16 @@ function renderMesh(
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.setAttribute("transform", `translate(${left},${top})`);
 
+  const shapeSpaceCameraDirection = cameraDirection.clone();
+
+  shapeMatrix.clone().invert().applyToVector3(shapeSpaceCameraDirection);
+
   // Render each face of the shape
   // TODO: Add in backface culling
   for (let face of shape.mesh.faces) {
-    const cameraFaceDot = cameraDirection.dotProduct(face.normal);
+    const cameraFaceDot = cameraDirectionInShapeSpaceAndInverted.dotProduct(
+      face.normal
+    );
     if (cameraFaceDot < 0) continue;
 
     let points = "";
@@ -130,7 +187,10 @@ function renderMesh(
 
     polygon.setAttribute("points", points);
 
-    const brightness = Math.max(0.4, directionalLight.dotProduct(face.normal));
+    const brightness = Math.max(
+      0.4,
+      directionalLightInShapeSpaceAndInverted.dotProduct(face.normal)
+    );
     const fill = stringifyFill(
       Color(
         shape.fill.r * brightness,

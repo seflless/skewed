@@ -9,6 +9,8 @@ export function Sphere(props: SphereProps): Shape {
     type: "sphere",
     radius: props.radius,
     position: props.position,
+    rotation: props.rotation,
+    scale: props.scale,
     fill: props.fill,
     stroke: props.stroke,
     strokeWidth: props.strokeWidth,
