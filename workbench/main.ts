@@ -253,14 +253,15 @@ for (let i = 0; i <= gridCount; i++) {
 
 const boxStrokeWidth = 3;
 
-const transparentBox = Box({
+const transparentGreenBox = Box({
   position: Vector3(0, 100, 0),
   rotation: Vector3(0, 0, 0),
   scale: 1.0,
   width: 100,
   height: 200,
   depth: 100,
-  fill: Color(0, 255, 0, 0.9),
+  // fill: Color(0, 255, 0, 0.9),
+  fill: Color(0, 255, 0, 1.0),
   stroke: Color(0, 0, 0),
   strokeWidth: boxStrokeWidth,
 });
@@ -288,9 +289,9 @@ const scene: Scene = {
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     }),
-    transparentBox,
+    transparentGreenBox,
     tallBlueBox,
-    cylinder,
+    // cylinder,
     sphere,
     ...shadowShapes,
     ...particles,
@@ -325,16 +326,44 @@ function resize() {
 }
 resize();
 
-// Front view
-// camera.matrix.makeTranslation(0, 0, 0);
+const cameraMode = ["front", "isometric", "cabinet"][1];
 
-// Isometric view
-// camera.matrix.makeTranslation(20, 20, 20);
-const eye = Vector3(20, 20, 20);
-camera.matrix[3] = eye.x;
-camera.matrix[7] = eye.y;
-camera.matrix[11] = eye.z;
-camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+switch (cameraMode) {
+  case "front":
+    camera.matrix.makeTranslation(0, 0, 0);
+    break;
+  case "isometric":
+    camera.matrix.makeTranslation(20, 20, 20);
+    const eye = Vector3(20, 20, 20);
+    camera.matrix[3] = eye.x;
+    camera.matrix[7] = eye.y;
+    camera.matrix[11] = eye.z;
+    camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+    break;
+  case "cabinet":
+    const alpha = Math.PI / 4; // 45 degrees in radians
+    const cabinetSkew = Matrix4x4().set(
+      1,
+      0,
+      -0.5 * Math.cos(alpha),
+      0,
+      0,
+      1,
+      -0.5 * Math.sin(alpha),
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    );
+
+    camera.projectionMatrix.multiply(cabinetSkew);
+    break;
+}
 
 window.addEventListener("resize", resize);
 
@@ -365,7 +394,7 @@ function renderLoop() {
 
   const boxRotationSpeed = 0.25;
   // transparentBox.rotation.y = now * 360 * boxRotationSpeed;
-  transparentBox.rotation.x = 90;
+  // transparentGreenBox.rotation.x = 90;
 
   const boxScalingSpeed = 0.25;
   tallBlueBox.scale =
