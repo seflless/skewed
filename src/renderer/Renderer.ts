@@ -5,9 +5,9 @@ import { Viewport } from "./Viewport";
 import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Color } from "../colors/Color";
+import { applyLighting } from "../lighting/LightingModel";
 
-export const directionalLight = Vector3(1, 0.75, 0).normalize();
-const strokeSize = 0.5;
+const CrackFillingStrokeWidth = 0.5;
 
 export function render(
   container: HTMLElement,
@@ -58,6 +58,7 @@ export function render(
     switch (shape.type) {
       case "mesh":
         renderMesh(
+          scene,
           svg,
           shape,
           viewport,
@@ -66,7 +67,7 @@ export function render(
         );
         break;
       case "sphere":
-        renderSphere(svg, defs, shape, viewport);
+        renderSphere(scene, svg, defs, shape, viewport);
         break;
       default:
         throw new Error(`Unknown shape type: ${(shape as Shape).type}`);
@@ -89,6 +90,7 @@ function stringifyFill(color: Color) {
 }
 
 function renderMesh(
+  scene: Scene,
   svg: SVGElement,
   shape: MeshShape,
   viewport: Viewport,
@@ -127,7 +129,8 @@ function renderMesh(
     cameraDirectionInShapeSpaceAndInverted
   );
 
-  const directionalLightInShapeSpaceAndInverted = directionalLight.clone();
+  const directionalLightInShapeSpaceAndInverted =
+    scene.directionalLight.direction.clone();
   shapeInverseRotationMatrix.applyToVector3(
     directionalLightInShapeSpaceAndInverted
   );
@@ -186,18 +189,17 @@ function renderMesh(
 
     polygon.setAttribute("points", points);
 
-    const brightness = Math.max(
-      0.4,
-      directionalLightInShapeSpaceAndInverted.dotProduct(face.normal)
+    const brightness = directionalLightInShapeSpaceAndInverted.dotProduct(
+      face.normal
     );
-    const fill = stringifyFill(
-      Color(
-        shape.fill.r * brightness,
-        shape.fill.g * brightness,
-        shape.fill.b * brightness,
-        shape.fill.a
-      )
+
+    const fill = applyLighting(
+      scene.directionalLight.color,
+      shape.fill,
+      scene.ambientLightColor,
+      brightness
     );
+
     polygon.setAttribute("fill", fill);
 
     // polygon.setAttribute("stroke-linecap", "round");
@@ -208,7 +210,7 @@ function renderMesh(
       polygon.setAttribute("stroke-width", shape.strokeWidth.toString());
     } else {
       polygon.setAttribute("stroke", fill);
-      polygon.setAttribute("stroke-width", strokeSize.toString());
+      polygon.setAttribute("stroke-width", CrackFillingStrokeWidth.toString());
     }
 
     //   console.log(face.normal);
@@ -224,6 +226,7 @@ function renderMesh(
 // Used this svg file of a 3D sphere as reference:
 // https://upload.wikimedia.org/wikipedia/commons/7/7e/Sphere_-_monochrome_simple.svg
 function renderSphere(
+  scene: Scene,
   svg: SVGElement,
   defs: SVGDefsElement,
   sphere: SphereShape,

@@ -14,7 +14,6 @@ import {
   Color,
   Matrix4x4,
   Camera,
-  directionalLight,
 } from "../src/index";
 import { svgPathParser } from "../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../src/svg/svg3d";
@@ -204,10 +203,24 @@ const shadows = [
       strokeWidth: 0.1,
     }),
   },
+  {
+    center: Vector3(0, 0, -350),
+    shape: Box({
+      position: Vector3(0, 0, -350),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      width: 120,
+      height: 1,
+      depth: 120,
+      fill: Color(0, 0, 0, 0.5),
+      stroke: Color(0, 0, 0),
+      strokeWidth: 0.1,
+    }),
+  },
 ];
 const shadowShapes = shadows.map((shadow) => shadow.shape);
 
-const gridCount = 8;
+const gridCount = 10;
 const grid: Shape[] = [];
 const gridSpacing = 100;
 const gridLineThickness = 2;
@@ -276,7 +289,49 @@ const tallBlueBox = Box({
   stroke: Color(0, 0, 0),
   strokeWidth: boxStrokeWidth,
 });
+
+let ambientLightColor;
+let directionalLightColor;
+
+let lightingScenario: string = ["reference", "moonlit"][1];
+
+if (lightingScenario === "moonlit") {
+  //    Bluish white
+  ambientLightColor = {
+    r: 64,
+    g: 64,
+    b: 120,
+  };
+
+  directionalLightColor = {
+    r: 255,
+    g: 252,
+    b: 181,
+  };
+} else {
+  ambientLightColor = {
+    r: 64,
+    g: 64,
+    b: 64,
+  };
+  directionalLightColor = {
+    r: 255,
+    g: 252,
+    b: 255,
+  };
+}
+
 const scene: Scene = {
+  directionalLight: {
+    type: "directional light",
+    direction: Vector3(1, 0.75, 0).normalize(),
+    color: Color(
+      directionalLightColor.r - ambientLightColor.r,
+      directionalLightColor.g - ambientLightColor.g,
+      directionalLightColor.b - ambientLightColor.b
+    ),
+  },
+  ambientLightColor,
   shapes: [
     Box({
       position: Vector3(0, 50, 150),
@@ -286,6 +341,17 @@ const scene: Scene = {
       height: 100,
       depth: 100,
       fill: Red,
+      stroke: Color(0, 0, 0),
+      strokeWidth: boxStrokeWidth,
+    }),
+    Box({
+      position: Vector3(0, 200, -350),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      width: 100,
+      height: 400,
+      depth: 100,
+      fill: Color(255, 255, 255),
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     }),
@@ -381,10 +447,14 @@ function renderLoop() {
   sphere.position.z =
     Math.cos(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
 
-  directionalLight.x = Math.sin(now * Math.PI * 2 * sphereSpeed);
-  directionalLight.y = 0.75;
-  directionalLight.z = Math.cos(now * Math.PI * 2 * sphereSpeed);
-  directionalLight.normalize();
+  scene.directionalLight.direction.x = Math.sin(
+    now * Math.PI * 2 * sphereSpeed
+  );
+  scene.directionalLight.direction.y = 0.75;
+  scene.directionalLight.direction.z = Math.cos(
+    now * Math.PI * 2 * sphereSpeed
+  );
+  scene.directionalLight.direction.normalize();
 
   const cylinderRotationSpeed = 0.25;
   const cylinderScaleSpeed = 0.25;
@@ -407,9 +477,9 @@ function renderLoop() {
   const shadowOffset = 10;
   for (let shadow of shadows) {
     shadow.shape.position.x =
-      shadow.center.x + directionalLight.x * -shadowOffset;
+      shadow.center.x + scene.directionalLight.direction.x * -shadowOffset;
     shadow.shape.position.z =
-      shadow.center.z + directionalLight.z * -shadowOffset;
+      shadow.center.z + scene.directionalLight.direction.z * -shadowOffset;
   }
 
   for (let i = 0; i < Particle_Count; i++) {
