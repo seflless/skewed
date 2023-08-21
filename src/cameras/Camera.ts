@@ -1,4 +1,5 @@
 import { Matrix4x4 } from "../math/Matrix4x4";
+import { Vector3 } from "../math/Vector3";
 import { Viewport } from "../renderer/Viewport";
 
 export interface Camera {
@@ -54,4 +55,16 @@ export function point3DToCabinet(
     x: x + scale * z * Math.cos(alpha) + viewport.width / 2,
     y: y + scale * z * Math.sin(alpha) + viewport.height / 2,
   };
+}
+
+export function projectToScreenCoordinate(
+  vertex: Vector3,
+  inverseAndProjectionMatrix: Matrix4x4,
+  viewport: Viewport
+): Vector3 {
+  const v = Vector3(vertex);
+  inverseAndProjectionMatrix.applyToVector3(v);
+  v.x = (v.x * viewport.width) / 2 + viewport.width;
+  v.y = (v.y * viewport.height) / 2;
+  return v;
 }

@@ -31,10 +31,10 @@ const svg3DCommands = svgPathToSvg3DCommands(pathSegments);
 console.log(svg3DCommands);
 
 const sphere = Sphere({
-  position: Vector3(300, 100, 300),
+  position: Vector3(0, 0, 0),
   rotation: Vector3(0, 0, 0),
   scale: 1.0,
-  radius: 30,
+  radius: 80,
   fill: Color(255, 255, 0),
   stroke: Color(0, 0, 0, 0),
   strokeWidth: 4,
@@ -355,7 +355,7 @@ const scene: Scene = {
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     }),
-    transparentGreenBox,
+    // transparentGreenBox,
     tallBlueBox,
     // cylinder,
     sphere,
@@ -434,18 +434,23 @@ switch (cameraMode) {
 window.addEventListener("resize", resize);
 
 let lastRenderTime = performance.now() / 1000;
+
+let renderCount = 0;
 function renderLoop() {
+  if (renderCount++ > 2) {
+    return;
+  }
   const now = performance.now() / 1000;
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
   const sphereSpeed = 0.55;
   const spherePathRadius = 520;
-  sphere.position.x =
-    Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
-  sphere.position.y = 100;
-  sphere.position.z =
-    Math.cos(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
+  // sphere.position.x =
+  //   Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
+  // sphere.position.y = 100;
+  // sphere.position.z =
+  //   Math.cos(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
 
   scene.directionalLight.direction.x = Math.sin(
     now * Math.PI * 2 * sphereSpeed

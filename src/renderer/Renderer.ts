@@ -1,4 +1,8 @@
-import { Camera, point3DToIsometric } from "../cameras/Camera";
+import {
+  Camera,
+  point3DToIsometric,
+  projectToScreenCoordinate,
+} from "../cameras/Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
@@ -6,6 +10,7 @@ import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Color } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
+import { renderSphere, sphereLightSide } from "./sphere";
 
 const CrackFillingStrokeWidth = 0.5;
 
@@ -67,7 +72,14 @@ export function render(
         );
         break;
       case "sphere":
-        renderSphere(scene, svg, defs, shape, viewport);
+        sphereLightSide(
+          scene,
+          svg,
+          defs,
+          shape,
+          viewport,
+          inverseAndProjectionMatrix
+        );
         break;
       default:
         throw new Error(`Unknown shape type: ${(shape as Shape).type}`);
@@ -221,97 +233,6 @@ function renderMesh(
     g.appendChild(polygon);
     svg.appendChild(g);
   }
-}
-
-// Used this svg file of a 3D sphere as reference:
-// https://upload.wikimedia.org/wikipedia/commons/7/7e/Sphere_-_monochrome_simple.svg
-function renderSphere(
-  _scene: Scene,
-  svg: SVGElement,
-  defs: SVGDefsElement,
-  sphere: SphereShape,
-  viewport: Viewport
-) {
-  const radialGradientId = crypto.randomUUID();
-
-  // Radial gradient
-  // Create the 'radialGradient' element
-  const radialGradient = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "radialGradient"
-  );
-  radialGradient.setAttribute("id", radialGradientId);
-  radialGradient.setAttribute("cx", "50%");
-  radialGradient.setAttribute("cy", "50%");
-  radialGradient.setAttribute("r", "50%");
-  radialGradient.setAttribute("fx", "75%");
-  radialGradient.setAttribute("fy", "25%");
-  // radialGradient.setAttribute("fx", "50%");
-  // radialGradient.setAttribute("fy", "50%");
-
-  // Create 'stop' elements for the gradient
-  const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-  stop1.setAttribute("offset", "0%");
-  stop1.style.stopColor = `rgb(${sphere.fill.r},${sphere.fill.g},${sphere.fill.b})`;
-  stop1.style.stopOpacity = "1";
-
-  const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-  stop2.setAttribute("offset", "100%");
-  const darker = 0.5;
-  stop2.style.stopColor = `rgba(${sphere.fill.r * darker},${
-    sphere.fill.g * darker
-  },${sphere.fill.b * darker}, ${sphere.fill.a})`;
-  stop2.style.stopOpacity = "1";
-
-  // Append 'stop' elements to the 'radialGradient'
-  radialGradient.appendChild(stop1);
-  radialGradient.appendChild(stop2);
-
-  // Append 'radialGradient' to 'defs'
-  defs.appendChild(radialGradient);
-
-  // Create a 'circle' element
-  const circle = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "circle"
-  );
-
-  const { x, y } = point3DToIsometric(
-    sphere.position.x,
-    sphere.position.y,
-    sphere.position.z,
-    viewport
-  );
-
-  circle.setAttribute("cx", x.toString());
-  circle.setAttribute("cy", y.toString());
-  circle.setAttribute("r", sphere.radius.toString());
-  // circle.setAttribute("fill", `url(#${radialGradientId})`);
-  circle.setAttribute("fill", stringifyFill(sphere.fill));
-
-  circle.setAttribute(
-    "stroke",
-    `rgba(${sphere.stroke.r},${sphere.stroke.g},${sphere.stroke.b},${sphere.stroke.a})`
-  );
-  circle.setAttribute("stroke-width", sphere.strokeWidth.toString());
-
-  // Add circle
-  // <circle cx="250" cy="250" r="200" style="fill:url(#radialGradient)"/>
-  // const circle = document.createElementNS(
-
-  svg.appendChild(circle);
-}
-
-function projectToScreenCoordinate(
-  vertex: Vector3,
-  inverseAndProjectionMatrix: Matrix4x4,
-  viewport: Viewport
-): Vector3 {
-  const v = Vector3(vertex);
-  inverseAndProjectionMatrix.applyToVector3(v);
-  v.x = (v.x * viewport.width) / 2 + viewport.width;
-  v.y = (v.y * viewport.height) / 2;
-  return v;
 }
 
 // <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0" y="0" width="500" height="500"><script xmlns=""/>
