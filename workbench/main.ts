@@ -34,7 +34,8 @@ const sphere = Sphere({
   position: Vector3(0, 0, 0),
   rotation: Vector3(0, 0, 0),
   scale: 1.0,
-  radius: 80,
+  // radius: 80,
+  radius: 40,
   fill: Color(255, 255, 0),
   stroke: Color(0, 0, 0, 0),
   strokeWidth: 4,
@@ -217,6 +218,20 @@ const shadows = [
       strokeWidth: 0.1,
     }),
   },
+  {
+    center: Vector3(200, 0, 0),
+    shape: Cylinder({
+      position: Vector3(400, 0, 100),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      radius: 55,
+      height: 1,
+      segments: 180,
+      fill: Color(0, 0, 0, 0.5),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 0.1,
+    }),
+  },
 ];
 const shadowShapes = shadows.map((shadow) => shadow.shape);
 
@@ -355,14 +370,24 @@ const scene: Scene = {
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     }),
-    // transparentGreenBox,
+    Sphere({
+      position: Vector3(200, 70, 0),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      // radius: 80,
+      radius: 70,
+      fill: Color(255, 128, 0),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 4,
+    }),
+    transparentGreenBox,
     tallBlueBox,
-    // cylinder,
+    cylinder,
     sphere,
     ...shadowShapes,
     ...particles,
     ...grid,
-    // ...Axii(Vector3(-500, 0, 0)),
+    // ...Axii(Vector3(0, 0, 0)),
   ],
 };
 
@@ -437,20 +462,21 @@ let lastRenderTime = performance.now() / 1000;
 
 let renderCount = 0;
 function renderLoop() {
-  if (renderCount++ > 2) {
-    return;
-  }
+  // if (renderCount++ > 2) {
+  //   return;
+  // }
   const now = performance.now() / 1000;
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
   const sphereSpeed = 0.55;
+  // const sphereSpeed = 0.05;
   const spherePathRadius = 520;
-  // sphere.position.x =
-  //   Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
-  // sphere.position.y = 100;
-  // sphere.position.z =
-  //   Math.cos(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
+  sphere.position.x =
+    Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
+  sphere.position.y = 100;
+  sphere.position.z =
+    Math.cos(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
 
   scene.directionalLight.direction.x = Math.sin(
     now * Math.PI * 2 * sphereSpeed
