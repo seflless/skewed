@@ -226,7 +226,7 @@ function renderMesh(
 // Used this svg file of a 3D sphere as reference:
 // https://upload.wikimedia.org/wikipedia/commons/7/7e/Sphere_-_monochrome_simple.svg
 function renderSphere(
-  scene: Scene,
+  _scene: Scene,
   svg: SVGElement,
   defs: SVGDefsElement,
   sphere: SphereShape,
