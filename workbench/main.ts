@@ -419,41 +419,48 @@ resize();
 
 const cameraMode = ["front", "isometric", "cabinet"][1];
 
-switch (cameraMode) {
-  case "front":
-    camera.matrix.makeTranslation(0, 0, 0);
-    break;
-  case "isometric":
-    camera.matrix.makeTranslation(20, 20, 20);
-    const eye = Vector3(20, 20, 20);
-    camera.matrix[3] = eye.x;
-    camera.matrix[7] = eye.y;
-    camera.matrix[11] = eye.z;
-    camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
-    break;
-  case "cabinet":
-    const alpha = Math.PI / 4; // 45 degrees in radians
-    const cabinetSkew = Matrix4x4().set(
-      1,
-      0,
-      -0.5 * Math.cos(alpha),
-      0,
-      0,
-      1,
-      -0.5 * Math.sin(alpha),
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1
-    );
+function updateCamera(rotationDegrees: number, distance: number = 20) {
+  const x = Math.sin((rotationDegrees / 180) * Math.PI) * distance;
+  const z = Math.cos((rotationDegrees / 180) * Math.PI) * distance;
+  // const x = 20;
+  // const z = 20;
 
-    camera.projectionMatrix.multiply(cabinetSkew);
-    break;
+  switch (cameraMode) {
+    case "front":
+      camera.matrix.makeTranslation(0, 0, 0);
+      break;
+    case "isometric":
+      camera.matrix.makeTranslation(x, 20, z);
+      const eye = Vector3(x, 20, z);
+      camera.matrix[3] = eye.x;
+      camera.matrix[7] = eye.y;
+      camera.matrix[11] = eye.z;
+      camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+      break;
+    case "cabinet":
+      const alpha = Math.PI / 4; // 45 degrees in radians
+      const cabinetSkew = Matrix4x4().set(
+        1,
+        0,
+        -0.5 * Math.cos(alpha),
+        0,
+        0,
+        1,
+        -0.5 * Math.sin(alpha),
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      );
+
+      camera.projectionMatrix.multiply(cabinetSkew);
+      break;
+  }
 }
 
 window.addEventListener("resize", resize);
@@ -469,8 +476,12 @@ function renderLoop() {
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
-  const sphereSpeed = 0.55;
-  // const sphereSpeed = 0.05;
+  const cameraSpeed = 0.25;
+  updateCamera(now * cameraSpeed * 360, 20);
+
+  // const sphereSpeed = 0.55;
+  // const sphereSpeed = 0.1;
+  const sphereSpeed = 0.5;
   const spherePathRadius = 520;
   sphere.position.x =
     Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
@@ -481,7 +492,7 @@ function renderLoop() {
   scene.directionalLight.direction.x = Math.sin(
     now * Math.PI * 2 * sphereSpeed
   );
-  scene.directionalLight.direction.y = 0.75;
+  // scene.directionalLight.direction.y = 0.75;
   scene.directionalLight.direction.z = Math.cos(
     now * Math.PI * 2 * sphereSpeed
   );
@@ -490,8 +501,8 @@ function renderLoop() {
   const cylinderRotationSpeed = 0.25;
   const cylinderScaleSpeed = 0.25;
   const cylinderTranslationSpeed = 1;
-  cylinder.rotation.x = 90;
-  cylinder.rotation.y = now * 360 * cylinderRotationSpeed;
+  // cylinder.rotation.x = 90;
+  // cylinder.rotation.y = now * 360 * cylinderRotationSpeed;
 
   const boxRotationSpeed = 0.25;
   // transparentBox.rotation.y = now * 360 * boxRotationSpeed;

@@ -11,32 +11,76 @@ import { SphereShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 
-const Debug = true;
+const Debug = false;
 
 function normalToDegrees(x: number, z: number) {
   return (Math.atan2(x, z) / Math.PI) * 180;
 }
 
-export function sphereLightSide(
+export function normalizeDegrees(degrees: number) {
+  let adjustedDegrees = degrees;
+  if (adjustedDegrees < 0) {
+    adjustedDegrees = 360 + (adjustedDegrees % 360);
+  } else {
+    adjustedDegrees = adjustedDegrees % 360;
+  }
+  return adjustedDegrees;
+}
+
+export function renderSphere(
   scene: Scene,
   svg: SVGElement,
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
-  //   let cycleAngle = -normalToDegrees(
-  //     scene.directionalLight.direction.x,
-  //     scene.directionalLight.direction.z
-  //   );
+  // Convert the light direction into camera space (not projected into screen space)
+  const directionalLightInCameraSpace =
+    scene.directionalLight.direction.clone();
+  inverseCameraMatrix
+    .extractRotation()
+    .applyToVector3(directionalLightInCameraSpace);
 
-  //   console.log(cycleAngle);
-  //   if (!(cycleAngle > 270 || cycleAngle < 90)) {
-  //     return;
-  //   }
-  let cycleAngle = 45;
-  let rotationAngle = 45;
-  //   let rotationAngle = 0;
+  console.log(
+    directionalLightInCameraSpace,
+    directionalLightInCameraSpace.length()
+  );
+
+  let cycleAngle = Math.abs(directionalLightInCameraSpace.x * 90);
+  let rotationAngle = 0;
+  if (directionalLightInCameraSpace.x < 0) {
+    rotationAngle += 180;
+  }
+  directionalLightInCameraSpace.x < 0
+    ? 90 - Math.abs(directionalLightInCameraSpace.x * 90)
+    : directionalLightInCameraSpace.x * 90;
+
+  sphereLightSide(
+    scene,
+    svg,
+    defs,
+    sphere,
+    viewport,
+    inverseCameraMatrix,
+    inverseAndProjectionMatrix,
+    cycleAngle,
+    rotationAngle
+  );
+}
+
+function sphereLightSide(
+  scene: Scene,
+  svg: SVGElement,
+  defs: SVGDefsElement,
+  sphere: SphereShape,
+  viewport: Viewport,
+  inverseCameraMatrix: Matrix4x4,
+  inverseAndProjectionMatrix: Matrix4x4,
+  cycleAngle: number,
+  rotationAngle: number
+) {
   // We do all logic assuming the light is from the center to the right below.
   // When cycleRange is over 270, we treat it the same by adjusting the angles here
   // so that the rotationAngle causes the lighting to flip/mirror

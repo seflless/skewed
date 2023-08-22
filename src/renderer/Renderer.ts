@@ -10,7 +10,7 @@ import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Color } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
-import { renderSphere, sphereLightSide } from "./sphere";
+import { renderSphere } from "./sphere";
 
 const CrackFillingStrokeWidth = 0.5;
 
@@ -67,17 +67,19 @@ export function render(
           svg,
           shape,
           viewport,
+          inverseCameraMatrix,
           inverseAndProjectionMatrix,
           cameraDirection
         );
         break;
       case "sphere":
-        sphereLightSide(
+        renderSphere(
           scene,
           svg,
           defs,
           shape,
           viewport,
+          inverseCameraMatrix,
           inverseAndProjectionMatrix
         );
         break;
@@ -106,6 +108,7 @@ function renderMesh(
   svg: SVGElement,
   shape: MeshShape,
   viewport: Viewport,
+  _inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4,
   cameraDirection: Vector3
 ) {
@@ -235,6 +238,17 @@ function renderMesh(
   }
 }
 
+// function renderSphere(
+//   scene: Scene,
+//   svg: SVGSVGElement,
+//   defs: SVGDefsElement,
+//   shape: SphereShape,
+//   viewport: Viewport,
+//   inverseCameraMatrix: Matrix4x4,
+//   inverseAndProjectionMatrix: Matrix4x4
+// ) {
+//   throw new Error("Function not implemented.");
+// }
 // <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0" y="0" width="500" height="500"><script xmlns=""/>
 // <defs>
 //   <linearGradient id="linearGradient">
