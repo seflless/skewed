@@ -480,9 +480,9 @@ function renderLoop() {
   const cameraSpeed = 0.25;
   updateCamera(now * cameraSpeed * 360 + 45, 20);
 
-  // const sphereSpeed = 0.0;
+  const sphereSpeed = 0.0;
   // const sphereSpeed = 0.1;
-  const sphereSpeed = 0.45;
+  // const sphereSpeed = 0.45;
   // const sphereSpeed = 0.55;
   const sphereRotationOffsetDegrees = 65;
 
