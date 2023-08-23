@@ -476,25 +476,37 @@ function renderLoop() {
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
+  // const cameraSpeed = 0.0;
   const cameraSpeed = 0.25;
-  updateCamera(now * cameraSpeed * 360, 20);
+  updateCamera(now * cameraSpeed * 360 + 45, 20);
 
-  // const sphereSpeed = 0.55;
+  // const sphereSpeed = 0.0;
   // const sphereSpeed = 0.1;
-  const sphereSpeed = 0.5;
+  const sphereSpeed = 0.45;
+  // const sphereSpeed = 0.55;
+  const sphereRotationOffsetDegrees = 65;
+
   const spherePathRadius = 520;
   sphere.position.x =
-    Math.sin(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
+    Math.sin(
+      now * Math.PI * 2 * sphereSpeed +
+        (sphereRotationOffsetDegrees / 180) * Math.PI
+    ) * spherePathRadius;
   sphere.position.y = 100;
   sphere.position.z =
-    Math.cos(now * Math.PI * 2 * sphereSpeed) * spherePathRadius;
+    Math.cos(
+      now * Math.PI * 2 * sphereSpeed +
+        (sphereRotationOffsetDegrees / 180) * Math.PI
+    ) * spherePathRadius;
 
   scene.directionalLight.direction.x = Math.sin(
-    now * Math.PI * 2 * sphereSpeed
+    now * Math.PI * 2 * sphereSpeed +
+      (sphereRotationOffsetDegrees / 180) * Math.PI
   );
   // scene.directionalLight.direction.y = 0.75;
   scene.directionalLight.direction.z = Math.cos(
-    now * Math.PI * 2 * sphereSpeed
+    now * Math.PI * 2 * sphereSpeed +
+      (sphereRotationOffsetDegrees / 180) * Math.PI
   );
   scene.directionalLight.direction.normalize();
 
