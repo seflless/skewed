@@ -15,6 +15,7 @@ import {
   Matrix4x4,
   Camera,
   Group,
+  Grid,
 } from "../src/index";
 import { svgPathParser } from "../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../src/svg/svg3d";
@@ -236,50 +237,6 @@ const shadows = [
 ];
 const shadowShapes = shadows.map((shadow) => shadow.shape);
 
-const gridCount = 10;
-const grid: Shape[] = [];
-const gridSpacing = 100;
-const gridLineThickness = 2;
-const gridLineFill = Color(128, 128, 128, 0.5);
-
-for (let i = 0; i <= gridCount; i++) {
-  const zAxisLine = Box({
-    position: Vector3(
-      0,
-      0,
-      i * gridSpacing - (gridSpacing * gridCount) / 2 /*+ gridSpacing / 2*/
-    ),
-    rotation: Vector3(0, 0, 0),
-    scale: 1.0,
-    width: gridCount * gridSpacing,
-    height: gridLineThickness,
-    depth: gridLineThickness,
-    fill: gridLineFill,
-    stroke: Color(0, 0, 0),
-    strokeWidth: 0,
-  });
-
-  grid.push(zAxisLine);
-
-  const xAxisLine = Box({
-    position: Vector3(
-      i * gridSpacing - (gridSpacing * gridCount) / 2,
-      0,
-      0 /*+ gridSpacing / 2*/
-    ),
-    rotation: Vector3(0, 0, 0),
-    scale: 1.0,
-    width: gridLineThickness,
-    height: gridLineThickness,
-    depth: gridCount * gridSpacing,
-    fill: gridLineFill,
-    stroke: Color(0, 0, 0),
-    strokeWidth: 0,
-  });
-
-  grid.push(xAxisLine);
-}
-
 const boxStrokeWidth = 3;
 
 const transparentGreenBox = Box({
@@ -443,8 +400,17 @@ const scene: Scene = {
       directionalLightColor.b - ambientLightColor.b
     ),
   },
+
   ambientLightColor,
   shapes: [
+    Grid({
+      rotation: Vector3(0, 0, 0),
+      cellCount: 10,
+      cellSize: 100,
+      fill: Red,
+      stroke: Color(0, 0, 0),
+      strokeWidth: 4,
+    }),
     topMostGroup,
     Box({
       position: Vector3(0, 50, 150),
@@ -475,8 +441,8 @@ const scene: Scene = {
       // radius: 80,
       radius: 70,
       fill: Color(255, 128, 0),
-      stroke: Color(0, 0, 0, 0),
-      strokeWidth: 4,
+      stroke: Color(0, 0, 0, 1),
+      strokeWidth: 5,
     }),
     // sphereScaleTestGroup,
     transparentGreenBox,
@@ -485,7 +451,6 @@ const scene: Scene = {
     sphere,
     ...shadowShapes,
     ...particles,
-    ...grid,
     // ...Axii(Vector3(0, 0, 0)),
   ],
 };
@@ -575,8 +540,8 @@ function renderLoop() {
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
-  const cameraSpeed = 0.0;
-  // const cameraSpeed = 0.25;
+  // const cameraSpeed = 0.0;
+  const cameraSpeed = 0.25;
   updateCamera(now * cameraSpeed * 360 + 45, 20);
 
   const sphereSpeed = 0.0;

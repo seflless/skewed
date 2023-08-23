@@ -21,6 +21,10 @@ export function render(
   const inverseAndProjectionMatrix = camera.projectionMatrix
     .clone()
     .multiply(inverseCameraMatrix);
+  const extractOrthographicDimensionsResult = extractOrthographicDimensions(
+    camera.projectionMatrix
+  );
+  const cameraZoom = viewport.width / extractOrthographicDimensionsResult.width;
 
   // Generate the world transforms of all shapes, by walking the hierarchy, applying the transforms
   // recursively, and storying the result for each shape for use in sorting and rendering
@@ -55,22 +59,28 @@ export function render(
     return {
       shape,
       position:
-        worldTransforms.get(shape)?.getTranslation() || Vector3(0, 0, 0),
+        worldTransforms.get(shape.shape)?.getTranslation() || Vector3(0, 0, 0),
     };
   });
 
   // Sort shapes back to front
 
   allShapePositions.sort((positionA, positionB) => {
-    const a = cameraDirection.dotProduct(positionA.position);
-    const b = cameraDirection.dotProduct(positionB.position);
+    const a =
+      positionA.shape.sortCategory === "grid"
+        ? -1000
+        : cameraDirection.dotProduct(positionA.position);
+    const b =
+      positionB.shape.sortCategory === "grid"
+        ? -1000
+        : cameraDirection.dotProduct(positionB.position);
 
     return a - b;
   });
 
   // For each shape in the scene
   for (let shapePosition of allShapePositions) {
-    const shape = shapePosition.shape;
+    const shape = shapePosition.shape.shape;
     const worldTransform = worldTransforms.get(shape);
     if (worldTransform === undefined) {
       throw new Error("World transform is undefined");
@@ -83,7 +93,7 @@ export function render(
           shape,
           viewport,
           worldTransform,
-          inverseCameraMatrix,
+          cameraZoom,
           inverseAndProjectionMatrix,
           cameraDirection
         );
@@ -96,6 +106,7 @@ export function render(
           shape,
           viewport,
           worldTransform,
+          cameraZoom,
           inverseCameraMatrix,
           inverseAndProjectionMatrix
         );
@@ -119,7 +130,7 @@ function generateWorldTransforms(
   for (let shape of shapes) {
     const shapeMatrix = transformToMatrix(shape);
     // If it's a group, apply the parent's transform to it, and then recurse into its children
-    if (shape.type === "group") {
+    if (shape.type === "group" || shape.type === "grid") {
       const worldMatrix = parentMatrix.clone().multiply(shapeMatrix);
       generateWorldTransforms(shape.children, worldMatrix, map);
     }
@@ -133,12 +144,20 @@ function generateWorldTransforms(
   return map;
 }
 
-function collectShapes(shapes: Shape[], list: Shape[] = []) {
+function collectShapes(
+  shapes: Shape[],
+  list: { shape: Shape; sortCategory: "grid" | "default" }[] = [],
+  sortCategory: "grid" | "default" = "default"
+) {
   for (let shape of shapes) {
-    if (shape.type === "group") {
-      collectShapes(shape.children, list);
+    if (shape.type === "group" || shape.type === "grid") {
+      collectShapes(
+        shape.children,
+        list,
+        shape.type === "grid" ? "grid" : "default"
+      );
     } else {
-      list.push(shape);
+      list.push({ shape, sortCategory });
     }
   }
 
@@ -193,7 +212,7 @@ function renderMesh(
   shape: MeshShape,
   viewport: Viewport,
   worldTransform: Matrix4x4,
-  _inverseCameraMatrix: Matrix4x4,
+  cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
   cameraDirection: Vector3
 ) {
@@ -282,10 +301,16 @@ function renderMesh(
 
     if (shape.strokeWidth > 0) {
       polygon.setAttribute("stroke", stringifyFill(shape.stroke));
-      polygon.setAttribute("stroke-width", shape.strokeWidth.toString());
+      polygon.setAttribute(
+        "stroke-width",
+        (shape.strokeWidth * cameraZoom).toString()
+      );
     } else {
       polygon.setAttribute("stroke", fill);
-      polygon.setAttribute("stroke-width", CrackFillingStrokeWidth.toString());
+      polygon.setAttribute(
+        "stroke-width",
+        (CrackFillingStrokeWidth * cameraZoom).toString()
+      );
     }
 
     //   console.log(face.normal);
@@ -296,6 +321,30 @@ function renderMesh(
     g.appendChild(polygon);
     svg.appendChild(g);
   }
+}
+
+function extractOrthographicDimensions(matrix: Matrix4x4): {
+  width: number;
+  height: number;
+  depth: number;
+} {
+  const elements = matrix.elements;
+
+  // These values represent how much the content is "squeezed" or "stretched"
+  const scaleX = elements[0];
+  const scaleY = elements[5];
+  const scaleZ = elements[10];
+
+  // Extracting the original width, height, and depth from the squeeze/stretch values.
+  const width = 2 / scaleX;
+  const height = 2 / scaleY;
+  const depth = -2 / scaleZ; // we use -2 since the scaleZ is typically negative in a right-handed system
+
+  return {
+    width: width,
+    height: height,
+    depth: depth,
+  };
 }
 
 // function renderSphere(

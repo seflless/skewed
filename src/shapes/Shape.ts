@@ -29,4 +29,11 @@ export type GroupShape = TransformProperties & {
   children: Shape[];
 };
 
-export type Shape = MeshShape | SphereShape | GroupShape;
+export type GridShape = BasicShapeProperties & {
+  type: "grid";
+  children: Shape[];
+  cellCount: number;
+  cellSize: number;
+};
+
+export type Shape = MeshShape | SphereShape | GroupShape | GridShape;
