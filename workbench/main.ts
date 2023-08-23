@@ -418,7 +418,7 @@ const topMostGroup = Group({
 const sphereScaleTestGroup = Group({
   position: Vector3(-250, 50, 250),
   rotation: Vector3(0, 0, 0),
-  scale: 2.0,
+  scale: 1.0,
   children: [
     Sphere({
       position: Vector3(0, 0, 0),
@@ -430,7 +430,6 @@ const sphereScaleTestGroup = Group({
       stroke: Color(0, 0, 0, 0),
       strokeWidth: 4,
     }),
-    nestedOnceGroup,
   ],
 });
 

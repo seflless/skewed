@@ -271,7 +271,11 @@ const Matrix4x4Proto = {
   getScale(this: Matrix4x4): Vector3 {
     const te = this.elements;
 
-    return Vector3(te[0], te[5], te[10]);
+    return Vector3(
+      Vector3(te[0], te[4], te[8]).length(),
+      Vector3(te[1], te[5], te[9]).length(),
+      Vector3(te[2], te[6], te[10]).length()
+    );
   },
 
   // setFromMatrix3(m) {

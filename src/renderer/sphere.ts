@@ -41,10 +41,10 @@ export function renderSphere(
     .extractRotation()
     .applyToVector3(directionalLightInCameraSpace);
 
-  console.log(
-    directionalLightInCameraSpace,
-    directionalLightInCameraSpace.length()
-  );
+  // console.log(
+  //   directionalLightInCameraSpace,
+  //   directionalLightInCameraSpace.length()
+  // );
 
   let cycleAngle = Math.abs(directionalLightInCameraSpace.x * 90);
   let rotationAngle = 0;
@@ -88,6 +88,7 @@ function sphereLightSide(
   }
 
   const Radius = sphere.radius * worldTransform.getScale().x;
+  console.log(worldTransform.getScale().x);
   const count = Radius;
 
   // const Width = Radius * 2;
