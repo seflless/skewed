@@ -472,9 +472,9 @@ function resize() {
 
   camera.projectionMatrix.makeOrthographic(
     0,
-    viewport.width,
+    viewport.width * 2,
     0,
-    viewport.height,
+    viewport.height * 2,
     0,
     10000
   );

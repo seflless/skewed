@@ -307,10 +307,7 @@ function renderMesh(
       );
     } else {
       polygon.setAttribute("stroke", fill);
-      polygon.setAttribute(
-        "stroke-width",
-        (CrackFillingStrokeWidth * cameraZoom).toString()
-      );
+      polygon.setAttribute("stroke-width", CrackFillingStrokeWidth.toString());
     }
 
     //   console.log(face.normal);
