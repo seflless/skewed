@@ -1,10 +1,7 @@
 // All of this code is based on this early prototype:
 // https://codesandbox.io/s/directionally-lit-sphere-using-svg-radial-gradients-c32ncz?file=/src/Sphere.tsx:2108-4852
 
-import {
-  point3DToIsometric,
-  projectToScreenCoordinate,
-} from "../cameras/Camera";
+import { projectToScreenCoordinate } from "../cameras/Camera";
 import { applyLighting } from "../lighting/LightingModel";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { SphereShape } from "../shapes/Shape";
@@ -13,9 +10,9 @@ import { Viewport } from "./Viewport";
 
 const Debug = false;
 
-function normalToDegrees(x: number, z: number) {
-  return (Math.atan2(x, z) / Math.PI) * 180;
-}
+// function normalToDegrees(x: number, z: number) {
+//   return (Math.atan2(x, z) / Math.PI) * 180;
+// }
 
 export function normalizeDegrees(degrees: number) {
   let adjustedDegrees = degrees;
@@ -63,7 +60,6 @@ export function renderSphere(
     defs,
     sphere,
     viewport,
-    inverseCameraMatrix,
     inverseAndProjectionMatrix,
     cycleAngle,
     rotationAngle
@@ -76,7 +72,6 @@ function sphereLightSide(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
-  inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4,
   cycleAngle: number,
   rotationAngle: number
@@ -92,8 +87,8 @@ function sphereLightSide(
   const Radius = sphere.radius;
   const count = Radius;
 
-  const Width = Radius * 2;
-  const Height = Radius * 2;
+  // const Width = Radius * 2;
+  // const Height = Radius * 2;
   const uuid = crypto.randomUUID();
 
   const size = Debug ? 0.01 : 0.0;
