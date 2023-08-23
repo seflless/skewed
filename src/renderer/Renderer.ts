@@ -1,12 +1,8 @@
-import {
-  Camera,
-  point3DToIsometric,
-  projectToScreenCoordinate,
-} from "../cameras/Camera";
+import { Camera, projectToScreenCoordinate } from "../cameras/Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
-import { MeshShape, Shape, SphereShape } from "../shapes/Shape";
+import { MeshShape, Shape } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Color } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
