@@ -2,11 +2,12 @@ import { Camera, projectToScreenCoordinate } from "../cameras/Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
-import { MeshShape, Shape } from "../shapes/Shape";
+import { MeshShape, Shape, TransformProperties } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Color } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { renderSphere } from "./sphere";
+import { workerData } from "worker_threads";
 
 const CrackFillingStrokeWidth = 0.5;
 
@@ -20,6 +21,10 @@ export function render(
   const inverseAndProjectionMatrix = camera.projectionMatrix
     .clone()
     .multiply(inverseCameraMatrix);
+
+  // Generate the world transforms of all shapes, by walking the hierarchy, applying the transforms
+  // recursively, and storying the result for each shape for use in sorting and rendering
+  const worldTransforms = generateWorldTransforms(scene.shapes);
 
   // Clear the container of all children
   // TODO: Change API to make it so we reuse created elements
@@ -44,18 +49,32 @@ export function render(
     cameraDirection
   );
 
+  const allShapes = collectShapes(scene.shapes);
+
+  const allShapePositions = allShapes.map((shape) => {
+    return {
+      shape,
+      position:
+        worldTransforms.get(shape)?.getTranslation() || Vector3(0, 0, 0),
+    };
+  });
+
   // Sort shapes back to front
-  let sortedShapesByIndex = scene.shapes.map((_, index) => index);
-  sortedShapesByIndex.sort((aIndex, bIndex) => {
-    const a = cameraDirection.dotProduct(scene.shapes[aIndex].position);
-    const b = cameraDirection.dotProduct(scene.shapes[bIndex].position);
+
+  allShapePositions.sort((positionA, positionB) => {
+    const a = cameraDirection.dotProduct(positionA.position);
+    const b = cameraDirection.dotProduct(positionB.position);
 
     return a - b;
   });
 
   // For each shape in the scene
-  for (let shapeIndex of sortedShapesByIndex) {
-    const shape = scene.shapes[shapeIndex];
+  for (let shapePosition of allShapePositions) {
+    const shape = shapePosition.shape;
+    const worldTransform = worldTransforms.get(shape);
+    if (worldTransform === undefined) {
+      throw new Error("World transform is undefined");
+    }
     switch (shape.type) {
       case "mesh":
         renderMesh(
@@ -63,6 +82,7 @@ export function render(
           svg,
           shape,
           viewport,
+          worldTransform,
           inverseCameraMatrix,
           inverseAndProjectionMatrix,
           cameraDirection
@@ -75,6 +95,7 @@ export function render(
           defs,
           shape,
           viewport,
+          worldTransform,
           inverseCameraMatrix,
           inverseAndProjectionMatrix
         );
@@ -85,6 +106,43 @@ export function render(
   }
 
   container.appendChild(svg);
+}
+
+function generateWorldTransforms(
+  shapes: Shape[],
+  parentMatrix: Matrix4x4 | undefined = undefined,
+  map: Map<Shape, Matrix4x4> | undefined = undefined
+): Map<Shape, Matrix4x4> {
+  map = map || new Map<Shape, Matrix4x4>();
+  parentMatrix = parentMatrix || Matrix4x4();
+
+  for (let shape of shapes) {
+    const shapeMatrix = transformToMatrix(shape);
+    // If it's a group, apply the parent's transform to it, and then recurse into its children
+    if (shape.type === "group") {
+      const worldMatrix = parentMatrix.clone().multiply(shapeMatrix);
+      generateWorldTransforms(shape.children, worldMatrix, map);
+    }
+    // If it's a shape, apply the parent's transform to it
+    else {
+      const worldMatrix = parentMatrix.clone().multiply(shapeMatrix);
+      map.set(shape, worldMatrix);
+    }
+  }
+
+  return map;
+}
+
+function collectShapes(shapes: Shape[], list: Shape[] = []) {
+  for (let shape of shapes) {
+    if (shape.type === "group") {
+      collectShapes(shape.children, list);
+    } else {
+      list.push(shape);
+    }
+  }
+
+  return list;
 }
 
 function stringifyFill(color: Color) {
@@ -99,41 +157,47 @@ function stringifyFill(color: Color) {
   }
 }
 
+function transformToMatrix(transform: TransformProperties) {
+  const translateMatrix = Matrix4x4().makeTranslation(
+    transform.position.x,
+    transform.position.y,
+    transform.position.z
+  );
+  const scaleMatrix = Matrix4x4().makeScale(
+    transform.scale,
+    transform.scale,
+    transform.scale
+  );
+  const rotationXMatrix = Matrix4x4().makeRotationX(
+    (transform.rotation.x * Math.PI) / 180
+  );
+  const rotationYMatrix = Matrix4x4().makeRotationY(
+    (transform.rotation.y * Math.PI) / 180
+  );
+  const rotationZMatrix = Matrix4x4().makeRotationZ(
+    (transform.rotation.z * Math.PI) / 180
+  );
+
+  const transformMatrix = translateMatrix
+    .multiply(scaleMatrix)
+    .multiply(rotationZMatrix)
+    .multiply(rotationYMatrix)
+    .multiply(rotationXMatrix);
+
+  return transformMatrix;
+}
+
 function renderMesh(
   scene: Scene,
   svg: SVGElement,
   shape: MeshShape,
   viewport: Viewport,
+  worldTransform: Matrix4x4,
   _inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4,
   cameraDirection: Vector3
 ) {
-  const translateMatrix = Matrix4x4().makeTranslation(
-    shape.position.x,
-    shape.position.y,
-    shape.position.z
-  );
-  const scaleMatrix = Matrix4x4().makeScale(
-    shape.scale,
-    shape.scale,
-    shape.scale
-  );
-  const rotationXMatrix = Matrix4x4().makeRotationX(
-    (shape.rotation.x * Math.PI) / 180
-  );
-  const rotationYMatrix = Matrix4x4().makeRotationY(
-    (shape.rotation.y * Math.PI) / 180
-  );
-  const rotationZMatrix = Matrix4x4().makeRotationZ(
-    (shape.rotation.z * Math.PI) / 180
-  );
-
-  const shapeMatrix = translateMatrix
-    .multiply(scaleMatrix)
-    .multiply(rotationZMatrix)
-    .multiply(rotationYMatrix)
-    .multiply(rotationXMatrix);
-  const shapeInverseRotationMatrix = shapeMatrix.extractRotation().invert();
+  const shapeInverseRotationMatrix = worldTransform.extractRotation().invert();
 
   const cameraDirectionInShapeSpaceAndInverted = cameraDirection.clone();
   shapeInverseRotationMatrix.applyToVector3(
@@ -149,7 +213,7 @@ function renderMesh(
   // Transform the shape's mesh's points to screen space
   const vertices = shape.mesh.vertices.map((vertex) => {
     vertex = vertex.clone();
-    shapeMatrix.applyToVector3(vertex);
+    worldTransform.applyToVector3(vertex);
     // return point3DToIsometric(vertex.x, vertex.y, vertex.z, viewport);
 
     return projectToScreenCoordinate(
@@ -177,7 +241,7 @@ function renderMesh(
 
   const shapeSpaceCameraDirection = cameraDirection.clone();
 
-  shapeMatrix.clone().invert().applyToVector3(shapeSpaceCameraDirection);
+  worldTransform.clone().invert().applyToVector3(shapeSpaceCameraDirection);
 
   // Render each face of the shape
   // TODO: Add in backface culling

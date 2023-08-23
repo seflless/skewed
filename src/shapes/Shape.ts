@@ -2,10 +2,13 @@ import { Mesh } from "../meshes/Mesh";
 import { Vector3 } from "../math/Vector3";
 import { Color } from "../colors/Color";
 
-export type BasicShapeProperties = {
+export type TransformProperties = {
   position: Vector3;
   rotation: Vector3;
   scale: number;
+};
+
+export type BasicShapeProperties = TransformProperties & {
   fill: Color;
   stroke: Color;
   strokeWidth: number;
@@ -21,4 +24,9 @@ export type SphereShape = {
   radius: number;
 } & BasicShapeProperties;
 
-export type Shape = MeshShape | SphereShape;
+export type GroupShape = TransformProperties & {
+  type: "group";
+  children: Shape[];
+};
+
+export type Shape = MeshShape | SphereShape | GroupShape;

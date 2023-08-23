@@ -14,6 +14,7 @@ import {
   Color,
   Matrix4x4,
   Camera,
+  Group,
 } from "../src/index";
 import { svgPathParser } from "../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../src/svg/svg3d";
@@ -336,6 +337,103 @@ if (lightingScenario === "moonlit") {
   };
 }
 
+const nestedThriceGroup = Group({
+  position: Vector3(300, 0, 0),
+  rotation: Vector3(0, 45, 0),
+  scale: 1.0,
+  children: [
+    Box({
+      position: Vector3(0, 0, 0),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      width: 100,
+      height: 100,
+      depth: 100,
+      fill: Color(128, 0, 128),
+      stroke: Color(0, 0, 0),
+      strokeWidth: boxStrokeWidth,
+    }),
+  ],
+});
+
+const nestedTwiceGroup = Group({
+  position: Vector3(200, 0, 0),
+  rotation: Vector3(0, 45, 0),
+  scale: 1.0,
+  children: [
+    Cylinder({
+      position: Vector3(0, 0, 0),
+      rotation: Vector3(90, 0, 0),
+      scale: 1.0,
+      radius: 50 / 2,
+      height: 150,
+      segments: 180,
+      fill: Color(0, 0, 128),
+      stroke: Color(0, 0, 0),
+      strokeWidth: 0,
+    }),
+    nestedThriceGroup,
+  ],
+});
+
+const nestedOnceGroup = Group({
+  position: Vector3(200, 0, 0),
+  rotation: Vector3(0, 45, 0),
+  scale: 1.0,
+  children: [
+    Sphere({
+      position: Vector3(0, 0, 0),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      // radius: 80,
+      radius: 70,
+      fill: Color(0, 128, 0),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 4,
+    }),
+    nestedTwiceGroup,
+  ],
+});
+
+const topMostGroup = Group({
+  position: Vector3(-450, 50, 0),
+  rotation: Vector3(0, 45, 0),
+  scale: 1.0,
+  children: [
+    Box({
+      position: Vector3(0, 0, 0),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      width: 100,
+      height: 100,
+      depth: 100,
+      fill: Color(128, 0, 0),
+      stroke: Color(0, 0, 0),
+      strokeWidth: boxStrokeWidth,
+    }),
+    nestedOnceGroup,
+  ],
+});
+
+const sphereScaleTestGroup = Group({
+  position: Vector3(-250, 50, 250),
+  rotation: Vector3(0, 0, 0),
+  scale: 2.0,
+  children: [
+    Sphere({
+      position: Vector3(0, 0, 0),
+      rotation: Vector3(0, 0, 0),
+      scale: 1,
+      // radius: 80,
+      radius: 50,
+      fill: Color(128, 128, 255),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 4,
+    }),
+    nestedOnceGroup,
+  ],
+});
+
 const scene: Scene = {
   directionalLight: {
     type: "directional light",
@@ -348,6 +446,7 @@ const scene: Scene = {
   },
   ambientLightColor,
   shapes: [
+    topMostGroup,
     Box({
       position: Vector3(0, 50, 150),
       rotation: Vector3(0, 0, 0),
@@ -380,6 +479,7 @@ const scene: Scene = {
       stroke: Color(0, 0, 0, 0),
       strokeWidth: 4,
     }),
+    // sphereScaleTestGroup,
     transparentGreenBox,
     tallBlueBox,
     cylinder,
@@ -476,8 +576,8 @@ function renderLoop() {
   const deltaTime = Math.max(0.0001, now - lastRenderTime);
   lastRenderTime = now;
 
-  // const cameraSpeed = 0.0;
-  const cameraSpeed = 0.25;
+  const cameraSpeed = 0.0;
+  // const cameraSpeed = 0.25;
   updateCamera(now * cameraSpeed * 360 + 45, 20);
 
   const sphereSpeed = 0.0;
@@ -527,6 +627,22 @@ function renderLoop() {
   // cylinder.position.x = ((now * cylinderRotationSpeed) % 1) * 500;
 
   // cylinder.scale = 1 + Math.sin(now * Math.PI * 2 * cylinderScaleSpeed) * 0.5;
+
+  const groupScalingSpeed = 0.15;
+  const scaleMultiplier = 1.0;
+  topMostGroup.scale =
+    ((1 + Math.sin(now * Math.PI * 2 * boxScalingSpeed) * 0.5) / 2.0) *
+    scaleMultiplier;
+  nestedOnceGroup.scale =
+    ((1 + Math.sin(now * Math.PI * 2 * boxScalingSpeed) * 0.5) / 2.0) *
+    scaleMultiplier;
+  nestedTwiceGroup.scale =
+    ((1 + Math.sin(now * Math.PI * 2 * boxScalingSpeed) * 0.5) / 2.0) *
+    scaleMultiplier;
+  const groupRotationSpeed = 0.15;
+  topMostGroup.rotation.y = now * 360 * groupRotationSpeed;
+  nestedOnceGroup.rotation.y = now * 360 * groupRotationSpeed;
+  nestedTwiceGroup.rotation.y = now * 360 * groupRotationSpeed;
 
   const shadowOffset = 10;
   for (let shadow of shadows) {

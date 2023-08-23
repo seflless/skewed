@@ -30,6 +30,7 @@ export function renderSphere(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  worldTransform: Matrix4x4,
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
@@ -60,6 +61,7 @@ export function renderSphere(
     defs,
     sphere,
     viewport,
+    worldTransform,
     inverseAndProjectionMatrix,
     cycleAngle,
     rotationAngle
@@ -72,6 +74,7 @@ function sphereLightSide(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  worldTransform: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4,
   cycleAngle: number,
   rotationAngle: number
@@ -84,7 +87,7 @@ function sphereLightSide(
     rotationAngle += 180;
   }
 
-  const Radius = sphere.radius;
+  const Radius = sphere.radius * worldTransform.getScale().x;
   const count = Radius;
 
   // const Width = Radius * 2;
@@ -126,7 +129,7 @@ function sphereLightSide(
     Math.sin((-rotationAngle / 180) * Math.PI) * offsetX + Radius;
 
   const { x, y } = projectToScreenCoordinate(
-    sphere.position,
+    worldTransform.getTranslation(),
     inverseAndProjectionMatrix,
     viewport
   );
@@ -162,7 +165,7 @@ function sphereLightSide(
   // TODO: Factor in camera projection matrix, this currectly
   // ignores all zoom factors. Can we even handle skew with sphere?!
   // I don't think we can.
-  circle.setAttribute("r", sphere.radius.toString());
+  circle.setAttribute("r", Radius.toString());
 
   circle.setAttribute("fill", fillUrl);
   //   circle.setAttribute("fill", "red");
