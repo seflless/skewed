@@ -24,6 +24,8 @@ export interface Matrix4x4 {
   clone: () => Matrix4x4;
   copy(matrix: Matrix4x4): Matrix4x4;
   copyPosition(matrix: Matrix4x4): Matrix4x4;
+  getTranslation(): Vector3;
+  getScale(): Vector3;
   extractBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4x4;
   extractRotation(): Matrix4x4;
   lookAt(eye: Vector3, target: Vector3, up: Vector3): Matrix4x4;
@@ -249,7 +251,7 @@ const Matrix4x4Proto = {
     return this;
   },
 
-  copyPosition(this: Matrix4x4, matrix: Matrix4x4) {
+  copyTranslationMatrix(this: Matrix4x4, matrix: Matrix4x4) {
     const te = this.elements,
       me = matrix.elements;
 
@@ -258,6 +260,22 @@ const Matrix4x4Proto = {
     te[14] = me[14];
 
     return this;
+  },
+
+  getTranslation(this: Matrix4x4): Vector3 {
+    const te = this.elements;
+
+    return Vector3(te[12], te[13], te[14]);
+  },
+
+  getScale(this: Matrix4x4): Vector3 {
+    const te = this.elements;
+
+    return Vector3(
+      Vector3(te[0], te[4], te[8]).length(),
+      Vector3(te[1], te[5], te[9]).length(),
+      Vector3(te[2], te[6], te[10]).length()
+    );
   },
 
   // setFromMatrix3(m) {

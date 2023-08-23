@@ -5,6 +5,8 @@ export * from "./colors/Color";
 export * from "./cameras/Camera";
 export * from "./shapes/Shape";
 export * from "./shapes/Box";
+export * from "./shapes/Grid";
+export * from "./shapes/Group";
 export * from "./shapes/Cylinder";
 export * from "./shapes/Sphere";
 export * from "./meshes/Mesh";

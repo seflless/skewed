@@ -2,6 +2,7 @@
 // https://codesandbox.io/s/directionally-lit-sphere-using-svg-radial-gradients-c32ncz?file=/src/Sphere.tsx:2108-4852
 
 import { projectToScreenCoordinate } from "../cameras/Camera";
+import { ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { SphereShape } from "../shapes/Shape";
@@ -30,6 +31,8 @@ export function renderSphere(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  worldTransform: Matrix4x4,
+  cameraZoom: number,
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
@@ -39,11 +42,6 @@ export function renderSphere(
   inverseCameraMatrix
     .extractRotation()
     .applyToVector3(directionalLightInCameraSpace);
-
-  console.log(
-    directionalLightInCameraSpace,
-    directionalLightInCameraSpace.length()
-  );
 
   let cycleAngle = Math.abs(directionalLightInCameraSpace.x * 90);
   let rotationAngle = 0;
@@ -60,6 +58,8 @@ export function renderSphere(
     defs,
     sphere,
     viewport,
+    worldTransform,
+    cameraZoom,
     inverseAndProjectionMatrix,
     cycleAngle,
     rotationAngle
@@ -72,6 +72,8 @@ function sphereLightSide(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  worldTransform: Matrix4x4,
+  cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
   cycleAngle: number,
   rotationAngle: number
@@ -84,15 +86,16 @@ function sphereLightSide(
     rotationAngle += 180;
   }
 
-  const Radius = sphere.radius;
+  const sphereScale = worldTransform.getScale().x;
+  const sphereScaleFactor = sphereScale * cameraZoom;
+
+  const Radius = sphere.radius * sphereScaleFactor;
+
   const count = Radius;
 
-  // const Width = Radius * 2;
-  // const Height = Radius * 2;
   const uuid = crypto.randomUUID();
 
   const size = Debug ? 0.01 : 0.0;
-  //   const gradientStops = [];
 
   const gradientStops: { offset: number; stopColor: string }[] = [];
 
@@ -126,7 +129,7 @@ function sphereLightSide(
     Math.sin((-rotationAngle / 180) * Math.PI) * offsetX + Radius;
 
   const { x, y } = projectToScreenCoordinate(
-    sphere.position,
+    worldTransform.getTranslation(),
     inverseAndProjectionMatrix,
     viewport
   );
@@ -162,9 +165,21 @@ function sphereLightSide(
   // TODO: Factor in camera projection matrix, this currectly
   // ignores all zoom factors. Can we even handle skew with sphere?!
   // I don't think we can.
-  circle.setAttribute("r", sphere.radius.toString());
+  circle.setAttribute("r", Radius.toString());
 
   circle.setAttribute("fill", fillUrl);
+
+  if (sphere.strokeWidth && sphere.stroke.a > 0.0) {
+    circle.setAttribute("stroke", ColorToCSS(sphere.stroke));
+
+    if (sphere.strokeWidth !== 1.0) {
+      circle.setAttribute(
+        "stroke-width",
+        (sphere.strokeWidth * sphereScaleFactor).toString()
+      );
+    }
+  }
+
   //   circle.setAttribute("fill", "red");
 
   // Radial gradient
