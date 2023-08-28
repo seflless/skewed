@@ -1,6 +1,6 @@
 {
   "name": "skewed",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "description": "Generate 3D isometric SVGs",
   "author": "Francois Laberge",
   "license": "MIT",
