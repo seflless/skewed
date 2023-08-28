@@ -4,7 +4,7 @@ import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
 import { MeshShape, Shape, TransformProperties } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
-import { Color } from "../colors/Color";
+import { Color, ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { renderSphere } from "./sphere";
 import { workerData } from "worker_threads";
@@ -35,6 +35,7 @@ export function render(
   container.innerHTML = "";
 
   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.id = "scene";
 
   svg.setAttribute(
     "viewBox",
@@ -132,11 +133,13 @@ function generateWorldTransforms(
     // If it's a group, apply the parent's transform to it, and then recurse into its children
     if (shape.type === "group" || shape.type === "grid") {
       const worldMatrix = parentMatrix.clone().multiply(shapeMatrix);
+      // const worldMatrix = shapeMatrix.clone().multiply(parentMatrix);
       generateWorldTransforms(shape.children, worldMatrix, map);
     }
     // If it's a shape, apply the parent's transform to it
     else {
       const worldMatrix = parentMatrix.clone().multiply(shapeMatrix);
+      // const worldMatrix = shapeMatrix.clone().multiply(parentMatrix);
       map.set(shape, worldMatrix);
     }
   }
@@ -164,18 +167,6 @@ function collectShapes(
   return list;
 }
 
-function stringifyFill(color: Color) {
-  if (color.a !== 1.0) {
-    return `rgba(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(
-      color.b
-    )},${color.a.toFixed(1)})`;
-  } else {
-    return `rgb(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(
-      color.b
-    )})`;
-  }
-}
-
 function transformToMatrix(transform: TransformProperties) {
   const translateMatrix = Matrix4x4().makeTranslation(
     transform.position.x,
@@ -188,20 +179,26 @@ function transformToMatrix(transform: TransformProperties) {
     transform.scale
   );
   const rotationXMatrix = Matrix4x4().makeRotationX(
-    (transform.rotation.x * Math.PI) / 180
+    (transform.rotation.x / 180) * Math.PI
   );
   const rotationYMatrix = Matrix4x4().makeRotationY(
-    (transform.rotation.y * Math.PI) / 180
+    (transform.rotation.y / 180) * Math.PI
   );
   const rotationZMatrix = Matrix4x4().makeRotationZ(
-    (transform.rotation.z * Math.PI) / 180
+    (transform.rotation.z / 180) * Math.PI
   );
 
   const transformMatrix = translateMatrix
     .multiply(scaleMatrix)
     .multiply(rotationZMatrix)
-    .multiply(rotationYMatrix)
-    .multiply(rotationXMatrix);
+    .multiply(rotationXMatrix)
+    .multiply(rotationYMatrix);
+
+  // const transformMatrix = rotationYMatrix
+  //   .multiply(rotationXMatrix)
+  //   .multiply(rotationZMatrix)
+  //   .multiply(scaleMatrix)
+  //   .multiply(translateMatrix);
 
   return transformMatrix;
 }
@@ -257,6 +254,7 @@ function renderMesh(
 
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.setAttribute("transform", `translate(${left},${top})`);
+  g.id = shape.id;
 
   const shapeSpaceCameraDirection = cameraDirection.clone();
 
@@ -299,15 +297,18 @@ function renderMesh(
     // polygon.setAttribute("stroke-linecap", "round");
     polygon.setAttribute("stroke-linejoin", "round");
 
-    if (shape.strokeWidth > 0) {
-      polygon.setAttribute("stroke", stringifyFill(shape.stroke));
+    if (shape.strokeWidth > 0 && shape.stroke.a > 0) {
+      polygon.setAttribute("stroke", ColorToCSS(shape.stroke));
       polygon.setAttribute(
         "stroke-width",
         (shape.strokeWidth * cameraZoom).toString()
       );
     } else {
       polygon.setAttribute("stroke", fill);
-      polygon.setAttribute("stroke-width", CrackFillingStrokeWidth.toString());
+      polygon.setAttribute(
+        "stroke-width",
+        (CrackFillingStrokeWidth * cameraZoom).toString()
+      );
     }
 
     //   console.log(face.normal);

@@ -8,11 +8,28 @@ export type TransformProperties = {
   scale: number;
 };
 
+export const DefaultTransformProperties: TransformProperties = {
+  position: Vector3(0, 0, 0),
+  rotation: Vector3(0, 0, 0),
+  scale: 1,
+};
+
 export type BasicShapeProperties = TransformProperties & {
   fill: Color;
   stroke: Color;
   strokeWidth: number;
+  id: string;
 };
+
+export const DefaultBasicShapeProperties: BasicShapeProperties = {
+  ...DefaultTransformProperties,
+  fill: Color(128, 128, 128),
+  stroke: Color(0, 0, 0),
+  strokeWidth: 1,
+  id: "",
+};
+
+export const DefaultShapeDimension = 100;
 
 export type MeshShape = {
   type: "mesh";
@@ -26,11 +43,13 @@ export type SphereShape = {
 
 export type GroupShape = TransformProperties & {
   type: "group";
+  id: string;
   children: Shape[];
 };
 
 export type GridShape = BasicShapeProperties & {
   type: "grid";
+  id: string;
   children: Shape[];
   cellCount: number;
   cellSize: number;

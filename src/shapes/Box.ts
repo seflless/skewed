@@ -1,22 +1,39 @@
-import { BasicShapeProperties, Shape } from "./Shape";
+import {
+  BasicShapeProperties,
+  Shape,
+  DefaultBasicShapeProperties,
+  DefaultShapeDimension,
+} from "./Shape";
 import { BoxMesh } from "../meshes/BoxMesh";
 
-export type BoxProps = {
+export type BoxProperties = {
   width: number;
   height: number;
   depth: number;
-} & BasicShapeProperties;
+};
 
-export function Box(props: BoxProps): Shape {
+const DefaultBoxProperties: BoxProperties & { id: string } = {
+  width: DefaultShapeDimension,
+  height: DefaultShapeDimension,
+  depth: DefaultShapeDimension,
+  id: "box",
+};
+
+export function Box(
+  props: Partial<BoxProperties & BasicShapeProperties>
+): Shape {
+  const dimensions: BoxProperties = {
+    width: props.width || DefaultBoxProperties.width,
+    height: props.height || DefaultBoxProperties.height,
+    depth: props.depth || DefaultBoxProperties.depth,
+  };
+
   const box: Shape = {
     type: "mesh",
-    mesh: BoxMesh(props.width, props.height, props.depth),
-    position: props.position,
-    rotation: props.rotation,
-    scale: props.scale,
-    fill: props.fill,
-    stroke: props.stroke,
-    strokeWidth: props.strokeWidth,
+    mesh: BoxMesh(dimensions.width, dimensions.height, dimensions.depth),
+    ...DefaultBasicShapeProperties,
+    id: props.id || DefaultBoxProperties.id,
+    ...props,
   };
 
   return box;

@@ -159,6 +159,7 @@ function sphereLightSide(
     "circle"
   );
 
+  circle.id = "sphere";
   circle.setAttribute("cx", x.toString());
   circle.setAttribute("cy", y.toString());
 

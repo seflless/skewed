@@ -1,19 +1,24 @@
-import { BasicShapeProperties, Shape } from "./Shape";
+import {
+  BasicShapeProperties,
+  DefaultBasicShapeProperties,
+  DefaultShapeDimension,
+  SphereShape,
+} from "./Shape";
 
-export type SphereProps = {
+export type SphereProperties = {
   radius: number;
 } & BasicShapeProperties;
 
-export function Sphere(props: SphereProps): Shape {
-  const sphere: Shape = {
+const DefaultSphereProperties: SphereProperties = {
+  radius: DefaultShapeDimension / 2,
+  ...DefaultBasicShapeProperties,
+};
+
+export function Sphere(props: Partial<SphereProperties>): SphereShape {
+  const sphere: SphereShape = {
     type: "sphere",
-    radius: props.radius,
-    position: props.position,
-    rotation: props.rotation,
-    scale: props.scale,
-    fill: props.fill,
-    stroke: props.stroke,
-    strokeWidth: props.strokeWidth,
+    ...DefaultSphereProperties,
+    ...props,
   };
   return sphere;
 }

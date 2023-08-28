@@ -1,33 +1,40 @@
 import { Color } from "../colors/Color";
 import { Vector3 } from "../math/Vector3";
 import { Box } from "./Box";
-import { GridShape } from "./Shape";
+import { DefaultBasicShapeProperties, GridShape } from "./Shape";
 
-export type GridProps = Omit<
+export type GridProperties = Omit<
   GridShape,
   "type" | "children" | "position" | "scale"
 >;
 
-export function Grid(props: GridProps): GridShape {
+const DefaultGridProperties: GridProperties = {
+  cellCount: 10,
+  cellSize: 100,
+  ...DefaultBasicShapeProperties,
+};
+
+export function Grid(props: Partial<GridProperties>): GridShape {
   const grid: GridShape = {
     type: "grid",
-    ...props,
     children: [],
     position: Vector3(0, 0, 0),
-    scale: 1.0,
+    scale: 1,
+    ...DefaultGridProperties,
+    ...props,
   };
 
-  for (let i = 0; i <= props.cellCount; i++) {
+  for (let i = 0; i <= grid.cellCount; i++) {
     const zAxisLine = Box({
       position: Vector3(
         0,
         0,
-        i * props.cellSize -
-          (props.cellSize * props.cellCount) / 2 /*+ props.cellSize / 2*/
+        i * grid.cellSize -
+          (grid.cellSize * grid.cellCount) / 2 /*+ props.cellSize / 2*/
       ),
       rotation: Vector3(0, 0, 0),
       scale: 1.0,
-      width: props.cellCount * props.cellSize,
+      width: grid.cellCount * grid.cellSize,
       height: props.strokeWidth,
       depth: props.strokeWidth,
       fill: props.stroke,
@@ -39,7 +46,7 @@ export function Grid(props: GridProps): GridShape {
 
     const xAxisLine = Box({
       position: Vector3(
-        i * props.cellSize - (props.cellSize * props.cellCount) / 2,
+        i * grid.cellSize - (grid.cellSize * grid.cellCount) / 2,
         0,
         0 /*+ props.cellSize / 2*/
       ),
@@ -47,7 +54,7 @@ export function Grid(props: GridProps): GridShape {
       scale: 1.0,
       width: props.strokeWidth,
       height: props.strokeWidth,
-      depth: props.cellCount * props.cellSize,
+      depth: grid.cellCount * grid.cellSize,
       fill: props.stroke,
       stroke: Color(0, 0, 0),
       strokeWidth: 0,

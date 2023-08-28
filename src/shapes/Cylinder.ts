@@ -1,22 +1,43 @@
-import { BasicShapeProperties, Shape } from "./Shape";
+import {
+  BasicShapeProperties,
+  DefaultShapeDimension,
+  DefaultBasicShapeProperties,
+  Shape,
+} from "./Shape";
 import { CylinderMesh } from "../meshes/CylinderMesh";
 
-export type CylinderProps = {
+export type CylinderProperties = {
   segments: number;
   radius: number;
   height: number;
-} & BasicShapeProperties;
+};
 
-export function Cylinder(props: CylinderProps): Shape {
+const DefaultCylinderProperties: CylinderProperties & { id: string } = {
+  segments: 128,
+  radius: DefaultShapeDimension / 2,
+  height: DefaultShapeDimension,
+  id: "cylinder",
+};
+
+export function Cylinder(
+  props: Partial<CylinderProperties & BasicShapeProperties>
+): Shape {
+  const meshParams: CylinderProperties = {
+    segments: props.segments || DefaultCylinderProperties.segments,
+    radius: props.radius || DefaultCylinderProperties.radius,
+    height: props.height || DefaultCylinderProperties.height,
+  };
+
   const cylinder: Shape = {
     type: "mesh",
-    mesh: CylinderMesh(props.radius, props.height, props.segments),
-    position: props.position,
-    rotation: props.rotation,
-    scale: props.scale,
-    fill: props.fill,
-    stroke: props.stroke,
-    strokeWidth: props.strokeWidth,
+    mesh: CylinderMesh(
+      meshParams.radius,
+      meshParams.height,
+      meshParams.segments
+    ),
+    ...DefaultBasicShapeProperties,
+    id: props.id || DefaultCylinderProperties.id,
+    ...props,
   };
 
   return cylinder;

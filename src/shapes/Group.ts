@@ -1,15 +1,23 @@
-import { BasicShapeProperties, GroupShape, Shape } from "./Shape";
-import { BoxMesh } from "../meshes/BoxMesh";
+import {
+  BasicShapeProperties,
+  DefaultTransformProperties,
+  GroupShape,
+  Shape,
+} from "./Shape";
 
-export type GroupProps = Omit<GroupShape, "type">;
+export type GroupProperties = Omit<GroupShape, "type">;
 
-export function Group(props: GroupProps): GroupShape {
+const DefaultGridProperties: GroupProperties = {
+  ...DefaultTransformProperties,
+  id: "",
+  children: [],
+};
+
+export function Group(props?: Partial<GroupProperties>): GroupShape {
   const group: GroupShape = {
     type: "group",
-    position: props.position,
-    rotation: props.rotation,
-    scale: props.scale,
-    children: props.children,
+    ...DefaultGridProperties,
+    ...props,
   };
 
   return group;

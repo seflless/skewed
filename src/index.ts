@@ -2,6 +2,8 @@ export * from "./renderer/Scene";
 export * from "./renderer/Viewport";
 export * from "./renderer/Renderer";
 export * from "./colors/Color";
+export * from "./lighting/DirectionalLight";
+export * from "./lighting/LightingModel";
 export * from "./cameras/Camera";
 export * from "./shapes/Shape";
 export * from "./shapes/Box";
