@@ -7,7 +7,7 @@ import {
   Viewport,
 } from "../src";
 
-export type LightingChoice = "reference" | "moonlit";
+export type LightingChoice = "reference" | "moonlit" | "headon" | "none";
 
 export function getLighting(lighting: LightingChoice): {
   directionalLight: DirectionalLight;
@@ -39,6 +39,53 @@ export function getLighting(lighting: LightingChoice): {
       r: 255,
       g: 252,
       b: 181,
+    };
+  } else if (lighting === "headon") {
+    //    Bluish white
+    ambientLightColor = {
+      r: 64,
+      g: 64,
+      b: 120,
+    };
+
+    directionalLightColor = {
+      r: 255,
+      g: 252,
+      b: 181,
+    };
+    return {
+      ambientLightColor,
+      directionalLight: DirectionalLight({
+        direction: Vector3(1, 1, 1).normalize(),
+        color: Color(
+          directionalLightColor.r - ambientLightColor.r,
+          directionalLightColor.g - ambientLightColor.g,
+          directionalLightColor.b - ambientLightColor.b
+        ),
+      }),
+    };
+  } else if (lighting === "none") {
+    ambientLightColor = {
+      r: 255,
+      g: 255,
+      b: 255,
+    };
+
+    directionalLightColor = {
+      r: 0,
+      g: 0,
+      b: 0,
+    };
+    return {
+      ambientLightColor,
+      directionalLight: DirectionalLight({
+        direction: Vector3(1, 1, 1).normalize(),
+        color: Color(
+          directionalLightColor.r - ambientLightColor.r,
+          directionalLightColor.g - ambientLightColor.g,
+          directionalLightColor.b - ambientLightColor.b
+        ),
+      }),
     };
   } else {
     throw new Error("Unknown lighting choice");

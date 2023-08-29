@@ -132,13 +132,13 @@ function generateWorldTransforms(
     const shapeMatrix = transformToMatrix(shape);
     // If it's a group, apply the parent's transform to it, and then recurse into its children
     if (shape.type === "group" || shape.type === "grid") {
-      const worldMatrix = parentMatrix.clone().multiply(shapeMatrix);
+      const worldMatrix = shapeMatrix.clone().premultiply(parentMatrix);
       // const worldMatrix = shapeMatrix.clone().multiply(parentMatrix);
       generateWorldTransforms(shape.children, worldMatrix, map);
     }
     // If it's a shape, apply the parent's transform to it
     else {
-      const worldMatrix = parentMatrix.clone().multiply(shapeMatrix);
+      const worldMatrix = shapeMatrix.clone().premultiply(parentMatrix);
       // const worldMatrix = shapeMatrix.clone().multiply(parentMatrix);
       map.set(shape, worldMatrix);
     }
@@ -188,11 +188,16 @@ function transformToMatrix(transform: TransformProperties) {
     (transform.rotation.z / 180) * Math.PI
   );
 
-  const transformMatrix = translateMatrix
-    .multiply(scaleMatrix)
-    .multiply(rotationZMatrix)
-    .multiply(rotationXMatrix)
-    .multiply(rotationYMatrix);
+  const transformMatrix = rotationYMatrix
+    .premultiply(rotationXMatrix)
+    .premultiply(rotationZMatrix)
+    .premultiply(scaleMatrix)
+    .premultiply(translateMatrix);
+  // translateMatrix
+  // .multiply(scaleMatrix)
+  // .multiply(rotationZMatrix)
+  // .multiply(rotationXMatrix)
+  // .multiply(rotationYMatrix);
 
   // const transformMatrix = rotationYMatrix
   //   .multiply(rotationXMatrix)

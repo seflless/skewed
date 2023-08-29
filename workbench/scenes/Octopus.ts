@@ -15,7 +15,7 @@ import { getCamera, getGrid, getLighting } from "../Settings";
 
 export default function () {
   const scene: Scene = {
-    ...getLighting("moonlit"),
+    ...getLighting("headon"),
     shapes: [getGrid(), Octopus({})],
   };
 
@@ -76,8 +76,8 @@ export function Octopus(props: Partial<TransformProperties>) {
   for (let i = 0; i < 1; i++) {
     const leg = Leg();
     group.children.push(leg);
-    leg.rotation.x = 0;
-    // leg.rotation.y = 0;
+    leg.rotation.x = 4;
+    leg.rotation.y = 0;
     // leg.rotation.x = 0;
     // leg.rotation.y = 0;
   }
