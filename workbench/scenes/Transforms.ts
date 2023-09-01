@@ -9,7 +9,7 @@ import {
   Grid,
   Color,
 } from "../../src/index";
-import { getCamera, getGrid, getLighting } from "../Settings";
+import { getCamera, getGrid, getLighting, getPaused } from "../Settings";
 
 export default function () {
   const scene: Scene = {
@@ -56,6 +56,11 @@ export default function () {
   let lastRenderTime = performance.now() / 1000;
 
   function renderLoop() {
+    if (getPaused()) {
+      requestAnimationFrame(renderLoop);
+      return;
+    }
+
     const now = performance.now() / 1000;
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;

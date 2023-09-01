@@ -6,11 +6,11 @@ import Spheres from "./scenes/Spheres";
 import Worm from "./scenes/Worm";
 import { getPaused, setPaused } from "./Settings";
 
-// KitchenSink();
+KitchenSink();
 // Transforms();
 // Octopus();
 // Spheres();
-Worm();
+// Worm();
 
 document
   .getElementById("copy-svg")

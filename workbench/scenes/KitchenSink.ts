@@ -19,7 +19,7 @@ import {
 import { svgPathParser } from "../../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../../src/svg/svg3d";
 import { Octopus } from "./Octopus";
-import { getCamera, getGrid, getLighting } from "../Settings";
+import { getCamera, getGrid, getLighting, getPaused } from "../Settings";
 
 export default function () {
   // From this 1 diameter circle flattened into a path in Figma, exported as an SVG file, then copy/pasting out the path string
@@ -408,6 +408,10 @@ export default function () {
 
   let renderCount = 0;
   function renderLoop() {
+    if (getPaused()) {
+      requestAnimationFrame(renderLoop);
+      return;
+    }
     // if (renderCount++ > 2) {
     //   return;
     // }
@@ -415,8 +419,8 @@ export default function () {
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;
 
-    const cameraSpeed = 0.0;
-    // const cameraSpeed = 0.25;
+    // const cameraSpeed = 0.0;
+    const cameraSpeed = 0.25;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     const sphereSpeed = 0.0;
