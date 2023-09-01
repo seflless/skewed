@@ -25,12 +25,22 @@ document
   .getElementById("play-pause")
   ?.addEventListener("pointerdown", (event: PointerEvent) => {
     event.stopPropagation();
-    setPaused(!getPaused());
-    syncPausePlayUIState();
+
+    togglePlayState();
   });
 
 syncPausePlayUIState();
 
+function togglePlayState() {
+  setPaused(!getPaused());
+  syncPausePlayUIState();
+}
 function syncPausePlayUIState() {
   pausePlayButton.innerHTML = getPaused() ? "▶︎" : "‖";
 }
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === " ") {
+    togglePlayState();
+  }
+});
