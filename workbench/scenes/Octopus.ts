@@ -65,7 +65,7 @@ export function Octopus(props: Partial<TransformProperties>) {
     position: Vector3(0, 150, 0),
     fill: BodyColor,
     radius: 150,
-    strokeWidth: 1,
+    strokeWidth: 0,
   });
 
   const eyes = Group({
