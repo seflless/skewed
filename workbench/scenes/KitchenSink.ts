@@ -419,8 +419,8 @@ export default function () {
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;
 
-    // const cameraSpeed = 0.0;
-    const cameraSpeed = 0.25;
+    const cameraSpeed = 0.0;
+    // const cameraSpeed = 0.25;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     const sphereSpeed = 0.0;
