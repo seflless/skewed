@@ -1,14 +1,8 @@
-import {
-  BasicShapeProperties,
-  DefaultTransformProperties,
-  GroupShape,
-  Shape,
-} from "./Shape";
+import { DefaultTransformProperties, GroupShape } from "./Shape";
 
 export type GroupProperties = Omit<GroupShape, "type">;
 
-const DefaultGridProperties: GroupProperties = {
-  ...DefaultTransformProperties,
+const DefaultGridProperties = {
   id: "",
   children: [],
 };
@@ -16,6 +10,7 @@ const DefaultGridProperties: GroupProperties = {
 export function Group(props?: Partial<GroupProperties>): GroupShape {
   const group: GroupShape = {
     type: "group",
+    ...DefaultTransformProperties(),
     ...DefaultGridProperties,
     ...props,
   };

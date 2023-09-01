@@ -8,11 +8,11 @@ export type TransformProperties = {
   scale: number;
 };
 
-export const DefaultTransformProperties: TransformProperties = {
+export const DefaultTransformProperties = (): TransformProperties => ({
   position: Vector3(0, 0, 0),
   rotation: Vector3(0, 0, 0),
   scale: 1,
-};
+});
 
 export type BasicShapeProperties = TransformProperties & {
   fill: Color;
@@ -21,13 +21,13 @@ export type BasicShapeProperties = TransformProperties & {
   id: string;
 };
 
-export const DefaultBasicShapeProperties: BasicShapeProperties = {
-  ...DefaultTransformProperties,
+export const DefaultBasicShapeProperties = (): BasicShapeProperties => ({
+  ...DefaultTransformProperties(),
   fill: Color(128, 128, 128),
   stroke: Color(0, 0, 0),
   strokeWidth: 1,
   id: "",
-};
+});
 
 export const DefaultShapeDimension = 100;
 

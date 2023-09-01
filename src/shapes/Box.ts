@@ -31,7 +31,7 @@ export function Box(
   const box: Shape = {
     type: "mesh",
     mesh: BoxMesh(dimensions.width, dimensions.height, dimensions.depth),
-    ...DefaultBasicShapeProperties,
+    ...DefaultBasicShapeProperties(),
     id: props.id || DefaultBoxProperties.id,
     ...props,
   };

@@ -4,10 +4,9 @@ import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
 import { MeshShape, Shape, TransformProperties } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
-import { Color, ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { renderSphere } from "./sphere";
-import { workerData } from "worker_threads";
+import { ColorToCSS } from "../colors/Color";
 
 const CrackFillingStrokeWidth = 0.5;
 
@@ -188,16 +187,17 @@ function transformToMatrix(transform: TransformProperties) {
     (transform.rotation.z / 180) * Math.PI
   );
 
-  const transformMatrix = rotationYMatrix
-    .premultiply(rotationXMatrix)
-    .premultiply(rotationZMatrix)
-    .premultiply(scaleMatrix)
-    .premultiply(translateMatrix);
-  // translateMatrix
-  // .multiply(scaleMatrix)
-  // .multiply(rotationZMatrix)
-  // .multiply(rotationXMatrix)
-  // .multiply(rotationYMatrix);
+  const transformMatrix =
+    // rotationYMatrix
+    //   .premultiply(rotationXMatrix)
+    //   .premultiply(rotationZMatrix)
+    //   .premultiply(scaleMatrix)
+    //   .premultiply(translateMatrix);
+    translateMatrix
+      .multiply(scaleMatrix)
+      .multiply(rotationZMatrix)
+      .multiply(rotationYMatrix)
+      .multiply(rotationXMatrix);
 
   // const transformMatrix = rotationYMatrix
   //   .multiply(rotationXMatrix)
@@ -349,25 +349,3 @@ function extractOrthographicDimensions(matrix: Matrix4x4): {
     depth: depth,
   };
 }
-
-// function renderSphere(
-//   scene: Scene,
-//   svg: SVGSVGElement,
-//   defs: SVGDefsElement,
-//   shape: SphereShape,
-//   viewport: Viewport,
-//   inverseCameraMatrix: Matrix4x4,
-//   inverseAndProjectionMatrix: Matrix4x4
-// ) {
-//   throw new Error("Function not implemented.");
-// }
-// <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0" y="0" width="500" height="500"><script xmlns=""/>
-// <defs>
-//   <linearGradient id="linearGradient">
-//     <stop style="stop-color:#ffffff;stop-opacity:1" offset="0" id="stop6455"/>
-//     <stop style="stop-color:#000000;stop-opacity:1" offset="1" id="stop6457"/>
-//   </linearGradient>
-//   <radialGradient cx="171.20810" cy="196.85463" r="200" fx="171.20810" fy="196.85463" id="radialGradient" xlink:href="#linearGradient" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.040418,0.796229,-0.814518,1.064316,153.4218,-150.4353)"/>
-// </defs>
-
-// </svg>

@@ -11,7 +11,7 @@ export type GridProperties = Omit<
 const DefaultGridProperties: GridProperties = {
   cellCount: 10,
   cellSize: 100,
-  ...DefaultBasicShapeProperties,
+  ...DefaultBasicShapeProperties(),
 };
 
 export function Grid(props: Partial<GridProperties>): GridShape {

@@ -19,7 +19,7 @@ export default function () {
 
       Group({
         position: Vector3(-450, 50, -450),
-        rotation: Vector3(0, 0, 0),
+        rotation: Vector3(22, 0, 0),
         scale: 1,
         children: [
           Box({
@@ -28,7 +28,7 @@ export default function () {
           }),
           Group({
             position: Vector3(200, 0, 0),
-            rotation: Vector3(0, 0, 0),
+            rotation: Vector3(22, 0, 0),
             scale: 1,
             children: [
               Box({
@@ -36,7 +36,7 @@ export default function () {
               }),
               Group({
                 position: Vector3(200, 0, 0),
-                rotation: Vector3(0, 0, 0),
+                rotation: Vector3(22, 0, 0),
                 scale: 1,
                 children: [
                   Box({
@@ -67,12 +67,4 @@ export default function () {
     requestAnimationFrame(renderLoop);
   }
   renderLoop();
-
-  document
-    .getElementById("copy-svg")
-    ?.addEventListener("pointerdown", (event: PointerEvent) => {
-      event.stopPropagation();
-      const svg = document.querySelector("svg");
-      navigator.clipboard.writeText(svg!.outerHTML);
-    });
 }

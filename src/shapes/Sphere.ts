@@ -11,7 +11,7 @@ export type SphereProperties = {
 
 const DefaultSphereProperties: SphereProperties = {
   radius: DefaultShapeDimension / 2,
-  ...DefaultBasicShapeProperties,
+  ...DefaultBasicShapeProperties(),
 };
 
 export function Sphere(props: Partial<SphereProperties>): SphereShape {

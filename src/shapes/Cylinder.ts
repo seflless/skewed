@@ -13,7 +13,7 @@ export type CylinderProperties = {
 };
 
 const DefaultCylinderProperties: CylinderProperties & { id: string } = {
-  segments: 128,
+  segments: 32,
   radius: DefaultShapeDimension / 2,
   height: DefaultShapeDimension,
   id: "cylinder",
@@ -35,7 +35,7 @@ export function Cylinder(
       meshParams.height,
       meshParams.segments
     ),
-    ...DefaultBasicShapeProperties,
+    ...DefaultBasicShapeProperties(),
     id: props.id || DefaultCylinderProperties.id,
     ...props,
   };

@@ -529,12 +529,4 @@ export default function () {
     requestAnimationFrame(renderLoop);
   }
   renderLoop();
-
-  document
-    .getElementById("copy-svg")
-    ?.addEventListener("pointerdown", (event: PointerEvent) => {
-      event.stopPropagation();
-      const svg = document.querySelector("svg");
-      navigator.clipboard.writeText(svg!.outerHTML);
-    });
 }

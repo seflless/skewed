@@ -10,12 +10,13 @@ import {
   Color,
   TransformProperties,
   GroupShape,
+  Shape,
 } from "../../src/index";
 import { getCamera, getGrid, getLighting } from "../Settings";
 
 export default function () {
   const scene: Scene = {
-    ...getLighting("headon"),
+    ...getLighting("moonlit"),
     shapes: [getGrid(), Octopus({})],
   };
 
@@ -29,21 +30,13 @@ export default function () {
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;
 
-    const cameraSpeed = 0.0;
+    const cameraSpeed = 0.2;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     render(document.getElementById("root")!, scene, viewport, camera);
     requestAnimationFrame(renderLoop);
   }
   renderLoop();
-
-  document
-    .getElementById("copy-svg")
-    ?.addEventListener("pointerdown", (event: PointerEvent) => {
-      event.stopPropagation();
-      const svg = document.querySelector("svg");
-      navigator.clipboard.writeText(svg!.outerHTML);
-    });
 }
 
 const BodyColor = Color(99, 99, 194);
@@ -53,12 +46,24 @@ const LegShrinkFactor = 0.4;
 const LegSegmentCount = 5;
 
 export function Octopus(props: Partial<TransformProperties>) {
-  // const head = Sphere({
-  //   position: Vector3(0, 150, 0),
-  //   fill: BodyColor,
-  //   radius: 150,
-  //   strokeWidth: 4,
-  // });
+  const head = Sphere({
+    position: Vector3(0, 150, 0),
+    fill: BodyColor,
+    radius: 150,
+    strokeWidth: 1,
+  });
+
+  const eyes = Group({
+    id: "Eyes",
+    children: [
+      // Eye({ position: Vector3(200, 0, 0) }),
+      // Eye({ position: Vector3(-200, 0, 0) }),
+      // Eye({ position: Vector3(200, 0, 0) }),
+      // Group({ children: [Eye({ position: Vector3(50, 0, 0) })] }),
+      // Group({ children: [Eye({ position: Vector3(500, 0, 0) })] }),
+    ],
+    position: Vector3(0, 150, 0),
+  });
 
   // const shadow = Cylinder({
   //   radius: 150,
@@ -69,15 +74,21 @@ export function Octopus(props: Partial<TransformProperties>) {
   const group = Group({
     id: "Octopus",
     ...props,
-    // children: [head],
-    children: [],
+    children: [head, eyes],
+    // children: [],
   });
 
-  for (let i = 0; i < 1; i++) {
+  const legCount = 8;
+  for (let i = 0; i < legCount; i++) {
     const leg = Leg();
     group.children.push(leg);
-    leg.rotation.x = 4;
-    leg.rotation.y = 0;
+    const percent = i / legCount;
+    // Tilt leg over
+    leg.rotation.x = 90;
+
+    const legAngle = percent * 360;
+    console.log(legAngle);
+    leg.rotation.y = legAngle;
     // leg.rotation.x = 0;
     // leg.rotation.y = 0;
   }
@@ -85,10 +96,25 @@ export function Octopus(props: Partial<TransformProperties>) {
   return group;
 }
 
-function Leg(): GroupShape {
-  // const heights = [500, 400, 300, 200, 100];
-  const heights = [200, 170, 150, 100, 80];
-  // const heights = [50, 40, 30, 20, 10];
+function Eye(transformProps: Partial<TransformProperties>): Shape {
+  const eye = Group({
+    ...transformProps,
+  });
+  const eyeWhites = Cylinder({
+    radius: 30,
+    rotation: Vector3(45, 0, 0),
+    fill: Color(255, 255, 255),
+    stroke: Color(0, 0, 0, 0),
+    height: 10,
+  });
+
+  eye.children.push(eyeWhites);
+
+  return eye;
+}
+
+function Leg(): Shape {
+  const heights = [200, 170, 150, 100, 80].map((a) => a * 0.7);
   const leg = Group({
     id: "Leg",
     children: [
@@ -102,7 +128,7 @@ function Leg(): GroupShape {
       Group({
         id: `LegSegment-0`,
         position: Vector3(0, heights[0], 0),
-        rotation: Vector3(0, 0, 0),
+        // rotation: Vector3(45, 0, 0),
         scale: 1,
         children: [
           Cylinder({
@@ -115,6 +141,7 @@ function Leg(): GroupShape {
           Group({
             id: `LegSegment-1`,
             position: Vector3(0, heights[1], 0),
+            // rotation: Vector3(45, 0, 0),
             scale: 1,
             children: [
               Cylinder({
@@ -146,11 +173,6 @@ function Leg(): GroupShape {
                         height: heights[4],
                         radius: heights[4] / 4,
                       }),
-                      // Group({
-                      //   id: `LegSegment-2`,
-                      //   position: Vector3(0, heights[2], 0),
-                      //   children: [],
-                      // }),
                     ],
                   }),
                 ],
