@@ -15,9 +15,10 @@ import {
 import { getCamera, getGrid, getLighting } from "../Settings";
 
 export default function () {
+  const octopus = Octopus({});
   const scene: Scene = {
     ...getLighting("moonlit"),
-    shapes: [getGrid(), Octopus({})],
+    shapes: [getGrid(), octopus],
   };
 
   // const { viewport, camera, updateCamera } = getCamera("front");
