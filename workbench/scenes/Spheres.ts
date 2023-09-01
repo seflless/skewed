@@ -12,13 +12,41 @@ import {
 import { getCamera, getGrid, getLighting } from "../Settings";
 
 export default function () {
+  const scale = 0.3;
+
+  addSphereScene(Vector3(0, 0, -1), scale, "From Front");
+  addSphereScene(Vector3(-1, 0, 0), scale, "From Right");
+  addSphereScene(Vector3(1, 0, 0), scale, "From Left");
+  addSphereScene(Vector3(-1, 0, 1), scale, "From Right Behind");
+  addSphereScene(Vector3(1, 0, 1), scale, "From Left Behind");
+  addSphereScene(Vector3(0, -1, 1), scale, "From Top Behind");
+  addSphereScene(Vector3(0, 1, -1), scale, "From Bottom Front");
+}
+
+function addSphereScene(lightDirection: Vector3, scale: number, title: string) {
+  const container = document.createElement("div");
+  container.innerHTML = `<h3>${title}</h3>`;
+  container.style.display = "inline-block";
+  const svgContainer = document.createElement("div");
+  // container.style.transform = "translate(-50%, -50%) scale(2)"; //`translate(${scale},${scale}) scale(${scale})`;
+  svgContainer.style.display = "inline-block";
+  svgContainer.style.width = Math.floor(window.innerWidth * scale) + "px";
+  svgContainer.style.height = Math.floor(window.innerHeight * scale) + "px";
+  svgContainer.style.transform = `translate(0%,0%) scale(${scale})`; //`translate(${scale},${scale}) scale(${scale})`;
+  svgContainer.className = "scene 2";
+  container.appendChild(svgContainer);
+
+  lightDirection.normalize().multiply(-1);
+
   const lightBall = Sphere({ radius: 10 });
-  const box = Box({});
+  lightBall.position = lightDirection.clone().multiply(75);
+
+  const sphere = Sphere({});
   const scene: Scene = {
     ...getLighting("moonlit"),
     shapes: [
-      // getGrid(),
-      box,
+      getGrid(),
+      sphere,
       lightBall,
       // Sphere({
       //   radius: 75,
@@ -36,7 +64,9 @@ export default function () {
     ],
   };
 
-  const { viewport, camera, updateCamera } = getCamera("isometric");
+  scene.directionalLight.direction = lightDirection;
+
+  const { viewport, camera, updateCamera } = getCamera("front", 10);
 
   let lastRenderTime = performance.now() / 1000;
 
@@ -45,38 +75,13 @@ export default function () {
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;
 
-    const sphereSpeed = 0.1;
-
-    const sphereRotationOffsetDegrees = 65;
-
-    const spherePathRadius = 520;
-    lightBall.position.x =
-      Math.sin(
-        now * Math.PI * 2 * sphereSpeed +
-          (sphereRotationOffsetDegrees / 180) * Math.PI
-      ) * spherePathRadius;
-    lightBall.position.y = 100;
-    lightBall.position.z =
-      Math.cos(
-        now * Math.PI * 2 * sphereSpeed +
-          (sphereRotationOffsetDegrees / 180) * Math.PI
-      ) * spherePathRadius;
-
-    scene.directionalLight.direction.x = Math.sin(
-      now * Math.PI * 2 * sphereSpeed +
-        (sphereRotationOffsetDegrees / 180) * Math.PI
-    );
-    // scene.directionalLight.direction.y = 0.75;
-    scene.directionalLight.direction.z = Math.cos(
-      now * Math.PI * 2 * sphereSpeed +
-        (sphereRotationOffsetDegrees / 180) * Math.PI
-    );
-    scene.directionalLight.direction.normalize();
-
     const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
-    render(document.getElementById("root")!, scene, viewport, camera);
+    render(svgContainer, scene, viewport, camera);
+    document.getElementById("root")!.appendChild(container);
+    // render(document.getElementById("root")!, scene, viewport, camera);
+
     requestAnimationFrame(renderLoop);
   }
   renderLoop();

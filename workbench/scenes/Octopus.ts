@@ -27,12 +27,26 @@ export default function () {
   let lastRenderTime = performance.now() / 1000;
 
   function renderLoop() {
-    const now = performance.now() / 1000;
+    let now = performance.now() / 1000;
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;
 
-    const cameraSpeed = 0.2;
+    // const cameraSpeed = 0.2;
+    const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
+
+    // Animate the legs in a spiral pattern
+    const legRotationSpeedPerSecond = 0.5;
+    const maxLegCurlDegreesAbsolute = 40;
+    const legCurlDegrees =
+      maxLegCurlDegreesAbsolute * pingPongTime(legRotationSpeedPerSecond);
+    // maxLegCurlDegreesAbsolute;
+    // console.log(legCurlDegrees);
+    octopus.children
+      .filter((child) => child.id === "Leg")
+      .forEach((leg) => {
+        setLegSegmentRotationCurl(legCurlDegrees, leg as GroupShape);
+      });
 
     render(document.getElementById("root")!, scene, viewport, camera);
     requestAnimationFrame(renderLoop);
@@ -114,7 +128,7 @@ function Eye(transformProps: Partial<TransformProperties>): Shape {
   return eye;
 }
 
-function Leg(): Shape {
+function Leg(): GroupShape {
   const heights = [200, 170, 150, 100, 80].map((a) => a * 0.7);
   const leg = Group({
     id: "Leg",
@@ -186,4 +200,18 @@ function Leg(): Shape {
   });
 
   return leg;
+}
+
+function setLegSegmentRotationCurl(degrees: number, segmentParent: GroupShape) {
+  segmentParent.children.forEach((child) => {
+    if (child.type === "group") {
+      child.rotation.z = degrees;
+      setLegSegmentRotationCurl(degrees, child);
+    }
+  });
+}
+
+function pingPongTime(scaleFactor: number): number {
+  const timeInSeconds = (performance.now() / 1000) * scaleFactor;
+  return Math.sin((timeInSeconds * Math.PI) / 1); // Half period for 2 seconds
 }

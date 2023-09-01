@@ -106,7 +106,7 @@ export function getLighting(lighting: LightingChoice): {
 
 export type CameraChoice = "front" | "isometric" | "front-tilted"; //| "cabinet" ;
 
-export function getCamera(choice: CameraChoice) {
+export function getCamera(choice: CameraChoice, zoom: number = 1) {
   const camera = Camera();
 
   const viewport: Viewport = {
@@ -124,9 +124,9 @@ export function getCamera(choice: CameraChoice) {
 
     camera.projectionMatrix.makeOrthographic(
       0,
-      viewport.width,
+      viewport.width / zoom,
       0,
-      viewport.height,
+      viewport.height / zoom,
       0,
       10000
     );
