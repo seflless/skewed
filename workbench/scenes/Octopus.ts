@@ -31,8 +31,8 @@ export default function () {
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;
 
-    // const cameraSpeed = 0.2;
-    const cameraSpeed = 0.0;
+    const cameraSpeed = 0.1;
+    // const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     // Animate the legs in a spiral pattern
@@ -71,8 +71,10 @@ export function Octopus(props: Partial<TransformProperties>) {
   const eyes = Group({
     id: "Eyes",
     children: [
-      // Eye({ position: Vector3(200, 0, 0) }),
-      // Eye({ position: Vector3(-200, 0, 0) }),
+      Eye(Vector3(50, 0, 150)),
+      Eye(Vector3(-50, 0, 150)),
+      // Box({ position: Vector3(100, 0, 0) }),
+      // Box({ position: Vector3(-100, 0, 0) }),
       // Eye({ position: Vector3(200, 0, 0) }),
       // Group({ children: [Eye({ position: Vector3(50, 0, 0) })] }),
       // Group({ children: [Eye({ position: Vector3(500, 0, 0) })] }),
@@ -94,6 +96,7 @@ export function Octopus(props: Partial<TransformProperties>) {
   });
 
   const legCount = 8;
+  // const legCount = 0;
   for (let i = 0; i < legCount; i++) {
     const leg = Leg();
     group.children.push(leg);
@@ -111,25 +114,44 @@ export function Octopus(props: Partial<TransformProperties>) {
   return group;
 }
 
-function Eye(transformProps: Partial<TransformProperties>): Shape {
+function Eye(position: Vector3): Shape {
   const eye = Group({
-    ...transformProps,
+    // position,
+    rotation: Vector3(-10, 0, 0),
   });
   const eyeWhites = Cylinder({
+    position,
     radius: 30,
-    rotation: Vector3(45, 0, 0),
+    rotation: Vector3(90, 0, 0),
     fill: Color(255, 255, 255),
     stroke: Color(0, 0, 0, 0),
     height: 10,
   });
+  const pupil = Cylinder({
+    position: position.clone().add(Vector3(0, 0, 10)),
+    radius: 15,
+    rotation: Vector3(90, 0, 0),
+    fill: Color(0, 0, 0),
+    stroke: Color(0, 0, 0, 0),
+    height: 10,
+  });
+  // const eyeWhites = Box({
+  //   position,
+  //   rotation: Vector3(90, 0, 0),
+  //   scale: 0.5,
+  //   fill: Color(255, 255, 255),
+  //   stroke: Color(0, 0, 0, 0),
+  //   height: 10,
+  // });
 
   eye.children.push(eyeWhites);
+  eye.children.push(pupil);
 
   return eye;
 }
 
 function Leg(): GroupShape {
-  const heights = [200, 170, 150, 100, 80].map((a) => a * 0.7);
+  const heights = [200, 170, 150, 120, 100].map((a) => a * 0.7);
   const leg = Group({
     id: "Leg",
     children: [
