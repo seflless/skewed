@@ -206,3 +206,11 @@ export function getGrid() {
     strokeWidth: 4,
   });
 }
+
+let paused = false;
+export function setPaused(pause: boolean) {
+  paused = pause;
+}
+export function getPaused() {
+  return paused;
+}
