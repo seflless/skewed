@@ -67,11 +67,11 @@ export function render(
 
   allShapePositions.sort((positionA, positionB) => {
     const a =
-      positionA.shape.sortCategory === "floor"
+      positionA.shape.sortCategory === "background"
         ? -1000
         : cameraDirection.dotProduct(positionA.position);
     const b =
-      positionB.shape.sortCategory === "floor"
+      positionB.shape.sortCategory === "background"
         ? -1000
         : cameraDirection.dotProduct(positionB.position);
 
@@ -148,20 +148,24 @@ function generateWorldTransforms(
 
 function collectShapes(
   shapes: Shape[],
-  list: { shape: Shape; sortCategory: "floor" | "default" }[] = [],
-  sortCategory: "floor" | "default" = "default"
+  list: { shape: Shape; sortCategory: "background" | "default" }[] = [],
+  sortCategory: "background" | "default" = "default"
 ) {
   for (let shape of shapes) {
+    const isBackground =
+      sortCategory === "background" ||
+      shape.id === "background" ||
+      shape.type === "grid";
     if (shape.type === "group" || shape.type === "grid") {
       collectShapes(
         shape.children,
         list,
-        shape.id === "floor" ? "floor" : "default"
+        isBackground ? "background" : "default"
       );
     } else {
       list.push({
         shape,
-        sortCategory: shape.id === "floor" ? "floor" : "default",
+        sortCategory: isBackground ? "background" : "default",
       });
     }
   }

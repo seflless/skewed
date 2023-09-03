@@ -211,7 +211,7 @@ export function getEnvironment(environment: Environment = "grid"): Shape {
     case "grid":
       document.body.style.backgroundColor = "#e1e1e1";
       return Grid({
-        id: "floor",
+        id: "background",
         rotation: Vector3(0, 0, 0),
         cellCount: 10,
         cellSize: 100,
@@ -222,7 +222,7 @@ export function getEnvironment(environment: Environment = "grid"): Shape {
     case "white-floor":
       document.body.style.backgroundColor = "rgb(32,32,32)";
       return Box({
-        id: "floor",
+        id: "background",
         width: 1000,
         height: 30,
         depth: 1000,

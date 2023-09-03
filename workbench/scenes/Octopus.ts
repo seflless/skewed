@@ -36,13 +36,13 @@ export default function () {
     const deltaTime = Math.max(0.0001, now - lastRenderTime);
     lastRenderTime = now;
 
-    const cameraSpeed = 0.1;
-    // const cameraSpeed = 0.0;
+    // const cameraSpeed = 0.1;
+    const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     // Animate the legs in a spiral pattern
-    const legRotationSpeedPerSecond = 0.5;
-    const maxLegCurlDegreesAbsolute = 40;
+    const legRotationSpeedPerSecond = 1.0;
+    const maxLegCurlDegreesAbsolute = 15;
     const legCurlDegrees =
       maxLegCurlDegreesAbsolute * pingPongTime(legRotationSpeedPerSecond);
     // maxLegCurlDegreesAbsolute;

@@ -8,21 +8,22 @@ import {
   Group,
   Grid,
   Color,
+  SphereShape,
 } from "../../src/index";
 import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
 
 export default function () {
   const scene: Scene = {
     ...getLighting("moonlit"),
-    shapes: [getEnvironment()],
+    shapes: [getEnvironment("white-floor")],
   };
 
-  const spheres: Shape = [];
+  const spheres: SphereShape[] = [];
   const sphereCount = 100;
   for (let i = 0; i < sphereCount; i++) {
     const sphere = Sphere({
       radius: 30,
-      fill: Color(255, 255, 255),
+      fill: Color(255, 128, 255),
       position: Vector3(i * 100, 0, 0),
       strokeWidth: 0,
     });
@@ -49,7 +50,7 @@ export default function () {
       const degreeOffet = (index / sphereCount) * 360;
       const finalDegree = degreeOffet + percent * 360;
 
-      sphere.position.x = Math.sin((finalDegree / 180) * Math.PI) * 20;
+      sphere.position.x = Math.sin((finalDegree / 180) * Math.PI) * 40;
       sphere.position.y = sphere.radius;
       sphere.position.z = (index * 400) / (sphereCount - 1) - 200;
     });
