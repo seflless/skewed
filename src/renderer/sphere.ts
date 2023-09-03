@@ -1,5 +1,7 @@
 // All of this code is based on this early prototype:
 // https://codesandbox.io/s/directionally-lit-sphere-using-svg-radial-gradients-c32ncz?file=/src/Sphere.tsx:2108-4852
+// and this Observable Notebook
+// https://observablehq.com/d/011f054fc7eaf966
 
 import { projectToScreenCoordinate } from "../cameras/Camera";
 import { ColorToCSS } from "../colors/Color";
@@ -42,6 +44,10 @@ export function renderSphere(
   inverseCameraMatrix
     .extractRotation()
     .applyToVector3(directionalLightInCameraSpace);
+
+  // I like thinking about the light in terms of a position when
+  // calculating cycleAngle/rotationAngle as that's how the original prototype worked
+  const lightPosition = scene.directionalLight.direction.clone().multiply(100);
 
   let cycleAngle = Math.abs(directionalLightInCameraSpace.x * 90);
   let rotationAngle = 0;
