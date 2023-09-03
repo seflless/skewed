@@ -6,8 +6,8 @@ import Spheres from "./scenes/Spheres";
 import Worm from "./scenes/Worm";
 import { getPaused, setPaused } from "./Settings";
 
-KitchenSink();
-// Transforms();
+// KitchenSink();
+Transforms();
 // Octopus();
 // Spheres();
 // Worm();

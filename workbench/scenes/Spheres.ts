@@ -9,7 +9,7 @@ import {
   Grid,
   Color,
 } from "../../src/index";
-import { getCamera, getGrid, getLighting, getPaused } from "../Settings";
+import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
 
 export default function () {
   const scale = 0.3;
@@ -45,7 +45,7 @@ function addSphereScene(lightDirection: Vector3, scale: number, title: string) {
   const scene: Scene = {
     ...getLighting("moonlit"),
     shapes: [
-      getGrid(),
+      getEnvironment(),
       sphere,
       lightBall,
       // Sphere({

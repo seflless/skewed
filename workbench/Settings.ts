@@ -1,8 +1,11 @@
 import {
+  Box,
   Camera,
   Color,
   DirectionalLight,
   Grid,
+  Group,
+  Shape,
   Vector3,
   Viewport,
 } from "../src";
@@ -196,15 +199,41 @@ export function getCamera(choice: CameraChoice, zoom: number = 1) {
   };
 }
 
-export function getGrid() {
-  return Grid({
-    rotation: Vector3(0, 0, 0),
-    cellCount: 10,
-    cellSize: 100,
-    fill: Color(0, 0, 0, 0),
-    stroke: Color(0, 0, 0),
-    strokeWidth: 4,
-  });
+export type Environment = "none" | "underwater" | "grid" | "white-floor";
+
+export function getEnvironment(environment: Environment = "grid"): Shape {
+  switch (environment) {
+    case "none":
+      return Group({});
+    case "underwater":
+      document.body.style.backgroundColor = "#104A8A";
+      return Group({});
+    case "grid":
+      document.body.style.backgroundColor = "#e1e1e1";
+      return Grid({
+        id: "floor",
+        rotation: Vector3(0, 0, 0),
+        cellCount: 10,
+        cellSize: 100,
+        fill: Color(0, 0, 0, 0),
+        stroke: Color(0, 0, 0),
+        strokeWidth: 4,
+      });
+    case "white-floor":
+      document.body.style.backgroundColor = "rgb(32,32,32)";
+      return Box({
+        id: "floor",
+        width: 1000,
+        height: 30,
+        depth: 1000,
+        fill: Color(255, 255, 255),
+        stroke: Color(0, 0, 0),
+        strokeWidth: 2,
+      });
+      break;
+    default:
+      throw new Error("Unknown environment");
+  }
 }
 
 let paused = false;

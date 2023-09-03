@@ -9,17 +9,17 @@ import {
   Grid,
   Color,
 } from "../../src/index";
-import { getCamera, getGrid, getLighting, getPaused } from "../Settings";
+import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
 
 export default function () {
   const scene: Scene = {
     ...getLighting("moonlit"),
     shapes: [
-      getGrid(),
+      getEnvironment("white-floor"),
 
       Group({
         position: Vector3(-450, 50, -450),
-        rotation: Vector3(22, 0, 0),
+        rotation: Vector3(0, 0, 0),
         scale: 1,
         children: [
           Box({
@@ -28,7 +28,7 @@ export default function () {
           }),
           Group({
             position: Vector3(200, 0, 0),
-            rotation: Vector3(22, 0, 0),
+            rotation: Vector3(0, 0, 0),
             scale: 1,
             children: [
               Box({
@@ -36,7 +36,7 @@ export default function () {
               }),
               Group({
                 position: Vector3(200, 0, 0),
-                rotation: Vector3(22, 0, 0),
+                rotation: Vector3(0, 0, 0),
                 scale: 1,
                 children: [
                   Box({

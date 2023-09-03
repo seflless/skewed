@@ -12,13 +12,13 @@ import {
   GroupShape,
   Shape,
 } from "../../src/index";
-import { getCamera, getGrid, getLighting, getPaused } from "../Settings";
+import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
 
 export default function () {
   const octopus = Octopus({});
   const scene: Scene = {
-    ...getLighting("moonlit"),
-    shapes: [getGrid(), octopus],
+    ...getLighting("reference"),
+    shapes: [getEnvironment("underwater"), octopus],
   };
 
   // const { viewport, camera, updateCamera } = getCamera("front");
@@ -59,7 +59,7 @@ export default function () {
   renderLoop();
 }
 
-const BodyColor = Color(99, 99, 194);
+const BodyColor = Color(128, 64, 128);
 
 const LegSegmentLength = 200;
 const LegShrinkFactor = 0.4;
