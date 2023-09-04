@@ -94,25 +94,31 @@ export function renderSphere(
   //   `cycleAngle: ${cycleAngle}, x: ${directionalLightInCameraSpace.x}, y: ${directionalLightInCameraSpace.y}, z: ${directionalLightInCameraSpace.z}`
   // );
 
-  if (directionalLightInCameraSpace.x < 0) {
-    // rotationAngle += 180;
-  }
-  // directionalLightInCameraSpace.x < 0
-  //   ? 90 - Math.abs(directionalLightInCameraSpace.x * 90)
-  //   : directionalLightInCameraSpace.x * 90;
-
-  sphereLightSide(
-    scene,
-    svg,
-    defs,
-    sphere,
-    viewport,
-    worldTransform,
-    cameraZoom,
-    inverseAndProjectionMatrix,
-    cycleAngle,
-    rotationAngle
-  );
+  cycleAngle <= 90 || cycleAngle >= 270
+    ? sphereLightSide(
+        scene,
+        svg,
+        defs,
+        sphere,
+        viewport,
+        worldTransform,
+        cameraZoom,
+        inverseAndProjectionMatrix,
+        cycleAngle,
+        rotationAngle
+      )
+    : sphereDarkSide(
+        scene,
+        svg,
+        defs,
+        sphere,
+        viewport,
+        worldTransform,
+        cameraZoom,
+        inverseAndProjectionMatrix,
+        cycleAngle,
+        rotationAngle
+      );
 }
 
 function sphereLightSide(
@@ -262,19 +268,6 @@ function sphereLightSide(
     radialGradient.appendChild(stopElement);
   }
 
-  //   <radialGradient
-  //             id={fillUuid}
-  //             cx={0}
-  //             cy={0}
-  //             r={1}
-  //             gradientUnits="userSpaceOnUse"
-  //             gradientTransform={`translate(${translate.x} ${
-  //               translate.y
-  //             }) rotate(${-rotationAngle}) scale(${scale.x} ${scale.y})`}
-  //           >
-  //             {gradientStops}
-  //           </radialGradient>,
-
   defs.appendChild(radialGradient);
 
   svg.appendChild(circle);
@@ -292,105 +285,183 @@ function calculateVerticalRadius(
   return Math.sqrt((y * y) / factor);
 }
 
-// function LightSide({
-//     x,
-//     y,
-//     cycleAngle,
-//     surfaceColor,
-//     ambientLightColor,
-//     rotationAngle
-//   }: SphereProps) {
-//     // We do all logic assuming the light is from the center to the right below.
-//     // When cycleRange is over 270, we treat it the same by adjusting the angles here
-//     // so that the rotationAngle causes the lighting to flip/mirror
-//     if (cycleAngle > 270) {
-//       cycleAngle = 90 - (cycleAngle - 270);
-//       rotationAngle += 180;
-//     }
+function sphereDarkSide(
+  scene: Scene,
+  svg: SVGElement,
+  defs: SVGDefsElement,
+  sphere: SphereShape,
+  viewport: Viewport,
+  worldTransform: Matrix4x4,
+  cameraZoom: number,
+  inverseAndProjectionMatrix: Matrix4x4,
+  cycleAngle: number,
+  rotationAngle: number
+) {
+  let adjustedCycleAngle = cycleAngle;
+  let adjustedRotationAngle = rotationAngle;
 
-//     const Radius = 80;
-//     const count = Radius;
+  // Non-mirrored
+  if (cycleAngle >= 90 && cycleAngle <= 180) {
+    adjustedCycleAngle = adjustedCycleAngle - 90;
+  }
+  // // Mirrored
+  else {
+    adjustedCycleAngle = 270 - cycleAngle;
+    adjustedRotationAngle -= 180;
+  }
 
-//     const Width = Radius * 2;
-//     const Height = Radius * 2;
-//     const uuid = useMemo(() => crypto.randomUUID(), []);
+  if (Debug) {
+    console.log(
+      `DarkSide: cycleAngle = ${cycleAngle}, adjustedCycleAngle = ${adjustedCycleAngle} rotationAngle =${rotationAngle}, adjustedRotationAngle = ${adjustedRotationAngle}`
+    );
+  }
+  cycleAngle = adjustedCycleAngle;
+  rotationAngle = adjustedRotationAngle;
 
-//     const size = Debug ? 0.01 : 0.0;
-//     const gradientStops = [];
-//     gradientStops.push(<stop key={1000} offset={0.0} stopColor={"red"} />);
-//     gradientStops.push(<stop key={1001} offset={size} stopColor={"red"} />);
-//     for (let i = 0; i <= count; i++) {
-//       const normalized = i / count;
-//       const angle = (normalized * Math.PI) / 2;
-//       // const brightness = Math.cos(angle);
-//       // const offset = Math.sin(angle);
+  const sphereScale = worldTransform.getScale().x;
+  const sphereScaleFactor = sphereScale * cameraZoom;
 
-//       const brightness = Math.cos(angle);
-//       const offset = Math.sin(angle);
+  const Radius = sphere.radius * sphereScaleFactor;
+  const Count = Radius;
 
-//       gradientStops.push(
-//         <stop
-//           key={i}
-//           offset={offset * (1.0 - size) + size}
-//           stopColor={applyLighting(surfaceColor, ambientLightColor, brightness)}
-//         />
-//       );
-//     }
+  const Circumference = Radius * 2;
+  const Width = Radius * 2;
+  const Height = Radius * 2;
+  const uuid = crypto.randomUUID();
 
-//     const offsetX = Math.sin((cycleAngle / 180) * Math.PI) * Radius;
-//     const translateX =
-//       Math.cos((-rotationAngle / 180) * Math.PI) * offsetX + Radius;
-//     const translateY =
-//       Math.sin((-rotationAngle / 180) * Math.PI) * offsetX + Radius;
+  // Add debug red dot/ring
+  const size = Debug ? 0.01 / 2 : 0.0;
+  const gradientStops = [];
+  gradientStops.push({ offset: 0.0, stopColor: "red" });
+  gradientStops.push({ offset: size, stopColor: "red" });
 
-//     // const lightCenterX = Math.sin((cycleAngle / 180) * Math.PI) * Radius;
-//     const shadowEdgeX = Math.sin(((cycleAngle - 90) / 180) * Math.PI) * Radius;
-//     // const shadowEdgeX = -(Radius - lightCenterX);
-//     const translate: Vector2 = {
-//       x: translateX + Radius,
-//       y: translateY + Radius
-//     };
-//     const horizontalScale = offsetX - shadowEdgeX;
-//     const verticalScale = calculateVerticalRadius(
-//       horizontalScale,
-//       -offsetX,
-//       Radius
-//     );
-//     const scale: Vector2 = { x: horizontalScale, y: verticalScale };
+  // Inner half of gradient is pure black, then after that fades from black to
+  // white
+  gradientStops.push({
+    offset: size,
+    stopColor: applyLighting(
+      scene.directionalLight.color,
+      sphere.fill,
+      scene.ambientLightColor,
+      0
+    ),
+  });
+  gradientStops.push({
+    offset: 0.5,
+    stopColor: applyLighting(
+      scene.directionalLight.color,
+      sphere.fill,
+      scene.ambientLightColor,
+      0
+    ),
+  });
 
-//     const fillUuid = uuid + "-fill";
-//     const fillUrl = `url(#${fillUuid})`;
+  for (let i = 0; i <= Count; i++) {
+    const normalized = i / Count;
+    const angle = (normalized * Math.PI) / 2;
 
-//     return (
-//       <>
-//         {createPortal(
-//           <circle
-//             cx={x}
-//             cy={y}
-//             r={Radius}
-//             fill={fillUrl}
-//             filter="url(#fresnel)"
-//             // stroke="rgb(64,64,128)"
-//             // stroke-width="3"
-//           />,
-//           document.getElementById("svg-root")
-//         )}
+    let brightness = Math.max(0, Math.sin(angle));
 
-//         {createPortal(
-//           <radialGradient
-//             id={fillUuid}
-//             cx={0}
-//             cy={0}
-//             r={1}
-//             gradientUnits="userSpaceOnUse"
-//             gradientTransform={`translate(${translate.x} ${
-//               translate.y
-//             }) rotate(${-rotationAngle}) scale(${scale.x} ${scale.y})`}
-//           >
-//             {gradientStops}
-//           </radialGradient>,
-//           document.getElementById("svg-refs")
-//         )}
-//       </>
-//     );
-//   }
+    const offset = Math.cos((normalized * Math.PI) / 2 + Math.PI) + 1.0;
+
+    gradientStops.push({
+      offset: offset / 2 + 0.5,
+      stopColor: applyLighting(
+        scene.directionalLight.color,
+        sphere.fill,
+        scene.ambientLightColor,
+        brightness
+      ),
+    });
+  }
+
+  // Calculate center coordinates of the gradient
+  const offsetX = (Math.cos(((cycleAngle + 180) / 180) * Math.PI) + 1) * Radius;
+
+  const translate = {
+    x:
+      -Math.cos((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
+      Radius +
+      Radius,
+    y:
+      -Math.sin((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
+      Radius +
+      Radius,
+  };
+
+  const { x, y } = projectToScreenCoordinate(
+    worldTransform.getTranslation(),
+    inverseAndProjectionMatrix,
+    viewport
+  );
+
+  // Calculate horizontal/vertical scales
+  const shadowEdgeX = Math.sin((cycleAngle / 180) * Math.PI) * Radius + Radius;
+  const horizontalScale = offsetX - shadowEdgeX;
+  const verticalScale = calculateVerticalRadius(
+    horizontalScale,
+    -(Radius - offsetX),
+    Radius
+  );
+  const scale = { x: horizontalScale, y: verticalScale };
+
+  if (Debug) {
+    console.log(
+      `DarkSide: offsetX = ${offsetX}, shadowEdgeX = ${shadowEdgeX}, cycleAngle = ${cycleAngle}`
+    );
+  }
+
+  const fillUuid = uuid + "-fill";
+  const fillUrl = `url(#${fillUuid})`;
+
+  // Create a 'circle' element
+  const circle = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "circle"
+  );
+
+  circle.id = "sphere";
+  circle.setAttribute("cx", x.toString());
+  circle.setAttribute("cy", y.toString());
+
+  // TODO: Factor in camera projection matrix, this currectly
+  // ignores all zoom factors. Can we even handle skew with sphere?!
+  // I don't think we can.
+  circle.setAttribute("r", Radius.toString());
+
+  circle.setAttribute("fill", fillUrl);
+
+  if (sphere.strokeWidth && sphere.stroke.a > 0.0) {
+    circle.setAttribute("stroke", ColorToCSS(sphere.stroke));
+
+    if (sphere.strokeWidth !== 1.0) {
+      circle.setAttribute(
+        "stroke-width",
+        (sphere.strokeWidth * sphereScaleFactor).toString()
+      );
+    }
+  }
+
+  // Radial gradient
+  // Create the 'radialGradient' element
+  const radialGradient = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "radialGradient"
+  );
+
+  radialGradient.setAttribute("id", fillUuid);
+  radialGradient.setAttribute("cx", "0");
+  radialGradient.setAttribute("cy", "0");
+  radialGradient.setAttribute("r", "1");
+  radialGradient.setAttribute("gradientUnits", "userSpaceOnUse");
+  radialGradient.setAttribute(
+    "gradientTransform",
+    `translate(${translate.x} ${translate.y}) rotate(${-rotationAngle}) scale(${
+      scale.x * 2
+    } ${scale.y * 2})`
+  );
+
+  defs.appendChild(radialGradient);
+
+  svg.appendChild(circle);
+}
