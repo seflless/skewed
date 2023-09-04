@@ -9,7 +9,13 @@ import {
   Grid,
   Color,
 } from "../../src/index";
-import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
+import {
+  getCamera,
+  getEnvironment,
+  getLighting,
+  getPaused,
+  onUpdate,
+} from "../Settings";
 
 export default function () {
   const scene: Scene = {
@@ -53,23 +59,10 @@ export default function () {
 
   const { viewport, camera, updateCamera } = getCamera("isometric");
 
-  let lastRenderTime = performance.now() / 1000;
-
-  function renderLoop() {
-    if (getPaused()) {
-      requestAnimationFrame(renderLoop);
-      return;
-    }
-
-    const now = performance.now() / 1000;
-    const deltaTime = Math.max(0.0001, now - lastRenderTime);
-    lastRenderTime = now;
-
+  onUpdate(({ now, deltaTime }) => {
     const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     render(document.getElementById("root")!, scene, viewport, camera);
-    requestAnimationFrame(renderLoop);
-  }
-  renderLoop();
+  });
 }

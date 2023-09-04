@@ -1,3 +1,4 @@
+import { on } from "events";
 import {
   Box,
   Camera,
@@ -236,10 +237,40 @@ export function getEnvironment(environment: Environment = "grid"): Shape {
   }
 }
 
+let lastUpdateTime: number | undefined = undefined;
+let simTime = 0;
+function getSimTimeInSeconds() {
+  return simTime;
+}
+
 let paused = false;
 export function setPaused(pause: boolean) {
   paused = pause;
+  if (paused) {
+    lastUpdateTime = undefined;
+  }
 }
 export function getPaused() {
   return paused;
+}
+
+export function onUpdate(
+  updateCallback: (time: { now: number; deltaTime: number }) => void
+): void {
+  const onUpdateLoop = () => {
+    if (!paused) {
+      const now = performance.now() / 1000;
+      if (lastUpdateTime === undefined) {
+        lastUpdateTime = now;
+      }
+      const deltaTime = now - lastUpdateTime;
+      lastUpdateTime = now;
+      simTime += deltaTime;
+
+      updateCallback({ now: simTime, deltaTime });
+    }
+
+    requestAnimationFrame(onUpdateLoop as unknown as FrameRequestCallback);
+  };
+  onUpdateLoop();
 }

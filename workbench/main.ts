@@ -8,9 +8,9 @@ import { getPaused, setPaused } from "./Settings";
 
 // KitchenSink();
 // Transforms();
-Octopus();
+// Octopus();
 // Spheres();
-// Worm();
+Worm();
 
 document
   .getElementById("copy-svg")

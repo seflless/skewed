@@ -12,7 +12,13 @@ import {
   GroupShape,
   Shape,
 } from "../../src/index";
-import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
+import {
+  getCamera,
+  getEnvironment,
+  getLighting,
+  getPaused,
+  onUpdate,
+} from "../Settings";
 
 export default function () {
   const octopus = Octopus({});
@@ -24,18 +30,7 @@ export default function () {
   // const { viewport, camera, updateCamera } = getCamera("front");
   const { viewport, camera, updateCamera } = getCamera("isometric");
 
-  let lastRenderTime = performance.now() / 1000;
-
-  function renderLoop() {
-    if (getPaused()) {
-      requestAnimationFrame(renderLoop);
-      return;
-    }
-
-    let now = performance.now() / 1000;
-    const deltaTime = Math.max(0.0001, now - lastRenderTime);
-    lastRenderTime = now;
-
+  onUpdate(({ now, deltaTime }) => {
     // const cameraSpeed = 0.1;
     const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
@@ -44,7 +39,7 @@ export default function () {
     const legRotationSpeedPerSecond = 1.0;
     const maxLegCurlDegreesAbsolute = 15;
     const legCurlDegrees =
-      maxLegCurlDegreesAbsolute * pingPongTime(legRotationSpeedPerSecond);
+      maxLegCurlDegreesAbsolute * pingPongTime(legRotationSpeedPerSecond, now);
     // maxLegCurlDegreesAbsolute;
     // console.log(legCurlDegrees);
     octopus.children
@@ -54,9 +49,7 @@ export default function () {
       });
 
     render(document.getElementById("root")!, scene, viewport, camera);
-    requestAnimationFrame(renderLoop);
-  }
-  renderLoop();
+  });
 }
 
 const BodyColor = Color(128, 64, 128);
@@ -238,7 +231,7 @@ function setLegSegmentRotationCurl(degrees: number, segmentParent: GroupShape) {
   });
 }
 
-function pingPongTime(scaleFactor: number): number {
-  const timeInSeconds = (performance.now() / 1000) * scaleFactor;
+function pingPongTime(scaleFactor: number, now: number): number {
+  const timeInSeconds = now * scaleFactor;
   return Math.sin((timeInSeconds * Math.PI) / 1); // Half period for 2 seconds
 }

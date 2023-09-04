@@ -19,7 +19,13 @@ import {
 import { svgPathParser } from "../../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../../src/svg/svg3d";
 import { Octopus } from "./Octopus";
-import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
+import {
+  getCamera,
+  getEnvironment,
+  getLighting,
+  getPaused,
+  onUpdate,
+} from "../Settings";
 
 export default function () {
   // From this 1 diameter circle flattened into a path in Figma, exported as an SVG file, then copy/pasting out the path string
@@ -227,20 +233,20 @@ export default function () {
         strokeWidth: 0.0,
       }),
     },
-    {
-      center: Vector3(200, 0, 0),
-      shape: Cylinder({
-        position: Vector3(400, 0, 100),
-        rotation: Vector3(0, 0, 0),
-        scale: 1.0,
-        radius: 55,
-        height: 1,
-        segments: 180,
-        fill: Color(0, 0, 0, 0.5),
-        stroke: Color(0, 0, 0, 0),
-        strokeWidth: 0.0,
-      }),
-    },
+    // {
+    //   center: Vector3(200, 0, 0),
+    //   shape: Cylinder({
+    //     position: Vector3(400, 0, 100),
+    //     rotation: Vector3(0, 0, 0),
+    //     scale: 1.0,
+    //     radius: 55,
+    //     height: 1,
+    //     segments: 180,
+    //     fill: Color(0, 0, 0, 0.5),
+    //     stroke: Color(0, 0, 0, 0),
+    //     strokeWidth: 0.0,
+    //   }),
+    // },
   ];
   const shadowShapes = shadows.map((shadow) => shadow.shape);
 
@@ -287,13 +293,13 @@ export default function () {
         stroke: Color(0, 0, 0),
         strokeWidth: boxStrokeWidth,
       }),
-      Sphere({
-        position: Vector3(200, 70, 0),
-        radius: 70,
-        fill: Color(255, 128, 0),
-        stroke: Color(0, 0, 0, 1),
-        strokeWidth: 5,
-      }),
+      // Sphere({
+      //   position: Vector3(200, 70, 0),
+      //   radius: 70,
+      //   fill: Color(255, 128, 0),
+      //   stroke: Color(0, 0, 0, 1),
+      //   strokeWidth: 5,
+      // }),
       // sphereScaleTestGroup,
       transparentGreenBox,
       tallBlueBox,
@@ -308,21 +314,7 @@ export default function () {
 
   const { viewport, camera, updateCamera } = getCamera("isometric");
 
-  let lastRenderTime = performance.now() / 1000;
-
-  let renderCount = 0;
-  function renderLoop() {
-    if (getPaused()) {
-      requestAnimationFrame(renderLoop);
-      return;
-    }
-    // if (renderCount++ > 2) {
-    //   return;
-    // }
-    const now = performance.now() / 1000;
-    const deltaTime = Math.max(0.0001, now - lastRenderTime);
-    lastRenderTime = now;
-
+  onUpdate(({ now, deltaTime }) => {
     const cameraSpeed = 0.0;
     // const cameraSpeed = 0.25;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
@@ -361,7 +353,7 @@ export default function () {
     const cylinderScaleSpeed = 0.25;
     const cylinderTranslationSpeed = 1;
     // cylinder.rotation.x = 90;
-    // cylinder.rotation.y = now * 360 * cylinderRotationSpeed;
+    // cylinder.rotation.z = now * 360 * cylinderRotationSpeed;
 
     const boxRotationSpeed = 0.25;
     // transparentBox.rotation.y = now * 360 * boxRotationSpeed;
@@ -418,7 +410,5 @@ export default function () {
       }
     }
     render(document.getElementById("root")!, scene, viewport, camera);
-    requestAnimationFrame(renderLoop);
-  }
-  renderLoop();
+  });
 }

@@ -9,7 +9,13 @@ import {
   Grid,
   Color,
 } from "../../src/index";
-import { getCamera, getEnvironment, getLighting, getPaused } from "../Settings";
+import {
+  getCamera,
+  getEnvironment,
+  getLighting,
+  getPaused,
+  onUpdate,
+} from "../Settings";
 
 export default function () {
   const scale = 0.3;
@@ -68,26 +74,12 @@ function addSphereScene(lightDirection: Vector3, scale: number, title: string) {
 
   const { viewport, camera, updateCamera } = getCamera("front", 10);
 
-  let lastRenderTime = performance.now() / 1000;
-
-  function renderLoop() {
-    if (getPaused()) {
-      requestAnimationFrame(renderLoop);
-      return;
-    }
-
-    const now = performance.now() / 1000;
-    const deltaTime = Math.max(0.0001, now - lastRenderTime);
-    lastRenderTime = now;
-
+  onUpdate(({ now, deltaTime }) => {
     const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     render(svgContainer, scene, viewport, camera);
     document.getElementById("root")!.appendChild(container);
     // render(document.getElementById("root")!, scene, viewport, camera);
-
-    requestAnimationFrame(renderLoop);
-  }
-  renderLoop();
+  });
 }
