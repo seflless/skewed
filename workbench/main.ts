@@ -3,14 +3,16 @@ import KitchenSink from "./scenes/KitchenSink";
 import Transforms from "./scenes/Transforms";
 import Octopus from "./scenes/Octopus";
 import Spheres from "./scenes/Spheres";
+import SingleSphere from "./scenes/SingleSphere";
 import Worm from "./scenes/Worm";
 import { getPaused, setPaused } from "./Settings";
 
-// KitchenSink();
+KitchenSink();
 // Transforms();
 // Octopus();
 // Spheres();
-Worm();
+// SingleSphere();
+// Worm();
 
 document
   .getElementById("copy-svg")

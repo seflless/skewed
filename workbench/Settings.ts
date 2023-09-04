@@ -108,7 +108,7 @@ export function getLighting(lighting: LightingChoice): {
   };
 }
 
-export type CameraChoice = "front" | "isometric" | "front-tilted"; //| "cabinet" ;
+export type CameraChoice = "front" | "top" | "isometric" | "front-tilted"; //| "cabinet" ;
 
 export function getCamera(choice: CameraChoice, zoom: number = 1) {
   const camera = Camera();
@@ -151,6 +151,11 @@ export function getCamera(choice: CameraChoice, zoom: number = 1) {
       switch (choice) {
         case "front":
           camera.matrix.makeTranslation(0, 0, 0);
+          break;
+        case "top":
+          camera.matrix.makeTranslation(0, 0, 0);
+
+          camera.matrix.makeRotationX(Math.PI / 2);
           break;
         case "isometric":
           {

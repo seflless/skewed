@@ -27,6 +27,28 @@ export function normalizeDegrees(degrees: number) {
   return adjustedDegrees;
 }
 
+function calculateRotationAngle(x: number, y: number) {
+  const angleInRadians = Math.atan2(-y, -x);
+  // Convert radians to degrees
+  const angleInDegrees = angleInRadians * (180 / Math.PI);
+
+  // Normalize the angle to be between 0 and 360
+  const normalizedAngle = (angleInDegrees + 360) % 360;
+
+  return normalizedAngle;
+}
+
+function calculateCycleAngle(x: number, z: number) {
+  const angleInRadians = Math.atan2(x, z);
+  // Convert radians to degrees
+  const angleInDegrees = angleInRadians * (180 / Math.PI);
+
+  // Normalize the angle to be between 0 and 360
+  const normalizedAngle = (angleInDegrees + 360) % 360;
+
+  return normalizedAngle;
+}
+
 export function renderSphere(
   scene: Scene,
   svg: SVGElement,
@@ -38,6 +60,9 @@ export function renderSphere(
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
+  if (sphere.id) {
+    console.log(sphere.id);
+  }
   // Convert the light direction into camera space (not projected into screen space)
   const directionalLightInCameraSpace =
     scene.directionalLight.direction.clone();
@@ -45,18 +70,36 @@ export function renderSphere(
     .extractRotation()
     .applyToVector3(directionalLightInCameraSpace);
 
-  // I like thinking about the light in terms of a position when
-  // calculating cycleAngle/rotationAngle as that's how the original prototype worked
-  const lightPosition = scene.directionalLight.direction.clone().multiply(100);
+  let rotationAngle = calculateRotationAngle(
+    -directionalLightInCameraSpace.x,
+    -directionalLightInCameraSpace.y
+  );
 
-  let cycleAngle = Math.abs(directionalLightInCameraSpace.x * 90);
-  let rotationAngle = 0;
+  // Rotate the normal to be in the horizontal plane of the sphere
+  const counterRotation = Matrix4x4().makeRotationZ(
+    (-rotationAngle / 180) * Math.PI
+  );
+  counterRotation.applyToVector3(directionalLightInCameraSpace);
+
+  let cycleAngle = calculateCycleAngle(
+    directionalLightInCameraSpace.x,
+    directionalLightInCameraSpace.z
+  );
+
+  // console.log(
+  //   `rotationAngle: ${rotationAngle}, x: ${directionalLightInCameraSpace.x}, y: ${directionalLightInCameraSpace.y}`
+  // );
+
+  // console.log(
+  //   `cycleAngle: ${cycleAngle}, x: ${directionalLightInCameraSpace.x}, y: ${directionalLightInCameraSpace.y}, z: ${directionalLightInCameraSpace.z}`
+  // );
+
   if (directionalLightInCameraSpace.x < 0) {
-    rotationAngle += 180;
+    // rotationAngle += 180;
   }
-  directionalLightInCameraSpace.x < 0
-    ? 90 - Math.abs(directionalLightInCameraSpace.x * 90)
-    : directionalLightInCameraSpace.x * 90;
+  // directionalLightInCameraSpace.x < 0
+  //   ? 90 - Math.abs(directionalLightInCameraSpace.x * 90)
+  //   : directionalLightInCameraSpace.x * 90;
 
   sphereLightSide(
     scene,
