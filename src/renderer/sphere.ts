@@ -375,6 +375,12 @@ function sphereDarkSide(
     });
   }
 
+  const { x, y } = projectToScreenCoordinate(
+    worldTransform.getTranslation(),
+    inverseAndProjectionMatrix,
+    viewport
+  );
+
   // Calculate center coordinates of the gradient
   const offsetX = (Math.cos(((cycleAngle + 180) / 180) * Math.PI) + 1) * Radius;
 
@@ -382,18 +388,14 @@ function sphereDarkSide(
     x:
       -Math.cos((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
       Radius +
-      Radius,
+      x -
+      Radius * 2,
     y:
       -Math.sin((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
       Radius +
-      Radius,
+      y -
+      Radius * 2,
   };
-
-  const { x, y } = projectToScreenCoordinate(
-    worldTransform.getTranslation(),
-    inverseAndProjectionMatrix,
-    viewport
-  );
 
   // Calculate horizontal/vertical scales
   const shadowEdgeX = Math.sin((cycleAngle / 180) * Math.PI) * Radius + Radius;
