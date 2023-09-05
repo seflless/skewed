@@ -39,15 +39,11 @@ function calculateRotationAngle(x: number, y: number) {
 }
 
 function calculateCycleAngle(x: number, z: number) {
-  const angleInRadians = Math.atan2(x, z);
-  // Convert radians to degrees
-  const angleInDegrees = angleInRadians * (180 / Math.PI);
-
-  // Normalize the angle to be between 0 and 360
-  const normalizedAngle = (angleInDegrees + 360) % 360;
-
-  return normalizedAngle;
+  const degrees = (calculateRotationAngle(x, -z) + 90) % 360;
+  return degrees;
 }
+
+(globalThis as any).calculateCycleAngle = calculateCycleAngle;
 
 export function renderSphere(
   scene: Scene,
@@ -61,7 +57,7 @@ export function renderSphere(
   inverseAndProjectionMatrix: Matrix4x4
 ) {
   if (sphere.id) {
-    console.log(sphere.id);
+    // console.log(sphere.id);
   }
   // Convert the light direction into camera space (not projected into screen space)
   const directionalLightInCameraSpace =
@@ -74,6 +70,7 @@ export function renderSphere(
     -directionalLightInCameraSpace.x,
     -directionalLightInCameraSpace.y
   );
+  // rotationAngle = 0;
 
   // Rotate the normal to be in the horizontal plane of the sphere
   const counterRotation = Matrix4x4().makeRotationZ(
@@ -85,7 +82,11 @@ export function renderSphere(
     directionalLightInCameraSpace.x,
     directionalLightInCameraSpace.z
   );
+  // let cycleAngle = 45;
 
+  console.log(
+    `cycleAngle: ${cycleAngle}, rotationAngle: ${rotationAngle}, directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x}, directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z}`
+  );
   // console.log(
   //   `rotationAngle: ${rotationAngle}, x: ${directionalLightInCameraSpace.x}, y: ${directionalLightInCameraSpace.y}`
   // );
@@ -387,15 +388,20 @@ function sphereDarkSide(
   const translate = {
     x:
       -Math.cos((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
-      Radius +
-      x -
-      Radius * 2,
+      Radius * 2 -
+      x,
     y:
       -Math.sin((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
-      Radius +
-      y -
-      Radius * 2,
+      Radius * 2 +
+      y / 2,
   };
+
+  // const translateX =
+
+  // const translateY =
+  //   -Math.sin((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
+  //   Radius +
+  //   Radius;
 
   // Calculate horizontal/vertical scales
   const shadowEdgeX = Math.sin((cycleAngle / 180) * Math.PI) * Radius + Radius;
@@ -458,10 +464,21 @@ function sphereDarkSide(
   radialGradient.setAttribute("gradientUnits", "userSpaceOnUse");
   radialGradient.setAttribute(
     "gradientTransform",
-    `translate(${translate.x} ${translate.y}) rotate(${-rotationAngle}) scale(${
-      scale.x * 2
-    } ${scale.y * 2})`
+    `translate(${translate.x + x} ${
+      translate.y - y
+    }) rotate(${-rotationAngle}) scale(${scale.x * 2} ${scale.y * 2})`
   );
+
+  for (let stop of gradientStops) {
+    const stopElement = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "stop"
+    );
+
+    stopElement.setAttribute("offset", stop.offset.toString());
+    stopElement.setAttribute("stop-color", stop.stopColor);
+    radialGradient.appendChild(stopElement);
+  }
 
   defs.appendChild(radialGradient);
 

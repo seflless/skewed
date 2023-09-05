@@ -36,21 +36,60 @@ export default function () {
         radius: referenceRadius,
         stroke: Color(0, 0, 0),
         strokeWidth: 0,
-        position: Vector3(0, referenceRadius / 2, 0),
+        position: Vector3(0, 0, 0),
       }),
+      lightSphere,
     ],
   };
 
-  const { viewport, camera, updateCamera } = getCamera("top");
+  const { viewport, camera, updateCamera } = getCamera("front");
+
+  document.addEventListener("pointermove", (event: PointerEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const diffX = event.clientX - centerX;
+    const diffY = event.clientY - centerY;
+    const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+
+    const distanceNormalized = distance / referenceRadius;
+    const degrees = distanceNormalized * 90;
+    //Math.cos(((distanceNormalized * 90) / 180) * Math.PI);
+    console.log(
+      degrees,
+      event.clientX,
+      event.clientY,
+      centerX,
+      centerY,
+      diffX,
+      diffY,
+      distance,
+      distanceNormalized
+    );
+
+    lightSphere.position.x =
+      Math.sin((degrees / 180) * Math.PI) * referenceRadius;
+    lightSphere.position.y = 0;
+    lightSphere.position.z =
+      Math.cos((degrees / 180) * Math.PI) * referenceRadius;
+
+    // const x = event.clientX;
+    // const z = event.clientY;
+    // lightSphere.position.y = 0;
+    // const x = event.clientX;
+    // const y = event.clientY;
+  });
 
   onUpdate(({ now, deltaTime }) => {
     updateCamera(0);
 
-    lightSphere.position.x =
-      Math.sin(now * Math.PI * 2 * lightSpeed) * lightDistance;
-    lightSphere.position.y = 0;
-    lightSphere.position.z =
-      Math.cos(now * Math.PI * 2 * lightSpeed) * lightDistance;
+    // lightSphere.position.x =
+    //   Math.sin(now * Math.PI * 2 * lightSpeed) * lightDistance;
+    // lightSphere.position.y = 0;
+    // lightSphere.position.z =
+    //   Math.cos(now * Math.PI * 2 * lightSpeed) * lightDistance;
 
     scene.directionalLight.direction = lightSphere.position
       .clone()
