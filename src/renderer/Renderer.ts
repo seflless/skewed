@@ -233,7 +233,7 @@ function renderMesh(
   );
 
   const directionalLightInShapeSpaceAndInverted =
-    scene.directionalLight.direction.clone();
+    scene.directionalLight.direction.clone().multiply(-1);
   shapeInverseRotationMatrix.applyToVector3(
     directionalLightInShapeSpaceAndInverted
   );

@@ -312,7 +312,7 @@ export default function () {
     ],
   };
 
-  const { viewport, camera, updateCamera } = getCamera("front");
+  const { viewport, camera, updateCamera } = getCamera("isometric");
 
   onUpdate(({ now, deltaTime }) => {
     const cameraSpeed = 0.0;
@@ -338,16 +338,10 @@ export default function () {
           (sphereRotationOffsetDegrees / 180) * Math.PI
       ) * spherePathRadius;
 
-    scene.directionalLight.direction.x = Math.sin(
-      now * Math.PI * 2 * sphereSpeed +
-        (sphereRotationOffsetDegrees / 180) * Math.PI
-    );
-    // scene.directionalLight.direction.y = 0.75;
-    scene.directionalLight.direction.z = Math.cos(
-      now * Math.PI * 2 * sphereSpeed +
-        (sphereRotationOffsetDegrees / 180) * Math.PI
-    );
-    scene.directionalLight.direction.normalize();
+    scene.directionalLight.direction = lightSphere.position
+      .clone()
+      .normalize()
+      .multiply(-1);
 
     const cylinderRotationSpeed = 0.25;
     const cylinderScaleSpeed = 0.25;
