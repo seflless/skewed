@@ -49,7 +49,7 @@ export default function () {
 
   const { viewport, camera, updateCamera } = getCamera("front");
 
-  document.addEventListener("pointermove", (event: PointerEvent) => {
+  const onPointerEvent = (event: PointerEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -75,7 +75,7 @@ export default function () {
     //   distanceNormalized
     // );
 
-    const spinMode: string = "y";
+    const spinMode: string = "z";
 
     if (spinMode === "y") {
       if (diffX < 0) {
@@ -85,11 +85,16 @@ export default function () {
       lightSphere.position.y = 0.0;
       // lightSphere.position.y = 0.5;
       lightSphere.position.z = Math.cos((degrees / 180) * Math.PI);
+
+      if (event.buttons === 1) {
+        console.log();
+        lightSphere.position.z *= -1;
+      }
     } else if (spinMode === "z") {
       lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
       lightSphere.position.y = Math.cos((degrees / 180) * Math.PI);
       // lightSphere.position.z = 0; //
-      lightSphere.position.z = 0.5; //
+      lightSphere.position.z = -0.5; //
     }
 
     lightSphere.position.normalize().multiply(referenceRadius);
@@ -99,7 +104,10 @@ export default function () {
     // lightSphere.position.y = 0;
     // const x = event.clientX;
     // const y = event.clientY;
-  });
+  };
+  document.addEventListener("pointerdown", onPointerEvent);
+  document.addEventListener("pointermove", onPointerEvent);
+  document.addEventListener("pointerup", onPointerEvent);
 
   onUpdate(({ now, deltaTime }) => {
     updateCamera(45, 20);

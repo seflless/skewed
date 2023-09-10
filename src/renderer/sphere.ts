@@ -12,7 +12,7 @@ import { SphereShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 
-const Debug = false;
+const Debug = true;
 
 // Assumes only values in the range [0,1]
 function dotProductToDegrees(dotProduct: number) {
@@ -115,29 +115,37 @@ export function renderSphere(
     );
   }
 
-  if (sphere.id) {
-    console.log(
-      `id: ${sphere.id}, 
-lightSideDotProduct: ${lightSideDotProduct},
-lightSideDotProductDegrees: ${dotProductToDegrees(lightSideDotProduct)},
-darkSideLightProduct: ${lightSideDotProduct},
-darkSideLightProductDegrees: ${90 - dotProductToDegrees(darkSideLightProduct)},
-cycleAngle: ${cycleAngle}, rotationAngle: ${rotationAngle}, 
-directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x.toFixed(1)},
-directionalLightInCameraSpace.y = ${directionalLightInCameraSpace.y.toFixed(1)},
-directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z.toFixed(1)}
-scene.directionalLight.direction.x = ${scene.directionalLight.direction.x.toFixed(
-        1
-      )}, 
-scene.directionalLight.direction.y = ${scene.directionalLight.direction.y.toFixed(
-        1
-      )},
-scene.directionalLight.direction.z = ${scene.directionalLight.direction.z.toFixed(
-        1
-      )}
-`
-    );
-  }
+  // if (sphere.id) {
+  //   console.log(
+  //     `id: ${sphere.id},
+  // lightSideDotProduct: ${lightSideDotProduct},
+  // lightSideDotProductDegrees: ${dotProductToDegrees(lightSideDotProduct)},
+  // darkSideLightProduct: ${darkSideLightProduct},
+  // darkSideLightProductDegrees: ${
+  //   90 - dotProductToDegrees(darkSideLightProduct)
+  // },
+  // cycleAngle: ${cycleAngle}, rotationAngle: ${rotationAngle},
+  // directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x.toFixed(
+  //   1
+  // )},
+  // directionalLightInCameraSpace.y = ${directionalLightInCameraSpace.y.toFixed(
+  //   1
+  // )},
+  // directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z.toFixed(
+  //   1
+  // )}
+  // scene.directionalLight.direction.x = ${scene.directionalLight.direction.x.toFixed(
+  //   1
+  // )},
+  // scene.directionalLight.direction.y = ${scene.directionalLight.direction.y.toFixed(
+  //   1
+  // )},
+  // scene.directionalLight.direction.z = ${scene.directionalLight.direction.z.toFixed(
+  //   1
+  // )}
+  // `
+  //   );
+  // }
 }
 
 function sphereLightSide(
@@ -296,6 +304,16 @@ function calculateVerticalRadius(
   return Math.sqrt((y * y) / factor);
 }
 
+function rotate(x: number, degrees: number) {
+  return {
+    x: Math.cos((-degrees / 180) * Math.PI) * x,
+    y: -Math.sin((-degrees / 180) * Math.PI) * x,
+  };
+}
+
+// @ts-ignore
+window.rotate = rotate;
+
 function sphereDarkSide(
   scene: Scene,
   svg: SVGElement,
@@ -314,9 +332,6 @@ function sphereDarkSide(
   const Radius = sphere.radius * sphereScaleFactor;
   const Count = Radius;
 
-  const Circumference = Radius * 2;
-  const Width = Radius * 2;
-  const Height = Radius * 2;
   const uuid = crypto.randomUUID();
 
   // Add debug red dot/ring
@@ -327,23 +342,19 @@ function sphereDarkSide(
 
   // Inner half of gradient is pure black, then after that fades from black to
   // white
+  const darkSideFillColor = applyLighting(
+    scene.directionalLight.color,
+    sphere.fill,
+    scene.ambientLightColor,
+    0
+  );
   gradientStops.push({
     offset: size,
-    stopColor: applyLighting(
-      scene.directionalLight.color,
-      sphere.fill,
-      scene.ambientLightColor,
-      0
-    ),
+    stopColor: darkSideFillColor,
   });
   gradientStops.push({
     offset: 0.5,
-    stopColor: applyLighting(
-      scene.directionalLight.color,
-      sphere.fill,
-      scene.ambientLightColor,
-      0
-    ),
+    stopColor: darkSideFillColor,
   });
 
   for (let i = 0; i <= Count; i++) {
@@ -352,9 +363,13 @@ function sphereDarkSide(
 
     let brightness = Math.max(0, Math.sin(angle));
 
+    // Calculate an offset value between [0,1]
+    // This uses the part of the cosine curve that accelerates quickly
+    // to match the brightness of the light side's gradient
     const offset = Math.cos((normalized * Math.PI) / 2 + Math.PI) + 1.0;
 
     gradientStops.push({
+      // Offset of [0,1] maps to the last half of the gradient [0.5,1]
       offset: offset / 2 + 0.5,
       stopColor: applyLighting(
         scene.directionalLight.color,
@@ -371,42 +386,25 @@ function sphereDarkSide(
     viewport
   );
 
-  // Calculate center coordinates of the gradient
-  const offsetX = (Math.cos(((cycleAngle + 180) / 180) * Math.PI) + 1) * Radius;
+  // Calculate the non-rotated center of gradient
+  // Slow then fast, starting on the left edge [-1,0]
+  const offsetX = Math.cos(((cycleAngle + 180) / 180) * Math.PI) * Radius;
 
-  const translate = {
-    x:
-      -Math.cos((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
-      Radius * 2 -
-      x,
-    y:
-      -Math.sin((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
-      Radius * 2 +
-      y / 2,
-  };
+  // Calculate the rotated center of gradient
+  const translation = rotate(offsetX, rotationAngle);
 
-  // const translateX =
-
-  // const translateY =
-  //   -Math.sin((-rotationAngle / 180) * Math.PI) * (Radius - offsetX) +
-  //   Radius +
-  //   Radius;
+  // Calculate the non-rotated shadow edge of gradient
+  // Fast then slow starting in the middle and going to the right edge [0,1]
+  const shadowEdgeX = Math.sin((cycleAngle / 180) * Math.PI) * Radius;
+  const horizontalScale = shadowEdgeX - offsetX;
 
   // Calculate horizontal/vertical scales
-  const shadowEdgeX = Math.sin((cycleAngle / 180) * Math.PI) * Radius + Radius;
-  const horizontalScale = offsetX - shadowEdgeX;
   const verticalScale = calculateVerticalRadius(
     horizontalScale,
-    -(Radius - offsetX),
+    offsetX,
     Radius
   );
   const scale = { x: horizontalScale, y: verticalScale };
-
-  if (Debug) {
-    console.log(
-      `DarkSide: offsetX = ${offsetX}, shadowEdgeX = ${shadowEdgeX}, cycleAngle = ${cycleAngle}`
-    );
-  }
 
   const fillUuid = uuid + "-fill";
   const fillUrl = `url(#${fillUuid})`;
@@ -453,8 +451,8 @@ function sphereDarkSide(
   radialGradient.setAttribute("gradientUnits", "userSpaceOnUse");
   radialGradient.setAttribute(
     "gradientTransform",
-    `translate(${translate.x + x} ${
-      translate.y - y
+    `translate(${translation.x + x} ${
+      translation.y + y
     }) rotate(${-rotationAngle}) scale(${scale.x * 2} ${scale.y * 2})`
   );
 
