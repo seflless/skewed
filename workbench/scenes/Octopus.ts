@@ -31,8 +31,8 @@ export default function () {
   const { viewport, camera, updateCamera } = getCamera("isometric");
 
   onUpdate(({ now, deltaTime }) => {
-    // const cameraSpeed = 0.1;
-    const cameraSpeed = 0.0;
+    const cameraSpeed = 0.1;
+    // const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     // Animate the legs in a spiral pattern

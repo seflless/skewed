@@ -7,9 +7,9 @@ import SingleSphere from "./scenes/SingleSphere";
 import Worm from "./scenes/Worm";
 import { getPaused, setPaused } from "./Settings";
 
-KitchenSink();
+// KitchenSink();
 // Transforms();
-// Octopus();
+Octopus();
 // Spheres();
 // SingleSphere();
 // Worm();
