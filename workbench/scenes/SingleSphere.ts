@@ -23,33 +23,46 @@ export default function () {
   const referenceRadius = 75;
 
   const lightSpeed = 0.3;
-  const lightDistance = 400;
+  const lightDistance = 100;
   const lightSphere = Sphere({
     // id: "light",
-    radius: 10,
+    radius: 5,
     fill: Color(255, 255, 0, 0),
     stroke: Color(255, 255, 0),
+    strokeWidth: 10,
   });
+
+  const position = Vector3(0, referenceRadius / 2, 0);
 
   const scene: Scene = {
     ...getLighting("reference"),
     shapes: [
       getEnvironment("grid"),
-      Axii(Vector3(-referenceRadius * 2, 0, 0)),
+      Axii(Vector3(-referenceRadius * 3, 0, 0)),
+      // Group({
+      //   position: Vector3(0, 0, 0),
+      //   rotation: Vector3(45, 0, 0),
+      //   scale: 3,
+      //   children: [
       Sphere({
         id: "reference",
+        position,
         radius: referenceRadius,
         stroke: Color(0, 0, 0),
         strokeWidth: 0,
-        position: Vector3(0, 0, 0),
       }),
+      //   ],
+      // }),
       lightSphere,
     ],
   };
 
-  const { viewport, camera, updateCamera } = getCamera("front");
+  lightSphere.position = Vector3(1, 1, -1);
+
+  const { viewport, camera, updateCamera } = getCamera("isometric");
 
   const onPointerEvent = (event: PointerEvent) => {
+    // return;
     event.preventDefault();
     event.stopPropagation();
 
@@ -82,8 +95,8 @@ export default function () {
         degrees *= -1;
       }
       lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
-      lightSphere.position.y = 0.0;
-      // lightSphere.position.y = 0.5;
+      // lightSphere.position.y = 0.0;
+      lightSphere.position.y = 0.5;
       lightSphere.position.z = Math.cos((degrees / 180) * Math.PI);
 
       if (event.buttons === 1) {
@@ -93,11 +106,11 @@ export default function () {
     } else if (spinMode === "z") {
       lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
       lightSphere.position.y = Math.cos((degrees / 180) * Math.PI);
-      // lightSphere.position.z = 0; //
-      lightSphere.position.z = -0.5; //
+      lightSphere.position.z = 0; //
+      // lightSphere.position.z = -0.5; //
     }
 
-    lightSphere.position.normalize().multiply(referenceRadius);
+    lightSphere.position.normalize().multiply(lightDistance).add(position);
 
     // const x = event.clientX;
     // const z = event.clientY;
@@ -110,7 +123,10 @@ export default function () {
   document.addEventListener("pointerup", onPointerEvent);
 
   onUpdate(({ now, deltaTime }) => {
-    updateCamera(45, 20);
+    const cameraSpeed = 0.1;
+    // const cameraSpeed = 0.0;
+    updateCamera(now * cameraSpeed * 360 + 45, 20);
+    // updateCamera(45, 20);
 
     // lightSphere.position.x =
     //   Math.sin(now * Math.PI * 2 * lightSpeed) * lightDistance;

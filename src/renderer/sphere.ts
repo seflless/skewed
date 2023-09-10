@@ -12,7 +12,7 @@ import { SphereShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 
-const Debug = true;
+const Debug = false;
 
 // Assumes only values in the range [0,1]
 function dotProductToDegrees(dotProduct: number) {
@@ -46,6 +46,8 @@ function calculateRotationAngle(x: number, y: number) {
   return normalizedAngle;
 }
 
+(globalThis as any).calculateRotationAngle = calculateRotationAngle;
+
 function calculateCycleAngle(x: number, z: number) {
   const degrees = (calculateRotationAngle(x, -z) + 90) % 360;
   return degrees;
@@ -65,23 +67,24 @@ export function renderSphere(
   inverseAndProjectionMatrix: Matrix4x4
 ) {
   // Convert the light direction into camera space (not projected into screen space)
-  const directionalLightInCameraSpace = scene.directionalLight.direction
-    .clone()
-    .multiply(-1);
+  const directionalLightInCameraSpace =
+    scene.directionalLight.direction.clone();
   inverseCameraMatrix
     .extractRotation()
     .applyToVector3(directionalLightInCameraSpace);
 
   let rotationAngle = calculateRotationAngle(
-    directionalLightInCameraSpace.x,
-    directionalLightInCameraSpace.y
+    -directionalLightInCameraSpace.x,
+    -directionalLightInCameraSpace.y
   );
 
+  const reversedLightDirection = directionalLightInCameraSpace.multiply(-1);
+
   const lightSideDotProduct = Vector3(0, 0, 1).dotProduct(
-    directionalLightInCameraSpace
+    reversedLightDirection
   );
   const darkSideLightProduct = Vector3(0, 0, -1).dotProduct(
-    directionalLightInCameraSpace
+    reversedLightDirection
   );
 
   let cycleAngle;
@@ -115,37 +118,39 @@ export function renderSphere(
     );
   }
 
-  // if (sphere.id) {
-  //   console.log(
-  //     `id: ${sphere.id},
-  // lightSideDotProduct: ${lightSideDotProduct},
-  // lightSideDotProductDegrees: ${dotProductToDegrees(lightSideDotProduct)},
-  // darkSideLightProduct: ${darkSideLightProduct},
-  // darkSideLightProductDegrees: ${
-  //   90 - dotProductToDegrees(darkSideLightProduct)
-  // },
-  // cycleAngle: ${cycleAngle}, rotationAngle: ${rotationAngle},
-  // directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x.toFixed(
-  //   1
-  // )},
-  // directionalLightInCameraSpace.y = ${directionalLightInCameraSpace.y.toFixed(
-  //   1
-  // )},
-  // directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z.toFixed(
-  //   1
-  // )}
-  // scene.directionalLight.direction.x = ${scene.directionalLight.direction.x.toFixed(
-  //   1
-  // )},
-  // scene.directionalLight.direction.y = ${scene.directionalLight.direction.y.toFixed(
-  //   1
-  // )},
-  // scene.directionalLight.direction.z = ${scene.directionalLight.direction.z.toFixed(
-  //   1
-  // )}
-  // `
-  //   );
-  // }
+  if (sphere.id) {
+    // if (false) {
+    console.log(
+      `id: ${sphere.id},
+  lightSideDotProduct: ${lightSideDotProduct},
+  lightSideDotProductDegrees: ${dotProductToDegrees(lightSideDotProduct)},
+  darkSideLightProduct: ${darkSideLightProduct},
+  darkSideLightProductDegrees: ${
+    90 - dotProductToDegrees(darkSideLightProduct)
+  },
+  cycleAngle: ${cycleAngle}, 
+  rotationAngle: ${rotationAngle},
+  directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x.toFixed(
+    1
+  )},
+  directionalLightInCameraSpace.y = ${directionalLightInCameraSpace.y.toFixed(
+    1
+  )},
+  directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z.toFixed(
+    1
+  )}
+  scene.directionalLight.direction.x = ${scene.directionalLight.direction.x.toFixed(
+    1
+  )},
+  scene.directionalLight.direction.y = ${scene.directionalLight.direction.y.toFixed(
+    1
+  )},
+  scene.directionalLight.direction.z = ${scene.directionalLight.direction.z.toFixed(
+    1
+  )}
+  `
+    );
+  }
 }
 
 function sphereLightSide(
@@ -306,8 +311,8 @@ function calculateVerticalRadius(
 
 function rotate(x: number, degrees: number) {
   return {
-    x: Math.cos((-degrees / 180) * Math.PI) * x,
-    y: -Math.sin((-degrees / 180) * Math.PI) * x,
+    x: Math.cos((degrees / 180) * Math.PI) * x,
+    y: -Math.sin((degrees / 180) * Math.PI) * x,
   };
 }
 

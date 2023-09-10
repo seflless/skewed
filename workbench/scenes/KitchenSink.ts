@@ -312,7 +312,7 @@ export default function () {
     ],
   };
 
-  const { viewport, camera, updateCamera } = getCamera("isometric");
+  const { viewport, camera, updateCamera } = getCamera("front");
 
   onUpdate(({ now, deltaTime }) => {
     const cameraSpeed = 0.0;
