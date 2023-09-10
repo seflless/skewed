@@ -16,6 +16,8 @@ import {
   getPaused,
   onUpdate,
 } from "../Settings";
+import { Axii } from "../Axii";
+import { type } from "os";
 
 export default function () {
   const referenceRadius = 75;
@@ -23,6 +25,7 @@ export default function () {
   const lightSpeed = 0.3;
   const lightDistance = 400;
   const lightSphere = Sphere({
+    // id: "light",
     radius: 10,
     fill: Color(255, 255, 0, 0),
     stroke: Color(255, 255, 0),
@@ -32,7 +35,9 @@ export default function () {
     ...getLighting("reference"),
     shapes: [
       getEnvironment("grid"),
+      Axii(Vector3(-referenceRadius * 2, 0, 0)),
       Sphere({
+        id: "reference",
         radius: referenceRadius,
         stroke: Color(0, 0, 0),
         strokeWidth: 0,
@@ -55,25 +60,39 @@ export default function () {
     const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
     const distanceNormalized = distance / referenceRadius;
-    const degrees = distanceNormalized * 90;
-    //Math.cos(((distanceNormalized * 90) / 180) * Math.PI);
-    console.log(
-      degrees,
-      event.clientX,
-      event.clientY,
-      centerX,
-      centerY,
-      diffX,
-      diffY,
-      distance,
-      distanceNormalized
-    );
+    let degrees = distanceNormalized * 90;
 
-    lightSphere.position.x =
-      Math.sin((degrees / 180) * Math.PI) * referenceRadius;
-    lightSphere.position.y = 0;
-    lightSphere.position.z =
-      Math.cos((degrees / 180) * Math.PI) * referenceRadius;
+    //Math.cos(((distanceNormalized * 90) / 180) * Math.PI);
+    // console.log(
+    //   degrees,
+    //   event.clientX,
+    //   event.clientY,
+    //   centerX,
+    //   centerY,
+    //   diffX,
+    //   diffY,
+    //   distance,
+    //   distanceNormalized
+    // );
+
+    const spinMode: string = "z";
+
+    if (spinMode === "y") {
+      if (diffX < 0) {
+        degrees *= -1;
+      }
+      lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
+      lightSphere.position.y = 0.0;
+      // lightSphere.position.y = 0.5;
+      lightSphere.position.z = Math.cos((degrees / 180) * Math.PI);
+    } else if (spinMode === "z") {
+      lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
+      lightSphere.position.y = Math.cos((degrees / 180) * Math.PI);
+      // lightSphere.position.z = 0; //
+      lightSphere.position.z = 0.5; //
+    }
+
+    lightSphere.position.normalize().multiply(referenceRadius);
 
     // const x = event.clientX;
     // const z = event.clientY;
@@ -83,7 +102,7 @@ export default function () {
   });
 
   onUpdate(({ now, deltaTime }) => {
-    updateCamera(0);
+    updateCamera(45, 20);
 
     // lightSphere.position.x =
     //   Math.sin(now * Math.PI * 2 * lightSpeed) * lightDistance;

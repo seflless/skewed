@@ -7,17 +7,25 @@ import { projectToScreenCoordinate } from "../cameras/Camera";
 import { ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { Matrix4x4 } from "../math/Matrix4x4";
+import { Vector3 } from "../math/Vector3";
 import { SphereShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 
 const Debug = false;
 
+// Assumes only values in the range [0,1]
+function dotProductToDegrees(dotProduct: number) {
+  const angleInRadians = Math.acos(dotProduct);
+  const angleInDegrees = angleInRadians * (180 / Math.PI);
+  return angleInDegrees;
+}
+
 // function normalToDegrees(x: number, z: number) {
 //   return (Math.atan2(x, z) / Math.PI) * 180;
 // }
 
-export function normalizeDegrees(degrees: number) {
+function normalizeDegrees(degrees: number) {
   let adjustedDegrees = degrees;
   if (adjustedDegrees < 0) {
     adjustedDegrees = 360 + (adjustedDegrees % 360);
@@ -28,7 +36,7 @@ export function normalizeDegrees(degrees: number) {
 }
 
 function calculateRotationAngle(x: number, y: number) {
-  const angleInRadians = Math.atan2(-y, -x);
+  const angleInRadians = Math.atan2(y, x);
   // Convert radians to degrees
   const angleInDegrees = angleInRadians * (180 / Math.PI);
 
@@ -56,70 +64,80 @@ export function renderSphere(
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
-  if (sphere.id) {
-    // console.log(sphere.id);
-  }
   // Convert the light direction into camera space (not projected into screen space)
-  const directionalLightInCameraSpace =
-    scene.directionalLight.direction.clone();
+  const directionalLightInCameraSpace = scene.directionalLight.direction
+    .clone()
+    .multiply(-1);
   inverseCameraMatrix
     .extractRotation()
     .applyToVector3(directionalLightInCameraSpace);
 
   let rotationAngle = calculateRotationAngle(
-    -directionalLightInCameraSpace.x,
-    -directionalLightInCameraSpace.y
-  );
-  // rotationAngle = 0;
-
-  // Rotate the normal to be in the horizontal plane of the sphere
-  const counterRotation = Matrix4x4().makeRotationZ(
-    (-rotationAngle / 180) * Math.PI
-  );
-  counterRotation.applyToVector3(directionalLightInCameraSpace);
-
-  let cycleAngle = calculateCycleAngle(
     directionalLightInCameraSpace.x,
-    directionalLightInCameraSpace.z
+    directionalLightInCameraSpace.y
   );
-  // let cycleAngle = 45;
 
-  console.log(
-    `cycleAngle: ${cycleAngle}, rotationAngle: ${rotationAngle}, directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x}, directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z}`
+  const lightSideDotProduct = Vector3(0, 0, 1).dotProduct(
+    directionalLightInCameraSpace
   );
-  // console.log(
-  //   `rotationAngle: ${rotationAngle}, x: ${directionalLightInCameraSpace.x}, y: ${directionalLightInCameraSpace.y}`
-  // );
+  const darkSideLightProduct = Vector3(0, 0, -1).dotProduct(
+    directionalLightInCameraSpace
+  );
 
-  // console.log(
-  //   `cycleAngle: ${cycleAngle}, x: ${directionalLightInCameraSpace.x}, y: ${directionalLightInCameraSpace.y}, z: ${directionalLightInCameraSpace.z}`
-  // );
+  let cycleAngle;
+  if (lightSideDotProduct > 0.0) {
+    cycleAngle = dotProductToDegrees(lightSideDotProduct);
+    sphereLightSide(
+      scene,
+      svg,
+      defs,
+      sphere,
+      viewport,
+      worldTransform,
+      cameraZoom,
+      inverseAndProjectionMatrix,
+      cycleAngle,
+      rotationAngle
+    );
+  } else {
+    cycleAngle = 90 - dotProductToDegrees(darkSideLightProduct);
+    sphereDarkSide(
+      scene,
+      svg,
+      defs,
+      sphere,
+      viewport,
+      worldTransform,
+      cameraZoom,
+      inverseAndProjectionMatrix,
+      cycleAngle,
+      rotationAngle
+    );
+  }
 
-  cycleAngle <= 90 || cycleAngle >= 270
-    ? sphereLightSide(
-        scene,
-        svg,
-        defs,
-        sphere,
-        viewport,
-        worldTransform,
-        cameraZoom,
-        inverseAndProjectionMatrix,
-        cycleAngle,
-        rotationAngle
-      )
-    : sphereDarkSide(
-        scene,
-        svg,
-        defs,
-        sphere,
-        viewport,
-        worldTransform,
-        cameraZoom,
-        inverseAndProjectionMatrix,
-        cycleAngle,
-        rotationAngle
-      );
+  if (sphere.id) {
+    console.log(
+      `id: ${sphere.id}, 
+lightSideDotProduct: ${lightSideDotProduct},
+lightSideDotProductDegrees: ${dotProductToDegrees(lightSideDotProduct)},
+darkSideLightProduct: ${lightSideDotProduct},
+darkSideLightProductDegrees: ${90 - dotProductToDegrees(darkSideLightProduct)},
+cycleAngle: ${cycleAngle}, rotationAngle: ${rotationAngle}, 
+directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x.toFixed(1)},
+directionalLightInCameraSpace.y = ${directionalLightInCameraSpace.y.toFixed(1)},
+directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z.toFixed(1)}
+scene.directionalLight.direction.x = ${scene.directionalLight.direction.x.toFixed(
+        1
+      )}, 
+scene.directionalLight.direction.y = ${scene.directionalLight.direction.y.toFixed(
+        1
+      )},
+scene.directionalLight.direction.z = ${scene.directionalLight.direction.z.toFixed(
+        1
+      )}
+`
+    );
+  }
 }
 
 function sphereLightSide(
@@ -134,14 +152,6 @@ function sphereLightSide(
   cycleAngle: number,
   rotationAngle: number
 ) {
-  // We do all logic assuming the light is from the center to the right below.
-  // When cycleRange is over 270, we treat it the same by adjusting the angles here
-  // so that the rotationAngle causes the lighting to flip/mirror
-  if (cycleAngle > 270) {
-    cycleAngle = 90 - (cycleAngle - 270);
-    rotationAngle += 180;
-  }
-
   const sphereScale = worldTransform.getScale().x;
   const sphereScaleFactor = sphereScale * cameraZoom;
 
@@ -298,27 +308,6 @@ function sphereDarkSide(
   cycleAngle: number,
   rotationAngle: number
 ) {
-  let adjustedCycleAngle = cycleAngle;
-  let adjustedRotationAngle = rotationAngle;
-
-  // Non-mirrored
-  if (cycleAngle >= 90 && cycleAngle <= 180) {
-    adjustedCycleAngle = adjustedCycleAngle - 90;
-  }
-  // // Mirrored
-  else {
-    adjustedCycleAngle = 270 - cycleAngle;
-    adjustedRotationAngle -= 180;
-  }
-
-  if (Debug) {
-    console.log(
-      `DarkSide: cycleAngle = ${cycleAngle}, adjustedCycleAngle = ${adjustedCycleAngle} rotationAngle =${rotationAngle}, adjustedRotationAngle = ${adjustedRotationAngle}`
-    );
-  }
-  cycleAngle = adjustedCycleAngle;
-  rotationAngle = adjustedRotationAngle;
-
   const sphereScale = worldTransform.getScale().x;
   const sphereScaleFactor = sphereScale * cameraZoom;
 

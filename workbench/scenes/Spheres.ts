@@ -18,22 +18,22 @@ import {
 } from "../Settings";
 
 export default function () {
-  // const scale = 0.3;
-  const scale = 1;
+  const scale = 0.25;
+  // const scale = 1;
 
-  // addSphereScene(Vector3(-1, -1, -3), scale, "From Up, Right, and in Front");
-  // addSphereScene(Vector3(-1, -1, 3), scale, "From Up, Right, and in Back");
+  addSphereScene(Vector3(-1, -1, -3), scale, "From Up, Right, and in Front");
+  addSphereScene(Vector3(-1, -1, 3), scale, "From Up, Right, and in Back");
 
-  // addSphereScene(Vector3(-1, 0, 1), scale, "From Up, Right, and in Back");
+  addSphereScene(Vector3(-1, 0, 1), scale, "From Up, Right, and in Back");
 
-  // addSphereScene(Vector3(0, 0, -1), scale, "From Front");
+  addSphereScene(Vector3(0, 0, -1), scale, "From Front");
   addSphereScene(Vector3(0, 0, 1), scale, "From Back");
-  // addSphereScene(Vector3(-1, 0, 0), scale, "From Right");
-  // addSphereScene(Vector3(1, 0, 0), scale, "From Left");
-  // addSphereScene(Vector3(-1, 0, 1), scale, "From Right Behind");
-  // addSphereScene(Vector3(1, 0, 1), scale, "From Left Behind");
-  // // addSphereScene(Vector3(0, -1, 1), scale, "From Top Behind");
-  // addSphereScene(Vector3(0, 1, -1), scale, "From Bottom Front");
+  addSphereScene(Vector3(-1, 0, 0), scale, "From Right");
+  addSphereScene(Vector3(1, 0, 0), scale, "From Left");
+  addSphereScene(Vector3(-1, 0, 1), scale, "From Right Behind");
+  addSphereScene(Vector3(1, 0, 1), scale, "From Left Behind");
+  // addSphereScene(Vector3(0, -1, 1), scale, "From Top Behind");
+  addSphereScene(Vector3(0, 1, -1), scale, "From Bottom Front");
 }
 
 function addSphereScene(lightDirection: Vector3, scale: number, title: string) {
