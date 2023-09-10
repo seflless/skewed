@@ -75,7 +75,7 @@ export default function () {
     //   distanceNormalized
     // );
 
-    const spinMode: string = "z";
+    const spinMode: string = "y";
 
     if (spinMode === "y") {
       if (diffX < 0) {
