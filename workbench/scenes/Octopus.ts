@@ -23,7 +23,7 @@ import {
 export default function () {
   const octopus = Octopus({});
   const scene: Scene = {
-    ...getLighting("reference"),
+    ...getLighting("underwater"),
     shapes: [getEnvironment("underwater"), octopus],
   };
 
@@ -52,7 +52,9 @@ export default function () {
   });
 }
 
-const BodyColor = Color(128, 64, 128);
+// const BodyColor = Color(128, 64, 128);
+// const BodyColor = Color(255, 255, 255);
+const BodyColor = Color(180, 120, 180);
 
 const LegSegmentLength = 200;
 const LegShrinkFactor = 0.4;

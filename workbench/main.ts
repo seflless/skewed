@@ -9,8 +9,8 @@ import { getPaused, setPaused } from "./Settings";
 
 // KitchenSink();
 // Transforms();
-// Octopus();
-Spheres();
+Octopus();
+// Spheres();
 // SingleSphere();
 // Worm();
 

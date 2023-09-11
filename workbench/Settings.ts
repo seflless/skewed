@@ -11,7 +11,7 @@ import {
   Viewport,
 } from "../src";
 
-export type LightingChoice = "reference" | "moonlit" | "headon" | "none";
+export type LightingChoice = "reference" | "moonlit" | "underwater" | "none";
 
 export function getLighting(lighting: LightingChoice): {
   directionalLight: DirectionalLight;
@@ -51,23 +51,23 @@ export function getLighting(lighting: LightingChoice): {
       g: 252,
       b: 181,
     };
-  } else if (lighting === "headon") {
+  } else if (lighting === "underwater") {
     //    Bluish white
     ambientLightColor = {
-      r: 64,
-      g: 64,
-      b: 120,
+      r: 16,
+      g: 55,
+      b: 119,
     };
 
     directionalLightColor = {
-      r: 255,
-      g: 252,
-      b: 181,
+      r: 200,
+      g: 200,
+      b: 255,
     };
     return {
       ambientLightColor,
       directionalLight: DirectionalLight({
-        direction,
+        direction: fromAbove,
         color: Color(
           directionalLightColor.r - ambientLightColor.r,
           directionalLightColor.g - ambientLightColor.g,
