@@ -18,37 +18,53 @@ import {
   onUpdate,
 } from "../Settings";
 
+const scenarios: [Vector3, string][] = [
+  [Vector3(-1, -1, -3), "From Up, Right, and in Front"],
+  [Vector3(-1, -1, 3), "From Up, Right, and in Back"],
+  [Vector3(0, 0, -1), "From Front"],
+  [Vector3(0, 0, 1), "From Back"],
+  [Vector3(-1, 0, 0), "From Right"],
+  [Vector3(1, 0, 0), "From Left"],
+  [Vector3(-1, 0, 1), "From Right Behind"],
+  [Vector3(1, 0, 1), "From Left Behind"],
+  [Vector3(0, -1, 1), "From Top Behind"],
+  [Vector3(0, 1, -1), "From Bottom Front"],
+  [Vector3(0, 1, 1), "From Bottom Behind"],
+  [Vector3(-1, 0, 0.0001), "From Right Just Behind"],
+];
+
 export default function () {
-  const scale = 0.3;
-  // const scale = 1;
+  const viewportScale = 1 / Math.floor(Math.sqrt(scenarios.length));
 
-  addSphereScene(Vector3(-1, -1, -3), scale, "From Up, Right, and in Front");
-  addSphereScene(Vector3(-1, -1, 3), scale, "From Up, Right, and in Back");
-
-  // addSphereScene(Vector3(-1, 0, 1), scale, "From Up, Right, and in Back");
-
-  // addSphereScene(Vector3(0, 0, -1), scale, "From Front");
-  // addSphereScene(Vector3(0, 0, 1), scale, "From Back");
-  // addSphereScene(Vector3(-1, 0, 0), scale, "From Right");
-  // addSphereScene(Vector3(1, 0, 0), scale, "From Left");
-  // addSphereScene(Vector3(-1, 0, 1), scale, "From Right Behind");
-  // addSphereScene(Vector3(1, 0, 1), scale, "From Left Behind");
-  // // addSphereScene(Vector3(0, -1, 1), scale, "From Top Behind");
-  // addSphereScene(Vector3(0, 1, -1), scale, "From Bottom Front");
-
-  // Special tests
-  addSphereScene(Vector3(-1, 0, 0.0001), scale, "From Right Just Behind");
+  scenarios.forEach(([lightDirection, title]) => {
+    addSphereScene(lightDirection, title);
+  });
 }
 
-function addSphereScene(lightDirection: Vector3, scale: number, title: string) {
+function addSphereScene(lightDirection: Vector3, title: string) {
   const container = document.createElement("div");
   container.innerHTML = `<h3>${title}</h3>`;
   container.style.display = "inline-block";
   const svgContainer = document.createElement("div");
   // container.style.transform = "translate(-50%, -50%) scale(2)"; //`translate(${scale},${scale}) scale(${scale})`;
   svgContainer.style.display = "inline-block";
-  svgContainer.style.width = Math.floor(window.innerWidth * scale - 2) + "px";
-  svgContainer.style.height = Math.floor(window.innerHeight * scale - 2) + "px";
+
+  let cameraZoom = 8;
+  const { viewport, camera, updateCamera } = getCamera("front", cameraZoom);
+
+  function resize() {
+    const viewportScale = 1 / Math.ceil(Math.sqrt(scenarios.length));
+
+    svgContainer.style.width =
+      Math.floor(window.innerWidth * viewportScale - 1) + "px";
+    svgContainer.style.height =
+      Math.floor(window.innerWidth * viewportScale - 1) + "px";
+
+    viewport.height = viewport.width;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
   svgContainer.style.transform = `translate(0%,0%)`; //`translate(${scale},${scale}) scale(${scale})`;
   svgContainer.className = "scene 2";
   container.appendChild(svgContainer);
@@ -70,35 +86,20 @@ function addSphereScene(lightDirection: Vector3, scale: number, title: string) {
     ...getLighting("moonlit"),
     shapes: [
       getEnvironment(),
-      Axii(Vector3(-sphere.radius * 2, 0, 0)),
+      // Axii(Vector3(-sphere.radius * 2, 0, 0)),
       sphere,
       lightBall,
-      // Sphere({
-      //   radius: 75,
-      //   stroke: Color(0, 0, 0),
-      //   strokeWidth: 4,
-      //   position: Vector3(0, 35 + 100, 0),
-      // }),
-      // // Fake shadow
-      // Cylinder({
-      //   height: 1,
-      //   radius: 60,
-      //   fill: Color(0, 0, 0, 0.6),
-      //   stroke: Color(0, 0, 0, 0),
-      // }),
     ],
   };
 
   scene.directionalLight.direction = lightDirection;
 
-  const { viewport, camera, updateCamera } = getCamera("front", 7);
-
   onUpdate(({ now, deltaTime }) => {
     const cameraSpeed = 0.0;
+
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     render(svgContainer, scene, viewport, camera);
     document.getElementById("root")!.appendChild(container);
-    // render(document.getElementById("root")!, scene, viewport, camera);
   });
 }

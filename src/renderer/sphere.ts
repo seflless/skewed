@@ -118,7 +118,7 @@ export function renderSphere(
     );
   }
 
-  if (sphere.id) {
+  if (sphere.id && Debug) {
     // if (false) {
     console.log(
       `id: ${sphere.id},

@@ -60,7 +60,3 @@ canvas {
   cursor: pointer;
   font-weight: bolder;
 }
-
-#root > div {
-  border: thin solid rgba(0, 0, 0, 0.3);
-}

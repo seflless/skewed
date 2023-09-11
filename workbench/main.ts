@@ -9,8 +9,8 @@ import { getPaused, setPaused } from "./Settings";
 
 // KitchenSink();
 // Transforms();
-Octopus();
-// Spheres();
+// Octopus();
+Spheres();
 // SingleSphere();
 // Worm();
 
@@ -43,6 +43,7 @@ function syncPausePlayUIState() {
 
 document.addEventListener("keydown", (event) => {
   if (event.key === " ") {
+    event.preventDefault();
     togglePlayState();
   }
 });

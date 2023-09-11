@@ -20,6 +20,13 @@ export function getLighting(lighting: LightingChoice): {
   let ambientLightColor;
   let directionalLightColor;
 
+  // Lighting direction options
+  const fromAbove = Vector3(0, -1, 0).normalize();
+  const fromBelow = Vector3(0, 1, 0).normalize();
+
+  // By default the light comes from above and at a slight angle from the front right
+  const direction = Vector3(-0.25, -1, -0.25).normalize();
+
   if (lighting === "reference") {
     ambientLightColor = {
       r: 64,
@@ -60,7 +67,7 @@ export function getLighting(lighting: LightingChoice): {
     return {
       ambientLightColor,
       directionalLight: DirectionalLight({
-        direction: Vector3(1, 1, 1).normalize(),
+        direction,
         color: Color(
           directionalLightColor.r - ambientLightColor.r,
           directionalLightColor.g - ambientLightColor.g,
@@ -83,7 +90,7 @@ export function getLighting(lighting: LightingChoice): {
     return {
       ambientLightColor,
       directionalLight: DirectionalLight({
-        direction: Vector3(1, 1, 1).normalize(),
+        direction,
         color: Color(
           directionalLightColor.r - ambientLightColor.r,
           directionalLightColor.g - ambientLightColor.g,
@@ -98,7 +105,7 @@ export function getLighting(lighting: LightingChoice): {
   return {
     ambientLightColor,
     directionalLight: DirectionalLight({
-      direction: Vector3(1, 0.75, 0).normalize(),
+      direction,
       color: Color(
         directionalLightColor.r - ambientLightColor.r,
         directionalLightColor.g - ambientLightColor.g,
