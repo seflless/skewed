@@ -49,11 +49,10 @@ function addSphereScene(lightDirection: Vector3, title: string) {
   // container.style.transform = "translate(-50%, -50%) scale(2)"; //`translate(${scale},${scale}) scale(${scale})`;
   svgContainer.style.display = "inline-block";
 
-  let cameraZoom = 8;
-  const { viewport, camera, updateCamera } = getCamera("front", cameraZoom);
+  const { viewport, camera, updateCamera } = getCamera("front", 1);
 
   function resize() {
-    const viewportScale = 1 / Math.ceil(Math.sqrt(scenarios.length));
+    const viewportScale = 1 / Math.ceil(Math.sqrt(scenarios.length) * 1.5);
 
     svgContainer.style.width =
       Math.floor(window.innerWidth * viewportScale - 1) + "px";
@@ -61,6 +60,16 @@ function addSphereScene(lightDirection: Vector3, title: string) {
       Math.floor(window.innerWidth * viewportScale - 1) + "px";
 
     viewport.height = viewport.width;
+
+    const cameraZoom = (viewport.width / 100) * 0.9;
+    camera.projectionMatrix.makeOrthographic(
+      0,
+      viewport.width / cameraZoom,
+      0,
+      viewport.height / cameraZoom,
+      0,
+      10000
+    );
   }
   resize();
   window.addEventListener("resize", resize);
