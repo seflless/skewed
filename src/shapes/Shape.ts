@@ -41,6 +41,12 @@ export type SphereShape = {
   radius: number;
 } & BasicShapeProperties;
 
+export type CylinderShape = {
+  type: "cylinder";
+  radius: number;
+  height: number;
+} & BasicShapeProperties;
+
 export type GroupShape = TransformProperties & {
   type: "group";
   id: string;
@@ -55,4 +61,9 @@ export type GridShape = BasicShapeProperties & {
   cellSize: number;
 };
 
-export type Shape = MeshShape | SphereShape | GroupShape | GridShape;
+export type Shape =
+  | MeshShape
+  | SphereShape
+  | CylinderShape
+  | GroupShape
+  | GridShape;

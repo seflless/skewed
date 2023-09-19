@@ -13,6 +13,5 @@ export * from "./shapes/Cylinder";
 export * from "./shapes/Sphere";
 export * from "./meshes/Mesh";
 export * from "./meshes/BoxMesh";
-export * from "./meshes/CylinderMesh";
 export * from "./math/Vector3";
 export * from "./math/Matrix4x4";

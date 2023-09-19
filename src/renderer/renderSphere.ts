@@ -242,9 +242,6 @@ function sphereLightSide(
   circle.setAttribute("cx", x.toString());
   circle.setAttribute("cy", y.toString());
 
-  // TODO: Factor in camera projection matrix, this currectly
-  // ignores all zoom factors. Can we even handle skew with sphere?!
-  // I don't think we can.
   circle.setAttribute("r", Radius.toString());
 
   circle.setAttribute("fill", fillUrl);
@@ -424,9 +421,6 @@ function sphereDarkSide(
   circle.setAttribute("cx", x.toString());
   circle.setAttribute("cy", y.toString());
 
-  // TODO: Factor in camera projection matrix, this currectly
-  // ignores all zoom factors. Can we even handle skew with sphere?!
-  // I don't think we can.
   circle.setAttribute("r", Radius.toString());
 
   circle.setAttribute("fill", fillUrl);

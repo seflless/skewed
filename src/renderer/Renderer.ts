@@ -5,8 +5,9 @@ import { Viewport } from "./Viewport";
 import { MeshShape, Shape, TransformProperties } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { applyLighting } from "../lighting/LightingModel";
-import { renderSphere } from "./sphere";
+import { renderSphere } from "./renderSphere";
 import { ColorToCSS } from "../colors/Color";
+import { renderCylinder } from "./renderCylinder";
 
 const CrackFillingStrokeWidth = 0.5;
 
@@ -107,6 +108,20 @@ export function render(
           viewport,
           worldTransform,
           cameraZoom,
+          inverseCameraMatrix,
+          inverseAndProjectionMatrix
+        );
+        break;
+      case "cylinder":
+        renderCylinder(
+          scene,
+          svg,
+          defs,
+          shape,
+          viewport,
+          worldTransform,
+          cameraZoom,
+          cameraDirection,
           inverseCameraMatrix,
           inverseAndProjectionMatrix
         );
