@@ -20,7 +20,7 @@ import { Axii } from "../Axii";
 import { type } from "os";
 
 export default function () {
-  const referenceRadius = 75;
+  const referenceRadius = 50;
 
   const lightSpeed = 0.3;
   const lightDistance = 100;
@@ -33,6 +33,16 @@ export default function () {
   });
 
   const position = Vector3(0, referenceRadius / 2, 0);
+  const cylinder = Cylinder({
+    id: "reference",
+    position,
+    radius: referenceRadius,
+    height: referenceRadius * 4,
+    // radius: referenceRadius,
+    fill: Color(255, 0, 0),
+    stroke: Color(0, 0, 0),
+    strokeWidth: 0,
+  });
 
   const scene: Scene = {
     ...getLighting("reference"),
@@ -44,14 +54,7 @@ export default function () {
       //   rotation: Vector3(45, 0, 0),
       //   scale: 3,
       //   children: [
-      Cylinder({
-        id: "reference",
-        position,
-        radius: referenceRadius,
-        fill: Color(255, 0, 0),
-        stroke: Color(0, 0, 0),
-        strokeWidth: 0,
-      }),
+      cylinder,
       //   ],
       // }),
       lightSphere,
@@ -60,7 +63,7 @@ export default function () {
 
   lightSphere.position = Vector3(1, 1, -1);
 
-  const { viewport, camera, updateCamera } = getCamera("isometric");
+  const { viewport, camera, updateCamera } = getCamera("top");
 
   const onPointerEvent = (event: PointerEvent) => {
     // return;
@@ -127,7 +130,10 @@ export default function () {
     const cameraSpeed = 0.1;
     // const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
+
     // updateCamera(45, 20);
+
+    cylinder.rotation.x = now * 90;
 
     // lightSphere.position.x =
     //   Math.sin(now * Math.PI * 2 * lightSpeed) * lightDistance;
