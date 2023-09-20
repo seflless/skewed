@@ -60,7 +60,7 @@ export default function () {
 
   lightSphere.position = Vector3(1, 1, -1);
 
-  const { viewport, camera, updateCamera } = getCamera("front");
+  const { viewport, camera, updateCamera } = getCamera("isometric");
 
   const onPointerEvent = (event: PointerEvent) => {
     // return;

@@ -12,6 +12,11 @@ import { CylinderShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 
+enum CylinderEnds {
+  Top = 0,
+  Bottom = 1,
+}
+
 export function renderCylinder(
   _scene: Scene,
   svg: SVGElement,
