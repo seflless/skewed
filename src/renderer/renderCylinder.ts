@@ -26,7 +26,7 @@ export function renderCylinder(
   worldTransform: Matrix4x4,
   cameraZoom: number,
   cameraDirection: Vector3,
-  _inverseCameraMatrix: Matrix4x4,
+  inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
   const points: Vector3[] = [
@@ -44,8 +44,14 @@ export function renderCylinder(
     );
   });
 
-  const yAxis = Vector3(0, 1, 0);
-  worldTransform.extractBasis(Vector3(0, 0, 0), yAxis, Vector3(0, 0, 0));
+  const yAxisWorldSpace = Vector3(0, 0, 0);
+  worldTransform.extractBasis(
+    Vector3(0, 0, 0),
+    yAxisWorldSpace,
+    Vector3(0, 0, 0)
+  );
+  const yAxisCameraSpace = yAxisWorldSpace.clone();
+  inverseCameraMatrix.applyToVector3(yAxisCameraSpace);
 
   const addCylinderEnd = (
     { x, y }: Vector3,
@@ -82,9 +88,16 @@ export function renderCylinder(
   // Top === -1
   // Front === 0
   // Bottom === 1
-  const dotProduct = yAxis.dotProduct(cameraDirection);
-  console.log(dotProduct);
-  const isTopVisible = yAxis.dotProduct(cameraDirection) > 0;
+  const dotProduct = yAxisWorldSpace.dotProduct(
+    cameraDirection.clone().multiply(-1)
+  );
+  console.log(
+    `dotProduct: ${dotProduct.toFixed(3)} 
+    yAxisCameraSpace: ${yAxisCameraSpace.x.toFixed(
+      2
+    )}, ${yAxisCameraSpace.y.toFixed(2)}, ${yAxisCameraSpace.z.toFixed(2)}`
+  );
+  const isTopVisible = dotProduct > 0;
 
   addCylinderEnd(
     isTopVisible ? points[CylinderEnds.Top] : points[CylinderEnds.Bottom],
