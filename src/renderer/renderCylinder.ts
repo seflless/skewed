@@ -128,6 +128,18 @@ export function renderCylinder(
           )
     )
   );
+
+  if (cylinder.strokeWidth && cylinder.stroke.a > 0.0) {
+    capPath.setAttribute("stroke", ColorToCSS(cylinder.stroke));
+
+    if (cylinder.strokeWidth !== 1.0) {
+      capPath.setAttribute(
+        "stroke-width",
+        (cylinder.strokeWidth * cylinderScaleFactor).toString()
+      );
+    }
+  }
+
   capPath.setAttribute(
     "d",
     `
@@ -140,8 +152,6 @@ export function renderCylinder(
       topLeftPoint.x
     } ${topLeftPoint.y}`
   );
-
-  svg.appendChild(capPath);
 
   const tubePath = document.createElementNS(
     "http://www.w3.org/2000/svg",
@@ -159,6 +169,7 @@ export function renderCylinder(
     `
   );
   svg.appendChild(tubePath);
+  svg.appendChild(capPath);
 
   // Scenarios we can view the cylinder from:
   // 1. From the top/bottom (can't see the tube)
