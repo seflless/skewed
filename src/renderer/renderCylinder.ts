@@ -129,16 +129,8 @@ export function renderCylinder(
     )
   );
 
-  if (cylinder.strokeWidth && cylinder.stroke.a > 0.0) {
-    capPath.setAttribute("stroke", ColorToCSS(cylinder.stroke));
-
-    if (cylinder.strokeWidth !== 1.0) {
-      capPath.setAttribute(
-        "stroke-width",
-        (cylinder.strokeWidth * cylinderScaleFactor).toString()
-      );
-    }
-  }
+  addStrokeAttribute(capPath, cylinder, cylinderScaleFactor);
+  svg.appendChild(capPath);
 
   capPath.setAttribute(
     "d",
@@ -166,10 +158,14 @@ export function renderCylinder(
     A ${Radius} ${ShortRadius} ${xAxisRotation} 0 1 ${topRightPoint.x} ${topRightPoint.y}
     L ${bottomRightPoint.x} ${bottomRightPoint.y}
     A ${Radius} ${ShortRadius} ${xAxisRotation} 0 0 ${bottomLeftPoint.x} ${bottomLeftPoint.y}
+    Z
     `
   );
+
+  addStrokeAttribute(tubePath, cylinder, cylinderScaleFactor);
+
   svg.appendChild(tubePath);
-  svg.appendChild(capPath);
+  // Add Cap last
 
   // Scenarios we can view the cylinder from:
   // 1. From the top/bottom (can't see the tube)
@@ -204,6 +200,23 @@ export function renderCylinder(
   // Get the center of the cylinder's top face
 
   // Get the center of the cylinder's bottom face
+}
+
+function addStrokeAttribute(
+  svgShape: SVGElement,
+  cylinderShape: CylinderShape,
+  scaleFactor: number
+) {
+  if (cylinderShape.strokeWidth && cylinderShape.stroke.a > 0.0) {
+    svgShape.setAttribute("stroke", ColorToCSS(cylinderShape.stroke));
+
+    if (cylinderShape.strokeWidth !== 1.0) {
+      svgShape.setAttribute(
+        "stroke-width",
+        (cylinderShape.strokeWidth * scaleFactor).toString()
+      );
+    }
+  }
 }
 
 function addCylinderEnd(
