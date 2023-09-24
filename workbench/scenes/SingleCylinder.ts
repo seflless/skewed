@@ -135,8 +135,10 @@ export default function () {
     // updateCamera(45, 20);
 
     // cylinder.rotation.x = now * 90;
-    cylinder.rotation.x = 0;
-    cylinder.rotation.z = 0;
+    cylinder.rotation.x = 45;
+    cylinder.rotation.y = now * 90;
+
+    // cylinder.rotation.x = now * 90;
 
     // lightSphere.position.x =
     //   Math.sin(now * Math.PI * 2 * lightSpeed) * lightDistance;

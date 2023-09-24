@@ -18,7 +18,7 @@ enum CylinderEnds {
 }
 
 export function renderCylinder(
-  _scene: Scene,
+  scene: Scene,
   svg: SVGElement,
   _defs: SVGDefsElement,
   cylinder: CylinderShape,
@@ -53,34 +53,6 @@ export function renderCylinder(
   const yAxisCameraSpace = yAxisWorldSpace.clone();
   inverseCameraMatrix.applyToVector3(yAxisCameraSpace);
 
-  const addCylinderEnd = (
-    { x, y }: Vector3,
-    radius: number,
-    dotProduct: number,
-    fill: Color
-  ) => {
-    const dotProductAbsolute = Math.abs(dotProduct);
-    // Create a 'circle' element
-    const circle = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "ellipse"
-    );
-
-    circle.id = "sphere";
-    circle.setAttribute("cx", x.toString());
-    circle.setAttribute("cy", y.toString());
-
-    // TODO: Factor in camera projection matrix, this currectly
-    // ignores all zoom factors. Can we even handle skew with sphere?!
-    // I don't think we can.
-    circle.setAttribute("rx", radius.toString());
-    circle.setAttribute("ry", (radius * dotProductAbsolute).toString());
-
-    circle.setAttribute("fill", ColorToCSS(fill));
-
-    svg.appendChild(circle);
-  };
-
   const cylinderScale = worldTransform.getScale().x;
   const cylinderScaleFactor = cylinderScale * cameraZoom;
   const Radius = cylinder.radius * cylinderScaleFactor;
@@ -91,6 +63,10 @@ export function renderCylinder(
   const dotProduct = yAxisWorldSpace.dotProduct(
     cameraDirection.clone().multiply(-1)
   );
+  const dotProductAbsolute = Math.abs(dotProduct);
+
+  const ShortRadius = Radius * dotProductAbsolute;
+
   console.log(
     `dotProduct: ${dotProduct.toFixed(3)} 
     yAxisCameraSpace: ${yAxisCameraSpace.x.toFixed(
@@ -99,12 +75,90 @@ export function renderCylinder(
   );
   const isTopVisible = dotProduct > 0;
 
-  addCylinderEnd(
-    isTopVisible ? points[CylinderEnds.Top] : points[CylinderEnds.Bottom],
-    cylinder.radius,
-    dotProduct,
-    isTopVisible ? Color(255, 0, 0) : Color(0, 0, 255)
+  const yAxisScreenSpace = Vector3(yAxisCameraSpace.x, -yAxisCameraSpace.y, 0)
+    .normalize()
+    .multiply(isTopVisible ? 1 : -1);
+
+  const capCenter = isTopVisible
+    ? points[CylinderEnds.Top]
+    : points[CylinderEnds.Bottom];
+
+  const tailCenter = isTopVisible
+    ? points[CylinderEnds.Bottom]
+    : points[CylinderEnds.Top];
+
+  // addCylinderEnd(
+  //   capCenter,
+  //   cylinder.radius,
+  //   dotProduct,
+  //   isTopVisible ? Color(255, 0, 0) : Color(0, 0, 255),
+  //   svg
+  // );
+
+  const leftNormal = Vector3(-yAxisScreenSpace.y, yAxisScreenSpace.x, 0);
+  const rightNormal = Vector3(yAxisScreenSpace.y, -yAxisScreenSpace.x, 0);
+  const topLeftPoint = leftNormal.clone().multiply(Radius).add(capCenter);
+  const topRightPoint = rightNormal.clone().multiply(Radius).add(capCenter);
+  const bottomLeftPoint = leftNormal.clone().multiply(Radius).add(tailCenter);
+  const bottomRightPoint = rightNormal.clone().multiply(Radius).add(tailCenter);
+
+  const xAxisRotation = normalToXAxisDegrees(rightNormal.x, rightNormal.y);
+  const largeArcFlag = 0;
+  const sweepFlag = 0;
+
+  const reversedLightDirection = scene.directionalLight.direction
+    .clone()
+    .multiply(-1);
+
+  const capPath = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "path"
   );
+  capPath.setAttribute("id", "cylinder-top");
+  capPath.setAttribute(
+    "fill",
+    applyLighting(
+      scene.directionalLight.color,
+      cylinder.fill,
+      scene.ambientLightColor,
+      isTopVisible
+        ? reversedLightDirection.dotProduct(yAxisWorldSpace)
+        : reversedLightDirection.dotProduct(
+            yAxisWorldSpace.clone().multiply(-1)
+          )
+    )
+  );
+  capPath.setAttribute(
+    "d",
+    `
+    M ${topLeftPoint.x} ${
+      topLeftPoint.y
+    } A ${Radius} ${ShortRadius} ${xAxisRotation} ${largeArcFlag} ${sweepFlag} ${
+      topRightPoint.x
+    } ${topRightPoint.y}
+    A ${Radius} ${ShortRadius} ${xAxisRotation} ${1} ${sweepFlag} ${
+      topLeftPoint.x
+    } ${topLeftPoint.y}`
+  );
+
+  svg.appendChild(capPath);
+
+  const tubePath = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "path"
+  );
+  tubePath.setAttribute("id", "cylinder-tube");
+  tubePath.setAttribute("fill", "purple");
+  tubePath.setAttribute(
+    "d",
+    `
+    M ${topLeftPoint.x} ${topLeftPoint.y} 
+    A ${Radius} ${ShortRadius} ${xAxisRotation} 0 1 ${topRightPoint.x} ${topRightPoint.y}
+    L ${bottomRightPoint.x} ${bottomRightPoint.y}
+    A ${Radius} ${ShortRadius} ${xAxisRotation} 0 0 ${bottomLeftPoint.x} ${bottomLeftPoint.y}
+    `
+  );
+  svg.appendChild(tubePath);
 
   // Scenarios we can view the cylinder from:
   // 1. From the top/bottom (can't see the tube)
@@ -113,30 +167,62 @@ export function renderCylinder(
 
   // Are we viewing the cylinder from the top or bottom?
 
-  points.forEach(({ x, y }, index) => {
-    const circle = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "circle"
-    );
+  // points.forEach(({ x, y }, index) => {
+  //   const circle = document.createElementNS(
+  //     "http://www.w3.org/2000/svg",
+  //     "circle"
+  //   );
 
-    circle.id = "sphere";
-    circle.setAttribute("cx", x.toString());
-    circle.setAttribute("cy", y.toString());
+  //   circle.id = "sphere";
+  //   circle.setAttribute("cx", x.toString());
+  //   circle.setAttribute("cy", y.toString());
 
-    // TODO: Factor in camera projection matrix, this currectly
-    // ignores all zoom factors. Can we even handle skew with sphere?!
-    // I don't think we can.
-    circle.setAttribute("r", (5).toString());
+  //   // TODO: Factor in camera projection matrix, this currectly
+  //   // ignores all zoom factors. Can we even handle skew with sphere?!
+  //   // I don't think we can.
+  //   circle.setAttribute("r", (5).toString());
 
-    circle.setAttribute(
-      "fill",
-      index === CylinderEnds.Top ? "rgb(128,0,0)" : "rgb(0,0,128)"
-    );
+  //   circle.setAttribute(
+  //     "fill",
+  //     index === CylinderEnds.Top ? "rgb(128,0,0)" : "rgb(0,0,128)"
+  //   );
 
-    svg.appendChild(circle);
-  });
+  //   svg.appendChild(circle);
+  // });
 
   // Get the center of the cylinder's top face
 
   // Get the center of the cylinder's bottom face
+}
+
+function addCylinderEnd(
+  { x, y }: Vector3,
+  radius: number,
+  dotProductAbsolute: number,
+  fill: Color,
+  svg: SVGElement
+) {
+  // Create a 'circle' element
+  const circle = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "ellipse"
+  );
+
+  circle.id = "sphere";
+  circle.setAttribute("cx", x.toString());
+  circle.setAttribute("cy", y.toString());
+
+  // TODO: Factor in camera projection matrix, this currectly
+  // ignores all zoom factors. Can we even handle skew with sphere?!
+  // I don't think we can.
+  circle.setAttribute("rx", radius.toString());
+  circle.setAttribute("ry", (radius * dotProductAbsolute).toString());
+
+  circle.setAttribute("fill", ColorToCSS(fill));
+
+  svg.appendChild(circle);
+}
+
+function normalToXAxisDegrees(x: number, y: number) {
+  return (Math.atan2(y, x) / Math.PI) * 180;
 }

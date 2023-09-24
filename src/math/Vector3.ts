@@ -3,6 +3,9 @@ export interface Vector3 {
   y: number;
   z: number;
   set(vec: Vector3): Vector3;
+  setX(x: number): Vector3;
+  setY(y: number): Vector3;
+  setZ(z: number): Vector3;
   add(vec: Vector3): Vector3;
   subtract(vec: Vector3): Vector3;
   multiply(scalar: number): Vector3;
@@ -23,6 +26,21 @@ const Vector3Proto = {
     this.x = vec.x;
     this.y = vec.y;
     this.z = vec.z;
+    return this;
+  },
+
+  setX(this: Vector3, x: number): Vector3 {
+    this.x = x;
+    return this;
+  },
+
+  setY(this: Vector3, y: number): Vector3 {
+    this.y = y;
+    return this;
+  },
+
+  setZ(this: Vector3, z: number): Vector3 {
+    this.z = z;
     return this;
   },
 
