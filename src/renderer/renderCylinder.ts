@@ -55,21 +55,17 @@ export function renderCylinder(
   const yAxisCameraSpace = yAxisWorldSpace.clone();
   inverseCameraMatrix.extractRotation().applyToVector3(yAxisCameraSpace);
 
-  const cylinderScale = worldTransform.getScale().x;
-  const cylinderScaleFactor = cylinderScale * cameraZoom;
-  const Radius = cylinder.radius * cylinderScaleFactor;
-
   // Top === -1
   // Front === 0
   // Bottom === 1
-  const dotProduct = yAxisCameraSpace.dotProduct(
-    // cameraDirection.clone().multiply(-1)
-    Vector3(0, 0, 1)
-  );
+  const dotProduct = yAxisCameraSpace.dotProduct(Vector3(0, 0, 1)); // This boils down to just taking the z component
   const dotProductAbsolute = Math.abs(dotProduct);
-
-  const ShortRadius = Radius * dotProductAbsolute;
   const isTopVisible = dotProduct > 0;
+
+  const cylinderScale = worldTransform.getScale().x;
+  const cylinderScaleFactor = cylinderScale * cameraZoom;
+  const Radius = cylinder.radius * cylinderScaleFactor;
+  const ShortRadius = Radius * dotProductAbsolute;
 
   console.log(
     `scenario: ${isTopVisible ? "top" : "bottom"}
@@ -164,8 +160,19 @@ export function renderCylinder(
   );
 
   addStrokeAttribute(tubePath, cylinder, cylinderScaleFactor);
-
   svg.appendChild(tubePath);
+
+  // Convert the light direction into camera space (not projected into screen space)
+  const directionalLightInCameraSpace = scene.directionalLight.direction
+    .clone()
+    .multiply(-1);
+  inverseCameraMatrix
+    .extractRotation()
+    .applyToVector3(directionalLightInCameraSpace);
+  // Then convert it into screen aligned cylinder space
+  Matrix4x4()
+    .makeRotationZ((xAxisRotation / 180) * Math.PI)
+    .applyToVector3(directionalLightInCameraSpace);
 
   const uuid = crypto.randomUUID();
   const fillUuid = uuid + "-fill";
@@ -198,19 +205,28 @@ export function renderCylinder(
   linearGradient.setAttribute("x2", rightOfTubeCenter.x.toString());
   linearGradient.setAttribute("y2", rightOfTubeCenter.y.toString());
 
-  const gradientStops = [
-    { offset: 0, stopColor: ColorToCSS(cylinder.fill) },
-    { offset: 1.0, stopColor: ColorToCSS(Color(0, 0, 0)) },
-  ];
+  // Add the gradient stops
+  const GradientSteps = Math.min(2, Math.max(255, Math.floor(Radius)));
 
-  for (let stop of gradientStops) {
+  for (let i = 0; i < GradientSteps; i++) {
+    const normalized = i / (GradientSteps - 1);
+    const x = Math.sin(normalized * Math.PI);
+    const z = Math.cos(normalized * Math.PI + Math.PI);
+
     const stopElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "stop"
     );
-
-    stopElement.setAttribute("offset", stop.offset.toString());
-    stopElement.setAttribute("stop-color", stop.stopColor);
+    stopElement.setAttribute("offset", normalized.toFixed(3));
+    stopElement.setAttribute(
+      "stop-color",
+      applyLighting(
+        scene.directionalLight.color,
+        cylinder.fill,
+        scene.ambientLightColor,
+        directionalLightInCameraSpace.dotProduct(Vector3(x, 0, z))
+      )
+    );
     linearGradient.appendChild(stopElement);
   }
 

@@ -80,19 +80,6 @@ export default function () {
     const distanceNormalized = distance / referenceRadius;
     let degrees = distanceNormalized * 90;
 
-    //Math.cos(((distanceNormalized * 90) / 180) * Math.PI);
-    // console.log(
-    //   degrees,
-    //   event.clientX,
-    //   event.clientY,
-    //   centerX,
-    //   centerY,
-    //   diffX,
-    //   diffY,
-    //   distance,
-    //   distanceNormalized
-    // );
-
     const spinMode: string = "z";
 
     if (spinMode === "y") {
@@ -100,7 +87,6 @@ export default function () {
         degrees *= -1;
       }
       lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
-      // lightSphere.position.y = 0.0;
       lightSphere.position.y = 0.5;
       lightSphere.position.z = Math.cos((degrees / 180) * Math.PI);
 
@@ -111,17 +97,10 @@ export default function () {
     } else if (spinMode === "z") {
       lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
       lightSphere.position.y = Math.cos((degrees / 180) * Math.PI);
-      lightSphere.position.z = 0; //
-      // lightSphere.position.z = -0.5; //
+      lightSphere.position.z = 0;
     }
 
     lightSphere.position.normalize().multiply(lightDistance).add(position);
-
-    // const x = event.clientX;
-    // const z = event.clientY;
-    // lightSphere.position.y = 0;
-    // const x = event.clientX;
-    // const y = event.clientY;
   };
   document.addEventListener("pointerdown", onPointerEvent);
   document.addEventListener("pointermove", onPointerEvent);
@@ -136,7 +115,8 @@ export default function () {
 
     // cylinder.rotation.x = now * 90;
     // cylinder.rotation.x = 45;
-    cylinder.rotation.y = now * 90;
+    cylinder.rotation.x = 90;
+    // cylinder.rotation.y = now * 90;
 
     // cylinder.rotation.x = now * 90;
 
