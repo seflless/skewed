@@ -128,14 +128,14 @@ export default function () {
   document.addEventListener("pointerup", onPointerEvent);
 
   onUpdate(({ now, deltaTime }) => {
-    const cameraSpeed = 0.1;
-    // const cameraSpeed = 0.0;
+    // const cameraSpeed = 0.1;
+    const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     // updateCamera(45, 20);
 
     // cylinder.rotation.x = now * 90;
-    cylinder.rotation.x = 45;
+    // cylinder.rotation.x = 45;
     cylinder.rotation.y = now * 90;
 
     // cylinder.rotation.x = now * 90;

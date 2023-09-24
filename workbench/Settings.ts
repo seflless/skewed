@@ -162,7 +162,7 @@ export function getCamera(choice: CameraChoice, zoom: number = 1) {
         case "top":
           camera.matrix.makeTranslation(0, 0, 0);
 
-          camera.matrix.makeRotationX(Math.PI / 2);
+          camera.matrix.makeRotationX(-Math.PI / 2);
           break;
         case "isometric":
           {

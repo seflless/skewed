@@ -53,7 +53,7 @@ export function renderCylinder(
     Vector3(0, 0, 0)
   );
   const yAxisCameraSpace = yAxisWorldSpace.clone();
-  inverseCameraMatrix.applyToVector3(yAxisCameraSpace);
+  inverseCameraMatrix.extractRotation().applyToVector3(yAxisCameraSpace);
 
   const cylinderScale = worldTransform.getScale().x;
   const cylinderScaleFactor = cylinderScale * cameraZoom;
@@ -62,20 +62,22 @@ export function renderCylinder(
   // Top === -1
   // Front === 0
   // Bottom === 1
-  const dotProduct = yAxisWorldSpace.dotProduct(
-    cameraDirection.clone().multiply(-1)
+  const dotProduct = yAxisCameraSpace.dotProduct(
+    // cameraDirection.clone().multiply(-1)
+    Vector3(0, 0, 1)
   );
   const dotProductAbsolute = Math.abs(dotProduct);
 
   const ShortRadius = Radius * dotProductAbsolute;
+  const isTopVisible = dotProduct > 0;
 
   console.log(
-    `dotProduct: ${dotProduct.toFixed(3)} 
+    `scenario: ${isTopVisible ? "top" : "bottom"}
+    dotProduct: ${dotProduct.toFixed(3)} 
     yAxisCameraSpace: ${yAxisCameraSpace.x.toFixed(
       2
     )}, ${yAxisCameraSpace.y.toFixed(2)}, ${yAxisCameraSpace.z.toFixed(2)}`
   );
-  const isTopVisible = dotProduct > 0;
 
   const yAxisScreenSpace = Vector3(yAxisCameraSpace.x, -yAxisCameraSpace.y, 0)
     .normalize()
