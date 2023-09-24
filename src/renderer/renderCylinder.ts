@@ -17,10 +17,12 @@ enum CylinderEnds {
   Bottom = 1,
 }
 
+const CrackFillingStrokeWidth = 0.5;
+
 export function renderCylinder(
   scene: Scene,
   svg: SVGElement,
-  _defs: SVGDefsElement,
+  defs: SVGDefsElement,
   cylinder: CylinderShape,
   viewport: Viewport,
   worldTransform: Matrix4x4,
@@ -115,21 +117,18 @@ export function renderCylinder(
     "path"
   );
   capPath.setAttribute("id", "cylinder-top");
-  capPath.setAttribute(
-    "fill",
-    applyLighting(
-      scene.directionalLight.color,
-      cylinder.fill,
-      scene.ambientLightColor,
-      isTopVisible
-        ? reversedLightDirection.dotProduct(yAxisWorldSpace)
-        : reversedLightDirection.dotProduct(
-            yAxisWorldSpace.clone().multiply(-1)
-          )
-    )
-  );
 
-  addStrokeAttribute(capPath, cylinder, cylinderScaleFactor);
+  const capFill = applyLighting(
+    scene.directionalLight.color,
+    cylinder.fill,
+    scene.ambientLightColor,
+    isTopVisible
+      ? reversedLightDirection.dotProduct(yAxisWorldSpace)
+      : reversedLightDirection.dotProduct(yAxisWorldSpace.clone().multiply(-1))
+  );
+  capPath.setAttribute("fill", capFill);
+
+  addStrokeAttribute(capPath, cylinder, cylinderScaleFactor, capFill);
   svg.appendChild(capPath);
 
   capPath.setAttribute(
@@ -165,6 +164,56 @@ export function renderCylinder(
   addStrokeAttribute(tubePath, cylinder, cylinderScaleFactor);
 
   svg.appendChild(tubePath);
+
+  const uuid = crypto.randomUUID();
+  const fillUuid = uuid + "-fill";
+  const fillUrl = `url(#${fillUuid})`;
+
+  tubePath.setAttribute("fill", fillUrl);
+
+  // Create the 'radialGradient' element
+  const linearGradient = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "linearGradient"
+  );
+
+  linearGradient.setAttribute("id", fillUuid);
+  linearGradient.setAttribute("gradientUnits", "userSpaceOnUse");
+
+  // Make the control points of the gradient the center of the cylinder's
+  // just to keep it nice and organized when editing in Figma and such later
+  const leftOfTubeCenter = topLeftPoint
+    .clone()
+    .add(bottomLeftPoint)
+    .multiply(0.5);
+  const rightOfTubeCenter = topRightPoint
+    .clone()
+    .add(bottomRightPoint)
+    .multiply(0.5);
+
+  linearGradient.setAttribute("x1", leftOfTubeCenter.x.toString());
+  linearGradient.setAttribute("y1", leftOfTubeCenter.y.toString());
+  linearGradient.setAttribute("x2", rightOfTubeCenter.x.toString());
+  linearGradient.setAttribute("y2", rightOfTubeCenter.y.toString());
+
+  const gradientStops = [
+    { offset: 0, stopColor: ColorToCSS(cylinder.fill) },
+    { offset: 1.0, stopColor: ColorToCSS(Color(0, 0, 0)) },
+  ];
+
+  for (let stop of gradientStops) {
+    const stopElement = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "stop"
+    );
+
+    stopElement.setAttribute("offset", stop.offset.toString());
+    stopElement.setAttribute("stop-color", stop.stopColor);
+    linearGradient.appendChild(stopElement);
+  }
+
+  defs.appendChild(linearGradient);
+
   // Add Cap last
 
   // Scenarios we can view the cylinder from:
@@ -205,7 +254,8 @@ export function renderCylinder(
 function addStrokeAttribute(
   svgShape: SVGElement,
   cylinderShape: CylinderShape,
-  scaleFactor: number
+  scaleFactor: number,
+  fillColor?: string
 ) {
   if (cylinderShape.strokeWidth && cylinderShape.stroke.a > 0.0) {
     svgShape.setAttribute("stroke", ColorToCSS(cylinderShape.stroke));
@@ -216,6 +266,12 @@ function addStrokeAttribute(
         (cylinderShape.strokeWidth * scaleFactor).toString()
       );
     }
+  } else if (fillColor !== undefined) {
+    svgShape.setAttribute("stroke", fillColor);
+    svgShape.setAttribute(
+      "stroke-width",
+      (CrackFillingStrokeWidth * scaleFactor).toString()
+    );
   }
 }
 

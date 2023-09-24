@@ -42,7 +42,7 @@ export default function () {
     // radius: referenceRadius,
     fill: Color(255, 0, 0),
     stroke: Color(0, 0, 0),
-    strokeWidth: 4,
+    strokeWidth: 0,
   });
 
   const scene: Scene = {
