@@ -40,13 +40,13 @@ export default function () {
     radius: referenceRadius,
     height,
     // radius: referenceRadius,
-    fill: Color(255, 0, 0),
+    fill: Color(255, 255, 255),
     stroke: Color(0, 0, 0),
     strokeWidth: 0,
   });
 
   const scene: Scene = {
-    ...getLighting("reference"),
+    ...getLighting("black and white"),
     shapes: [
       getEnvironment("grid"),
       // Axii(Vector3(-referenceRadius * 3, 0, 0)),
@@ -76,6 +76,7 @@ export default function () {
     const diffX = event.clientX - centerX;
     const diffY = event.clientY - centerY;
     const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+    const lightSpeed = 2;
 
     const distanceNormalized = distance / referenceRadius;
     let degrees = distanceNormalized * 90;
@@ -86,17 +87,17 @@ export default function () {
       if (diffX < 0) {
         degrees *= -1;
       }
-      lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
-      lightSphere.position.y = 0.5;
-      lightSphere.position.z = Math.cos((degrees / 180) * Math.PI);
+      lightSphere.position.x = Math.sin((degrees / 180) * Math.PI * lightSpeed);
+      lightSphere.position.y = 0.0;
+      lightSphere.position.z = Math.cos((degrees / 180) * Math.PI * lightSpeed);
 
       if (event.buttons === 1) {
         console.log();
         lightSphere.position.z *= -1;
       }
     } else if (spinMode === "z") {
-      lightSphere.position.x = Math.sin((degrees / 180) * Math.PI);
-      lightSphere.position.y = Math.cos((degrees / 180) * Math.PI);
+      lightSphere.position.x = Math.sin((degrees / 180) * Math.PI * lightSpeed);
+      lightSphere.position.y = Math.cos((degrees / 180) * Math.PI * lightSpeed);
       lightSphere.position.z = 0;
     }
 
@@ -126,10 +127,16 @@ export default function () {
     // lightSphere.position.z =
     //   Math.cos(now * Math.PI * 2 * lightSpeed) * lightDistance;
 
+    // lightSphere.position = Vector3(1, 0, 1).multiply(lightDistance);
+
     scene.directionalLight.direction = lightSphere.position
+      .clone()
+      .setY(0)
       .clone()
       .normalize()
       .multiply(-1);
+
+    lightSphere.position.y = height / 2;
 
     render(document.getElementById("root")!, scene, viewport, camera);
   });

@@ -205,13 +205,26 @@ export function renderCylinder(
   linearGradient.setAttribute("x2", rightOfTubeCenter.x.toString());
   linearGradient.setAttribute("y2", rightOfTubeCenter.y.toString());
 
+  const leftEdgeNormal = Vector3(0, 0, 1)
+    .crossProduct(yAxisCameraSpace)
+    .normalize();
+
+  const lightingSpace = Matrix4x4().lookAt(
+    Vector3(0, 0, 0),
+    leftEdgeNormal,
+    yAxisCameraSpace
+  );
+
   // Add the gradient stops
-  const GradientSteps = Math.min(2, Math.max(255, Math.floor(Radius)));
+  const GradientSteps = Math.max(2, Math.min(255, Math.floor(Radius)));
 
   for (let i = 0; i < GradientSteps; i++) {
     const normalized = i / (GradientSteps - 1);
-    const x = Math.sin(normalized * Math.PI);
+    const x = Math.cos(normalized * Math.PI + Math.PI / 2);
     const z = Math.cos(normalized * Math.PI + Math.PI);
+    const normal = Vector3(x, 0, z);
+
+    lightingSpace.applyToVector3(normal);
 
     const stopElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
@@ -224,7 +237,7 @@ export function renderCylinder(
         scene.directionalLight.color,
         cylinder.fill,
         scene.ambientLightColor,
-        directionalLightInCameraSpace.dotProduct(Vector3(x, 0, z))
+        directionalLightInCameraSpace.dotProduct(normal)
       )
     );
     linearGradient.appendChild(stopElement);
