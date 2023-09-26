@@ -131,12 +131,10 @@ export default function () {
 
     scene.directionalLight.direction = lightSphere.position
       .clone()
-      .setY(0)
-      .clone()
       .normalize()
       .multiply(-1);
 
-    lightSphere.position.y = height / 2;
+    // lightSphere.position.y = height / 2;
 
     render(document.getElementById("root")!, scene, viewport, camera);
   });

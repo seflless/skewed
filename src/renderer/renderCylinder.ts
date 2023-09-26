@@ -47,11 +47,7 @@ export function renderCylinder(
   });
 
   const yAxisWorldSpace = Vector3(0, 0, 0);
-  worldTransform.extractBasis(
-    Vector3(0, 0, 0),
-    yAxisWorldSpace,
-    Vector3(0, 0, 0)
-  );
+  worldTransform.extractBasis(undefined, yAxisWorldSpace, undefined);
   const yAxisCameraSpace = yAxisWorldSpace.clone();
   inverseCameraMatrix.extractRotation().applyToVector3(yAxisCameraSpace);
 
@@ -75,9 +71,12 @@ export function renderCylinder(
     )}, ${yAxisCameraSpace.y.toFixed(2)}, ${yAxisCameraSpace.z.toFixed(2)}`
   );
 
-  const yAxisScreenSpace = Vector3(yAxisCameraSpace.x, -yAxisCameraSpace.y, 0)
-    .normalize()
-    .multiply(isTopVisible ? 1 : -1);
+  const yAxisScreenSpace = Vector3(
+    yAxisCameraSpace.x,
+    -yAxisCameraSpace.y,
+    0
+  ).normalize();
+  // .multiply(isTopVisible ? 1 : -1);
 
   const capCenter = isTopVisible
     ? points[CylinderEnds.Top]
@@ -163,15 +162,9 @@ export function renderCylinder(
   svg.appendChild(tubePath);
 
   // Convert the light direction into camera space (not projected into screen space)
-  const directionalLightInCameraSpace = scene.directionalLight.direction
-    .clone()
-    .multiply(-1);
+  const directionalLightInCameraSpace = reversedLightDirection.clone();
   inverseCameraMatrix
     .extractRotation()
-    .applyToVector3(directionalLightInCameraSpace);
-  // Then convert it into screen aligned cylinder space
-  Matrix4x4()
-    .makeRotationZ((xAxisRotation / 180) * Math.PI)
     .applyToVector3(directionalLightInCameraSpace);
 
   const uuid = crypto.randomUUID();
@@ -221,7 +214,7 @@ export function renderCylinder(
   for (let i = 0; i < GradientSteps; i++) {
     const normalized = i / (GradientSteps - 1);
     const x = Math.cos(normalized * Math.PI + Math.PI / 2);
-    const z = Math.cos(normalized * Math.PI + Math.PI);
+    const z = -Math.cos(normalized * Math.PI + Math.PI);
     const normal = Vector3(x, 0, z);
 
     lightingSpace.applyToVector3(normal);
