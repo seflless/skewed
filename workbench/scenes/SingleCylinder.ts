@@ -45,6 +45,17 @@ export default function () {
     strokeWidth: 0,
   });
 
+  // const cylinder = Box({
+  //   id: "reference",
+  //   position,
+  //   width: referenceRadius * 2,
+  //   height,
+  //   // radius: referenceRadius,
+  //   fill: Color(255, 255, 255),
+  //   stroke: Color(0, 0, 0),
+  //   strokeWidth: 0,
+  // });
+
   const scene: Scene = {
     ...getLighting("black and white"),
     shapes: [
@@ -114,7 +125,7 @@ export default function () {
 
     // updateCamera(45, 20);
 
-    // cylinder.rotation.x = now * 90;
+    // cylinder.rotation.x = (now * 90) % 360;
     // cylinder.rotation.x = 45;
     cylinder.rotation.x = 90;
     // cylinder.rotation.y = now * 90;
