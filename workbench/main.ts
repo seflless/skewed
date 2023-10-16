@@ -9,11 +9,11 @@ import { getPaused, setPaused } from "./Settings";
 import Cylinders from "./scenes/Cylinders";
 import SingleCylinder from "./scenes/SingleCylinder";
 
-// KitchenSink();
+KitchenSink();
 // Transforms();
 // Octopus();
 // Spheres();
-Cylinders();
+// Cylinders();
 // SingleSphere();
 // SingleCylinder();
 // Worm();

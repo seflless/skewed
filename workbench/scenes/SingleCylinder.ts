@@ -61,7 +61,7 @@ export default function () {
     ...getLighting("black and white"),
     shapes: [
       getEnvironment("grid"),
-      Axii(Vector3(-referenceRadius * 3, 0, 0)),
+      // Axii(Vector3(-referenceRadius * 3, 0, 0)),
       // Group({
       //   position: Vector3(0, 0, 0),
       //   rotation: Vector3(45, 0, 0),

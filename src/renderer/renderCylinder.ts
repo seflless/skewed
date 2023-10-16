@@ -4,12 +4,11 @@
 // https://observablehq.com/d/011f054fc7eaf966
 
 import { projectToScreenCoordinate } from "../cameras/Camera";
-import { Color, ColorToCSS } from "../colors/Color";
+import { ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
 import { CylinderShape } from "../shapes/Shape";
-import { DebugLine2D } from "./DebugRenderer";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 
@@ -28,7 +27,7 @@ export function renderCylinder(
   viewport: Viewport,
   worldTransform: Matrix4x4,
   cameraZoom: number,
-  cameraDirection: Vector3,
+  _cameraDirection: Vector3,
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
@@ -111,14 +110,6 @@ export function renderCylinder(
   const hiddenCapCenter = isTopVisible
     ? capsInScreenSpace[CylinderEnds.Bottom]
     : capsInScreenSpace[CylinderEnds.Top];
-
-  // addCylinderEnd(
-  //   capCenter,
-  //   cylinder.radius,
-  //   dotProduct,
-  //   isTopVisible ? Color(255, 0, 0) : Color(0, 0, 255),
-  //   svg
-  // );
 
   const leftNormal = Vector3(
     -visibleUpAxisScreenSpace.y,
@@ -341,34 +332,6 @@ function addStrokeAttribute(
       (CrackFillingStrokeWidth * scaleFactor).toString()
     );
   }
-}
-
-function addCylinderEnd(
-  { x, y }: Vector3,
-  radius: number,
-  dotProductAbsolute: number,
-  fill: Color,
-  svg: SVGElement
-) {
-  // Create a 'circle' element
-  const circle = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "ellipse"
-  );
-
-  circle.id = "sphere";
-  circle.setAttribute("cx", x.toString());
-  circle.setAttribute("cy", y.toString());
-
-  // TODO: Factor in camera projection matrix, this currectly
-  // ignores all zoom factors. Can we even handle skew with sphere?!
-  // I don't think we can.
-  circle.setAttribute("rx", radius.toString());
-  circle.setAttribute("ry", (radius * dotProductAbsolute).toString());
-
-  circle.setAttribute("fill", ColorToCSS(fill));
-
-  svg.appendChild(circle);
 }
 
 function normalToXAxisDegrees(x: number, y: number) {

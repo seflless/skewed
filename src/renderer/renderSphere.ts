@@ -21,19 +21,19 @@ function dotProductToDegrees(dotProduct: number) {
   return angleInDegrees;
 }
 
-// function normalToDegrees(x: number, z: number) {
-//   return (Math.atan2(x, z) / Math.PI) * 180;
-// }
+// // function normalToDegrees(x: number, z: number) {
+// //   return (Math.atan2(x, z) / Math.PI) * 180;
+// // }
 
-function normalizeDegrees(degrees: number) {
-  let adjustedDegrees = degrees;
-  if (adjustedDegrees < 0) {
-    adjustedDegrees = 360 + (adjustedDegrees % 360);
-  } else {
-    adjustedDegrees = adjustedDegrees % 360;
-  }
-  return adjustedDegrees;
-}
+// function normalizeDegrees(degrees: number) {
+//   let adjustedDegrees = degrees;
+//   if (adjustedDegrees < 0) {
+//     adjustedDegrees = 360 + (adjustedDegrees % 360);
+//   } else {
+//     adjustedDegrees = adjustedDegrees % 360;
+//   }
+//   return adjustedDegrees;
+// }
 
 function calculateRotationAngle(x: number, y: number) {
   const angleInRadians = Math.atan2(y, x);
