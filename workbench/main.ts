@@ -6,12 +6,16 @@ import Spheres from "./scenes/Spheres";
 import SingleSphere from "./scenes/SingleSphere";
 import Worm from "./scenes/Worm";
 import { getPaused, setPaused } from "./Settings";
+import Cylinders from "./scenes/Cylinders";
+import SingleCylinder from "./scenes/SingleCylinder";
 
-// KitchenSink();
+KitchenSink();
 // Transforms();
 // Octopus();
-Spheres();
+// Spheres();
+// Cylinders();
 // SingleSphere();
+// SingleCylinder();
 // Worm();
 
 document

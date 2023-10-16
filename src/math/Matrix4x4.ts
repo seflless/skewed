@@ -26,7 +26,7 @@ export interface Matrix4x4 {
   copyPosition(matrix: Matrix4x4): Matrix4x4;
   getTranslation(): Vector3;
   getScale(): Vector3;
-  extractBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4x4;
+  extractBasis(xAxis?: Vector3, yAxis?: Vector3, zAxis?: Vector3): Matrix4x4;
   extractRotation(): Matrix4x4;
   lookAt(eye: Vector3, target: Vector3, up: Vector3): Matrix4x4;
 
@@ -313,13 +313,19 @@ const Matrix4x4Proto = {
 
   extractBasis(
     this: Matrix4x4,
-    xAxis: Vector3,
-    yAxis: Vector3,
-    zAxis: Vector3
+    xAxis?: Vector3,
+    yAxis?: Vector3,
+    zAxis?: Vector3
   ) {
-    setVector3FromMatrixElements(xAxis, this.elements, 0);
-    setVector3FromMatrixElements(yAxis, this.elements, 4);
-    setVector3FromMatrixElements(zAxis, this.elements, 8);
+    if (xAxis !== undefined) {
+      setVector3FromMatrixElements(xAxis, this.elements, 0);
+    }
+    if (yAxis !== undefined) {
+      setVector3FromMatrixElements(yAxis, this.elements, 4);
+    }
+    if (zAxis !== undefined) {
+      setVector3FromMatrixElements(zAxis, this.elements, 8);
+    }
 
     return this;
   },

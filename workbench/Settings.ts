@@ -11,7 +11,12 @@ import {
   Viewport,
 } from "../src";
 
-export type LightingChoice = "reference" | "moonlit" | "underwater" | "none";
+export type LightingChoice =
+  | "reference"
+  | "black and white"
+  | "moonlit"
+  | "underwater"
+  | "none";
 
 export function getLighting(lighting: LightingChoice): {
   directionalLight: DirectionalLight;
@@ -32,6 +37,17 @@ export function getLighting(lighting: LightingChoice): {
       r: 64,
       g: 64,
       b: 64,
+    };
+    directionalLightColor = {
+      r: 255,
+      g: 252,
+      b: 255,
+    };
+  } else if (lighting === "black and white") {
+    ambientLightColor = {
+      r: 0,
+      g: 0,
+      b: 0,
     };
     directionalLightColor = {
       r: 255,
@@ -162,7 +178,7 @@ export function getCamera(choice: CameraChoice, zoom: number = 1) {
         case "top":
           camera.matrix.makeTranslation(0, 0, 0);
 
-          camera.matrix.makeRotationX(Math.PI / 2);
+          camera.matrix.makeRotationX(-Math.PI / 2);
           break;
         case "isometric":
           {
