@@ -344,7 +344,7 @@ export default function () {
     const cylinderScaleSpeed = 0.25;
     const cylinderTranslationSpeed = 1;
     // cylinder.rotation.x = 90;
-    cylinder.rotation.z = now * 360 * cylinderRotationSpeed;
+    // cylinder.rotation.z = now * 360 * cylinderRotationSpeed;
 
     const boxRotationSpeed = 0.25;
     // transparentBox.rotation.y = now * 360 * boxRotationSpeed;
