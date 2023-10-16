@@ -71,22 +71,11 @@ export function renderCylinder(
   const dotProduct = cylinderYAxisCameraSpace.dotProduct(Vector3(0, 0, 1)); // This boils down to just taking the z component
   const dotProductAbsolute = Math.abs(dotProduct);
   const isTopVisible = dotProduct > 0;
-  console.log(`isTopVisible: ${isTopVisible}`);
 
   const cylinderScale = worldTransform.getScale().x;
   const cylinderScaleFactor = cylinderScale * cameraZoom;
   const Radius = cylinder.radius * cylinderScaleFactor;
   const ShortRadius = Radius * dotProductAbsolute;
-
-  console.log(
-    `scenario: ${isTopVisible ? "top" : "bottom"}
-    dotProduct: ${dotProduct.toFixed(3)} 
-    yAxisCameraSpace: ${cylinderYAxisCameraSpace.x.toFixed(
-      2
-    )}, ${cylinderYAxisCameraSpace.y.toFixed(
-      2
-    )}, ${cylinderYAxisCameraSpace.z.toFixed(2)}`
-  );
 
   const visibleUpAxisWorldSpace = isTopVisible
     ? cylinderYAxisWorldSpace.clone()

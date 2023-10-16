@@ -33,12 +33,12 @@ export default function () {
   // https://www.figma.com/file/735rFnz0E5ib3rq4ha5MMF/Figma-Experiments?type=design&node-id=1312-16&mode=design&t=w03Fbw0ybh430M6y-4
   const pathFromFigmaCircle =
     "M1 0.5C1 0.776142 0.776142 1 0.5 1C0.223858 1 0 0.776142 0 0.5C0 0.223858 0.223858 0 0.5 0C0.776142 0 1 0.223858 1 0.5Z";
-  console.log(pathFromFigmaCircle);
+  // console.log(pathFromFigmaCircle);
 
   const pathSegments = svgPathParser(pathFromFigmaCircle, true);
-  console.log(pathSegments);
+  // console.log(pathSegments);
   const svg3DCommands = svgPathToSvg3DCommands(pathSegments);
-  console.log(svg3DCommands);
+  // console.log(svg3DCommands);
 
   const size = 35;
   const lightSphere = Sphere({
