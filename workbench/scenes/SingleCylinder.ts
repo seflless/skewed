@@ -33,7 +33,8 @@ export default function () {
   });
 
   const height = referenceRadius * 4;
-  const position = Vector3(0, height / 2, 0);
+  // const position = Vector3(0, height / 2, 0);
+  const position = Vector3(0, 0, 0);
   const cylinder = Cylinder({
     id: "reference",
     position,
@@ -60,7 +61,7 @@ export default function () {
     ...getLighting("black and white"),
     shapes: [
       getEnvironment("grid"),
-      // Axii(Vector3(-referenceRadius * 3, 0, 0)),
+      Axii(Vector3(-referenceRadius * 3, 0, 0)),
       // Group({
       //   position: Vector3(0, 0, 0),
       //   rotation: Vector3(45, 0, 0),
@@ -118,6 +119,8 @@ export default function () {
   document.addEventListener("pointermove", onPointerEvent);
   document.addEventListener("pointerup", onPointerEvent);
 
+  const rotationSpeed = 0.3;
+
   onUpdate(({ now, deltaTime }) => {
     // const cameraSpeed = 0.1;
     const cameraSpeed = 0.0;
@@ -125,9 +128,9 @@ export default function () {
 
     // updateCamera(45, 20);
 
-    // cylinder.rotation.x = (now * 90) % 360;
+    cylinder.rotation.x = (now * 90 * rotationSpeed) % 360;
     // cylinder.rotation.x = 45;
-    cylinder.rotation.x = 90;
+    // cylinder.rotation.x = 90;
     // cylinder.rotation.y = now * 90;
 
     // cylinder.rotation.x = now * 90;

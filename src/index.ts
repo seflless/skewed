@@ -1,6 +1,7 @@
 export * from "./renderer/Scene";
 export * from "./renderer/Viewport";
 export * from "./renderer/Renderer";
+export * from "./renderer/DebugRenderer";
 export * from "./colors/Color";
 export * from "./lighting/DirectionalLight";
 export * from "./lighting/LightingModel";

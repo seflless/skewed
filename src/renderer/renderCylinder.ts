@@ -9,6 +9,7 @@ import { applyLighting } from "../lighting/LightingModel";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
 import { CylinderShape } from "../shapes/Shape";
+import { DebugLine2D } from "./DebugRenderer";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 
@@ -31,7 +32,8 @@ export function renderCylinder(
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
-  const points: Vector3[] = [
+  // Get screen space coordinates for the top and bottom of the cylinder
+  const capsInScreenSpace: Vector3[] = [
     // Top
     Vector3(0, cylinder.height / 2, 0),
     // Bottom
@@ -46,17 +48,31 @@ export function renderCylinder(
     );
   });
 
-  const yAxisWorldSpace = Vector3(0, 0, 0);
-  worldTransform.extractBasis(undefined, yAxisWorldSpace, undefined);
-  const yAxisCameraSpace = yAxisWorldSpace.clone();
-  inverseCameraMatrix.extractRotation().applyToVector3(yAxisCameraSpace);
+  const cylinderYAxisWorldSpace = Vector3(0, 0, 0);
+  worldTransform.extractBasis(undefined, cylinderYAxisWorldSpace, undefined);
+
+  const cylinderYAxisCameraSpace = cylinderYAxisWorldSpace.clone();
+  inverseCameraMatrix
+    .extractRotation()
+    .applyToVector3(cylinderYAxisCameraSpace);
+
+  // DebugLine2D(
+  //   svg,
+  //   viewport,
+  //   0,
+  //   0,
+  //   cylinderYAxisCameraSpace.x * 100,
+  //   -cylinderYAxisCameraSpace.y * 100,
+  //   Color(255, 0, 0)
+  // );
 
   // Top === -1
   // Front === 0
   // Bottom === 1
-  const dotProduct = yAxisCameraSpace.dotProduct(Vector3(0, 0, 1)); // This boils down to just taking the z component
+  const dotProduct = cylinderYAxisCameraSpace.dotProduct(Vector3(0, 0, 1)); // This boils down to just taking the z component
   const dotProductAbsolute = Math.abs(dotProduct);
   const isTopVisible = dotProduct > 0;
+  console.log(`isTopVisible: ${isTopVisible}`);
 
   const cylinderScale = worldTransform.getScale().x;
   const cylinderScaleFactor = cylinderScale * cameraZoom;
@@ -66,25 +82,35 @@ export function renderCylinder(
   console.log(
     `scenario: ${isTopVisible ? "top" : "bottom"}
     dotProduct: ${dotProduct.toFixed(3)} 
-    yAxisCameraSpace: ${yAxisCameraSpace.x.toFixed(
+    yAxisCameraSpace: ${cylinderYAxisCameraSpace.x.toFixed(
       2
-    )}, ${yAxisCameraSpace.y.toFixed(2)}, ${yAxisCameraSpace.z.toFixed(2)}`
+    )}, ${cylinderYAxisCameraSpace.y.toFixed(
+      2
+    )}, ${cylinderYAxisCameraSpace.z.toFixed(2)}`
   );
 
-  const yAxisScreenSpace = Vector3(
-    yAxisCameraSpace.x,
-    -yAxisCameraSpace.y,
+  const visibleUpAxisWorldSpace = isTopVisible
+    ? cylinderYAxisWorldSpace.clone()
+    : cylinderYAxisWorldSpace.clone().multiply(-1);
+
+  const visibleUpAxisCameraSpace = isTopVisible
+    ? cylinderYAxisCameraSpace.clone()
+    : cylinderYAxisCameraSpace.clone().multiply(-1);
+
+  const visibleUpAxisScreenSpace = Vector3(
+    visibleUpAxisCameraSpace.x,
+    -visibleUpAxisCameraSpace.y,
     0
   ).normalize();
   // .multiply(isTopVisible ? 1 : -1);
 
-  const capCenter = isTopVisible
-    ? points[CylinderEnds.Top]
-    : points[CylinderEnds.Bottom];
+  const visibleCapCenter = isTopVisible
+    ? capsInScreenSpace[CylinderEnds.Top]
+    : capsInScreenSpace[CylinderEnds.Bottom];
 
-  const tailCenter = isTopVisible
-    ? points[CylinderEnds.Bottom]
-    : points[CylinderEnds.Top];
+  const hiddenCapCenter = isTopVisible
+    ? capsInScreenSpace[CylinderEnds.Bottom]
+    : capsInScreenSpace[CylinderEnds.Top];
 
   // addCylinderEnd(
   //   capCenter,
@@ -94,12 +120,32 @@ export function renderCylinder(
   //   svg
   // );
 
-  const leftNormal = Vector3(-yAxisScreenSpace.y, yAxisScreenSpace.x, 0);
-  const rightNormal = Vector3(yAxisScreenSpace.y, -yAxisScreenSpace.x, 0);
-  const topLeftPoint = leftNormal.clone().multiply(Radius).add(capCenter);
-  const topRightPoint = rightNormal.clone().multiply(Radius).add(capCenter);
-  const bottomLeftPoint = leftNormal.clone().multiply(Radius).add(tailCenter);
-  const bottomRightPoint = rightNormal.clone().multiply(Radius).add(tailCenter);
+  const leftNormal = Vector3(
+    -visibleUpAxisScreenSpace.y,
+    visibleUpAxisScreenSpace.x,
+    0
+  );
+  const rightNormal = Vector3(
+    visibleUpAxisScreenSpace.y,
+    -visibleUpAxisScreenSpace.x,
+    0
+  );
+  const visibleLeftPoint = leftNormal
+    .clone()
+    .multiply(Radius)
+    .add(visibleCapCenter);
+  const visibleRightPoint = rightNormal
+    .clone()
+    .multiply(Radius)
+    .add(visibleCapCenter);
+  const hiddenLeftPoint = leftNormal
+    .clone()
+    .multiply(Radius)
+    .add(hiddenCapCenter);
+  const hiddenRightPoint = rightNormal
+    .clone()
+    .multiply(Radius)
+    .add(hiddenCapCenter);
 
   const xAxisRotation = normalToXAxisDegrees(rightNormal.x, rightNormal.y);
   const largeArcFlag = 0;
@@ -113,15 +159,13 @@ export function renderCylinder(
     "http://www.w3.org/2000/svg",
     "path"
   );
-  capPath.setAttribute("id", "cylinder-top");
+  capPath.setAttribute("id", isTopVisible ? "cylinder-top" : "cylinder-bottom");
 
   const capFill = applyLighting(
     scene.directionalLight.color,
     cylinder.fill,
     scene.ambientLightColor,
-    isTopVisible
-      ? reversedLightDirection.dotProduct(yAxisWorldSpace)
-      : reversedLightDirection.dotProduct(yAxisWorldSpace.clone().multiply(-1))
+    reversedLightDirection.dotProduct(visibleUpAxisWorldSpace.clone())
   );
   capPath.setAttribute("fill", capFill);
 
@@ -131,14 +175,14 @@ export function renderCylinder(
   capPath.setAttribute(
     "d",
     `
-    M ${topLeftPoint.x} ${
-      topLeftPoint.y
+    M ${visibleLeftPoint.x} ${
+      visibleLeftPoint.y
     } A ${Radius} ${ShortRadius} ${xAxisRotation} ${largeArcFlag} ${sweepFlag} ${
-      topRightPoint.x
-    } ${topRightPoint.y}
+      visibleRightPoint.x
+    } ${visibleRightPoint.y}
     A ${Radius} ${ShortRadius} ${xAxisRotation} ${1} ${sweepFlag} ${
-      topLeftPoint.x
-    } ${topLeftPoint.y}`
+      visibleLeftPoint.x
+    } ${visibleLeftPoint.y}`
   );
 
   const tubePath = document.createElementNS(
@@ -150,10 +194,10 @@ export function renderCylinder(
   tubePath.setAttribute(
     "d",
     `
-    M ${topLeftPoint.x} ${topLeftPoint.y} 
-    A ${Radius} ${ShortRadius} ${xAxisRotation} 0 1 ${topRightPoint.x} ${topRightPoint.y}
-    L ${bottomRightPoint.x} ${bottomRightPoint.y}
-    A ${Radius} ${ShortRadius} ${xAxisRotation} 0 0 ${bottomLeftPoint.x} ${bottomLeftPoint.y}
+    M ${visibleLeftPoint.x} ${visibleLeftPoint.y} 
+    A ${Radius} ${ShortRadius} ${xAxisRotation} 0 1 ${visibleRightPoint.x} ${visibleRightPoint.y}
+    L ${hiddenRightPoint.x} ${hiddenRightPoint.y}
+    A ${Radius} ${ShortRadius} ${xAxisRotation} 0 0 ${hiddenLeftPoint.x} ${hiddenLeftPoint.y}
     Z
     `
   );
@@ -184,13 +228,13 @@ export function renderCylinder(
 
   // Make the control points of the gradient the center of the cylinder's
   // just to keep it nice and organized when editing in Figma and such later
-  const leftOfTubeCenter = topLeftPoint
+  const leftOfTubeCenter = visibleLeftPoint
     .clone()
-    .add(bottomLeftPoint)
+    .add(hiddenLeftPoint)
     .multiply(0.5);
-  const rightOfTubeCenter = topRightPoint
+  const rightOfTubeCenter = visibleRightPoint
     .clone()
-    .add(bottomRightPoint)
+    .add(hiddenRightPoint)
     .multiply(0.5);
 
   linearGradient.setAttribute("x1", leftOfTubeCenter.x.toString());
@@ -199,13 +243,13 @@ export function renderCylinder(
   linearGradient.setAttribute("y2", rightOfTubeCenter.y.toString());
 
   const leftEdgeNormal = Vector3(0, 0, 1)
-    .crossProduct(yAxisCameraSpace)
+    .crossProduct(visibleUpAxisCameraSpace)
     .normalize();
 
   const lightingSpace = Matrix4x4().lookAt(
     Vector3(0, 0, 0),
     leftEdgeNormal,
-    yAxisCameraSpace
+    visibleUpAxisCameraSpace
   );
 
   // Add the gradient stops

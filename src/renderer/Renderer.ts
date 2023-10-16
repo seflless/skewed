@@ -131,6 +131,11 @@ export function render(
     }
   }
 
+  // @ts-ignore
+  svg.debugQueue?.forEach((element) => {
+    svg.appendChild(element);
+  });
+
   container.appendChild(svg);
 }
 

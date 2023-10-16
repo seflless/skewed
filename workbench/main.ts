@@ -13,9 +13,9 @@ import SingleCylinder from "./scenes/SingleCylinder";
 // Transforms();
 // Octopus();
 // Spheres();
-// Cylinders();
+Cylinders();
 // SingleSphere();
-SingleCylinder();
+// SingleCylinder();
 // Worm();
 
 document
