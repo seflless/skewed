@@ -180,6 +180,10 @@ function createMatrix4x4(
   });
 }
 
+// Actual implementation of Matrix4x4, we take this approach we because we want a
+// 'new' free API. Ie: `v = Matrix4x4()` instead of `v = new Matrix4x4()`.
+// This is based on a conversation with GPT-4 that helped meet my requirements
+// https://chat.openai.com/c/f22bc4d6-2cc3-44c1-8b91-28c2708f2c17
 const Matrix4x4Proto = {
   set(
     this: Matrix4x4,
