@@ -50,7 +50,7 @@ export default function () {
     position: position.clone().add(Vector3(200, 0, 0)),
     width: 200,
     height: 48,
-    depth: 48,
+    depth: 4,
     // radius: referenceRadius,
     fill: Color(255, 255, 255),
     stroke: Color(0, 0, 0),
@@ -61,7 +61,7 @@ export default function () {
     ...getLighting("black and white"),
     shapes: [
       getEnvironment("grid"),
-      // Axii(Vector3(-referenceRadius * 3, 0, 0)),
+      Axii(Vector3(-referenceRadius * 3, 0, 0)),
       // Group({
       //   position: Vector3(0, 0, 0),
       //   rotation: Vector3(45, 0, 0),
@@ -128,8 +128,9 @@ export default function () {
     // updateCamera(45, 20);
 
     // text.rotation.x = (now * 90 * rotationSpeed) % 360;
-    text.rotation.y = (now * 90 * rotationSpeed) % 360;
-    // referenceBox.rotation.x = text.rotation.x;
+    text.rotation.z = (now * 90 * rotationSpeed) % 360;
+    text.rotation.x = 20;
+    referenceBox.rotation = text.rotation.clone();
     // text.rotation.y = (now * 120 * rotationSpeed) % 360;
     // cylinder.rotation.x = 45;
     // cylinder.rotation.x = 90;

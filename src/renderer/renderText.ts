@@ -6,6 +6,7 @@ import { TextShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 import { ColorToCSS } from "../colors/Color";
+import { Euler, EulerOrder } from "../math/Euler";
 
 export function renderText(
   scene: Scene,
@@ -16,11 +17,16 @@ export function renderText(
   worldTransform: Matrix4x4,
   cameraZoom: number,
   _cameraDirection: Vector3,
-  _inverseCameraMatrix: Matrix4x4,
+  inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
   const textScale = worldTransform.getScale().x;
   const textScaleFactor = textScale * cameraZoom;
+
+  const transformMatrixCameraSpace = inverseCameraMatrix
+    .clone()
+    .multiply(worldTransform)
+    .extractRotation();
 
   const textElement = document.createElementNS(
     "http://www.w3.org/2000/svg",
@@ -50,7 +56,7 @@ export function renderText(
 
   textElement.textContent = textShape.text;
 
-  setSVGElementRotation(x, y, textElement, worldTransform);
+  setSVGElementRotation(x, y, textElement, transformMatrixCameraSpace);
 
   svg.appendChild(textElement);
 }
@@ -61,30 +67,77 @@ function setSVGElementRotation(
   textElement: SVGTextElement,
   worldTransform: Matrix4x4
 ) {
-  // Extract the elements of the rotation matrix
-  const elements = worldTransform.elements;
-  // Elements of rotation matrix for ZYX rotation order
-  const r11 = elements[0],
-    r12 = elements[4],
-    r13 = elements[8];
-  const r21 = elements[1],
-    r22 = elements[5],
-    r23 = elements[9];
-  const r31 = elements[2],
-    r32 = elements[6],
-    r33 = elements[10];
-  // Compute rotation angles (in radians) for ZYX rotation order
-  const beta = Math.atan2(-r31, Math.sqrt(r11 * r11 + r21 * r21));
-  const alpha = Math.atan2(r21, r11);
-  const gamma = Math.atan2(r32, r33);
-  // Convert to degrees
-  const rotationZ = alpha * (180 / Math.PI);
-  const rotationY = beta * (180 / Math.PI);
-  const rotationX = gamma * (180 / Math.PI);
-  // SVG transform attribute for 3D rotation
-  // Note: SVG has limited 3D transformation capabilities compared to Three.js
-  const transform = ` translate(${x},${y}) rotate(${rotationX},${rotationY},${rotationZ})`;
-  //   const transform = `translate(${x},${y}) rotate(45,0,0)`;
+  const euler = new Euler();
+  euler.setFromRotationMatrix(worldTransform, EulerOrder.XYZ);
+  console.log(
+    radiansToDegrees(euler.x).toFixed(0),
+    radiansToDegrees(euler.y).toFixed(0),
+    radiansToDegrees(euler.z).toFixed(0)
+  );
 
+  const transform = `translate(${x}, ${y}) ${getIsometricTransformMatrix(
+    euler.x,
+    euler.y,
+    euler.z
+  )}`;
+  // console.log(transform);
+  // textElement.setAttribute("transform", transform);
   textElement.setAttribute("transform", transform);
+}
+
+function radiansToDegrees(radians: number) {
+  return (radians * 180) / Math.PI;
+}
+
+function getIsometricTransformMatrix(a: number, b: number, c: number): string {
+  // Calculate the rotation matrices for each axis
+  const Rx = [
+    [1, 0, 0],
+    [0, Math.cos(a), -Math.sin(a)],
+    [0, Math.sin(a), Math.cos(a)],
+  ];
+
+  const Ry = [
+    [Math.cos(b), 0, Math.sin(b)],
+    [0, 1, 0],
+    [-Math.sin(b), 0, Math.cos(b)],
+  ];
+
+  const Rz = [
+    [Math.cos(c), -Math.sin(c), 0],
+    [Math.sin(c), Math.cos(c), 0],
+    [0, 0, 1],
+  ];
+
+  // Calculate the combined rotation matrix
+  const Rxy = matrixMultiply(Rx, Ry);
+  const Rxyz = matrixMultiply(Rxy, Rz);
+
+  // Extract the 2D isometric transformation matrix
+  const m11 = Rxyz[0][0];
+  const m12 = Rxyz[0][1];
+  const m21 = Rxyz[1][0];
+  const m22 = Rxyz[1][1];
+
+  return `matrix(${m11}, ${m21}, ${m12}, ${m22}, 0, 0)`;
+}
+
+function matrixMultiply(A: number[][], B: number[][]): number[][] {
+  const rowsA = A.length,
+    colsA = A[0].length;
+  const rowsB = B.length,
+    colsB = B[0].length;
+  const C: number[][] = [];
+
+  for (let i = 0; i < rowsA; i++) {
+    C[i] = [];
+    for (let j = 0; j < colsB; j++) {
+      C[i][j] = 0;
+      for (let k = 0; k < colsA; k++) {
+        C[i][j] += A[i][k] * B[k][j];
+      }
+    }
+  }
+
+  return C;
 }
