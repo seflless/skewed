@@ -128,7 +128,7 @@ export default function () {
     // updateCamera(45, 20);
 
     // text.rotation.x = (now * 90 * rotationSpeed) % 360;
-    text.rotation.z = (now * 90 * rotationSpeed) % 360;
+    text.rotation.y = (now * 90 * rotationSpeed) % 360;
     text.rotation.x = 20;
     referenceBox.rotation = text.rotation.clone();
     // text.rotation.y = (now * 120 * rotationSpeed) % 360;
