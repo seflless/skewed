@@ -1,4 +1,3 @@
-import { text } from "stream/consumers";
 import { projectToScreenCoordinate } from "../cameras/Camera";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
@@ -9,7 +8,7 @@ import { ColorToCSS } from "../colors/Color";
 import { Euler, EulerOrder } from "../math/Euler";
 
 export function renderText(
-  scene: Scene,
+  _scene: Scene,
   svg: SVGElement,
   _defs: SVGDefsElement,
   textShape: TextShape,
@@ -125,8 +124,8 @@ function getIsometricTransformMatrix(a: number, b: number, c: number): string {
 function matrixMultiply(A: number[][], B: number[][]): number[][] {
   const rowsA = A.length,
     colsA = A[0].length;
-  const rowsB = B.length,
-    colsB = B[0].length;
+  // const rowsB = B.length,
+  const colsB = B[0].length;
   const C: number[][] = [];
 
   for (let i = 0; i < rowsA; i++) {

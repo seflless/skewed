@@ -12,12 +12,12 @@ import SingleText from "./scenes/SingleText";
 
 // KitchenSink();
 // Transforms();
-// Octopus();
+Octopus();
 // Spheres();
 // Cylinders();
 // SingleSphere();
 // SingleCylinder();
-SingleText();
+// SingleText();
 // Worm();
 
 document

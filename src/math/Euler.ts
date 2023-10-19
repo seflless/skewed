@@ -1,6 +1,6 @@
 import { Matrix4x4 } from "./Matrix4x4";
 
-const _matrix = /*@__PURE__*/ Matrix4x4();
+// const _matrix = /*@__PURE__*/ Matrix4x4();
 
 export enum EulerOrder {
   XYZ = "XYZ",
