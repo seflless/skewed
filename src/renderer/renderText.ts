@@ -4,11 +4,13 @@ import { Vector3 } from "../math/Vector3";
 import { TextShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
-import { ColorToCSS } from "../colors/Color";
+import { Color, ColorToCSS } from "../colors/Color";
 import { Euler, EulerOrder } from "../math/Euler";
+import { DebugLine2D } from "./DebugRenderer";
+import { applyLighting } from "../lighting/LightingModel";
 
 export function renderText(
-  _scene: Scene,
+  scene: Scene,
   svg: SVGElement,
   _defs: SVGDefsElement,
   textShape: TextShape,
@@ -27,116 +29,88 @@ export function renderText(
     .multiply(worldTransform)
     .extractRotation();
 
-  const textElement = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "text"
-  );
-  textElement.setAttribute("id", "text");
+  // Convert the light direction into camera space (not projected into screen space)
+  const directionalLightInCameraSpace = scene.directionalLight.direction
+    .clone()
+    .multiply(-1);
+  inverseCameraMatrix
+    .extractRotation()
+    .applyToVector3(directionalLightInCameraSpace);
 
-  const { x, y } = projectToScreenCoordinate(
-    worldTransform.getTranslation(),
-    inverseAndProjectionMatrix,
-    viewport
-  );
-
-  //   textElement.setAttribute("x", x.toFixed(2));
-  //   textElement.setAttribute("y", y.toFixed(2));
-  textElement.setAttribute(
-    "font-size",
-    (textShape.fontSize * textScaleFactor).toFixed(2)
-  );
-  textElement.setAttribute("font-family", textShape.fontFamily);
-  textElement.setAttribute("fill", ColorToCSS(textShape.fill));
-  textElement.setAttribute("stroke", ColorToCSS(textShape.stroke));
-  textElement.setAttribute("stroke-width", textShape.strokeWidth.toFixed(2));
-  // Align the text to the center
-  textElement.setAttribute("text-anchor", "middle");
-  textElement.setAttribute("dominant-baseline", "middle");
-
-  textElement.textContent = textShape.text;
-
-  setSVGElementRotation(x, y, textElement, transformMatrixCameraSpace);
-
-  svg.appendChild(textElement);
-}
-
-function setSVGElementRotation(
-  x: number,
-  y: number,
-  textElement: SVGTextElement,
-  worldTransform: Matrix4x4
-) {
-  const euler = new Euler();
-  euler.setFromRotationMatrix(worldTransform, EulerOrder.XYZ);
-  console.log(
-    radiansToDegrees(euler.x).toFixed(0),
-    radiansToDegrees(euler.y).toFixed(0),
-    radiansToDegrees(euler.z).toFixed(0)
+  const faceNormalInCameraSpace = Vector3(
+    -transformMatrixCameraSpace.elements[5],
+    -transformMatrixCameraSpace.elements[6],
+    -transformMatrixCameraSpace.elements[7]
   );
 
-  const transform = `translate(${x}, ${y}) ${getIsometricTransformMatrix(
-    euler.x,
-    euler.y,
-    euler.z
-  )}`;
-  // console.log(transform);
-  // textElement.setAttribute("transform", transform);
-  textElement.setAttribute("transform", transform);
-}
+  const fill = applyLighting(
+    scene.directionalLight.color,
+    textShape.fill,
+    scene.ambientLightColor,
+    directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace)
+  );
 
-function radiansToDegrees(radians: number) {
-  return (radians * 180) / Math.PI;
-}
+  function renderTextStackSlice() {
+    const textElement = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "text"
+    );
+    textElement.setAttribute("id", "text");
 
-function getIsometricTransformMatrix(a: number, b: number, c: number): string {
-  // Calculate the rotation matrices for each axis
-  const Rx = [
-    [1, 0, 0],
-    [0, Math.cos(a), -Math.sin(a)],
-    [0, Math.sin(a), Math.cos(a)],
-  ];
+    const { x, y } = projectToScreenCoordinate(
+      worldTransform.getTranslation(),
+      inverseAndProjectionMatrix,
+      viewport
+    );
 
-  const Ry = [
-    [Math.cos(b), 0, Math.sin(b)],
-    [0, 1, 0],
-    [-Math.sin(b), 0, Math.cos(b)],
-  ];
+    //   textElement.setAttribute("x", x.toFixed(2));
+    //   textElement.setAttribute("y", y.toFixed(2));
 
-  const Rz = [
-    [Math.cos(c), -Math.sin(c), 0],
-    [Math.sin(c), Math.cos(c), 0],
-    [0, 0, 1],
-  ];
+    textElement.setAttribute("font-size", textShape.fontSize.toFixed(2));
+    textElement.setAttribute("font-family", textShape.fontFamily);
+    textElement.setAttribute("fill", ColorToCSS(textShape.fill));
+    // textElement.setAttribute("fill", fill);
 
-  // Calculate the combined rotation matrix
-  const Rxy = matrixMultiply(Rx, Ry);
-  const Rxyz = matrixMultiply(Rxy, Rz);
+    textElement.setAttribute("stroke", ColorToCSS(textShape.stroke));
+    textElement.setAttribute("stroke-width", textShape.strokeWidth.toFixed(2));
+    // Align the text to the center
+    textElement.setAttribute("text-anchor", "middle");
+    textElement.setAttribute("dominant-baseline", "middle");
 
-  // Extract the 2D isometric transformation matrix
-  const m11 = Rxyz[0][0];
-  const m12 = Rxyz[0][1];
-  const m21 = Rxyz[1][0];
-  const m22 = Rxyz[1][1];
+    textElement.textContent = textShape.text;
 
-  return `matrix(${m11}, ${m21}, ${m12}, ${m22}, 0, 0)`;
-}
+    const e = transformMatrixCameraSpace.elements;
 
-function matrixMultiply(A: number[][], B: number[][]): number[][] {
-  const rowsA = A.length,
-    colsA = A[0].length;
-  // const rowsB = B.length,
-  const colsB = B[0].length;
-  const C: number[][] = [];
+    const xAxis = { x: e[0] * textScaleFactor, y: -e[1] * textScaleFactor };
+    const yAxis = { x: -e[4] * textScaleFactor, y: e[5] * textScaleFactor };
 
-  for (let i = 0; i < rowsA; i++) {
-    C[i] = [];
-    for (let j = 0; j < colsB; j++) {
-      C[i][j] = 0;
-      for (let k = 0; k < colsA; k++) {
-        C[i][j] += A[i][k] * B[k][j];
-      }
-    }
+    const transformMatrixText = `matrix(${xAxis.x.toFixed(2)} ${xAxis.y.toFixed(
+      2
+    )} ${yAxis.x.toFixed(2)} ${yAxis.y.toFixed(2)} ${x.toFixed(1)} ${y.toFixed(
+      1
+    )})`;
+    textElement.setAttribute("transform", transformMatrixText);
+
+    svg.appendChild(textElement);
+
+    // DebugLine2D(
+    //   svg,
+    //   viewport,
+    //   x,
+    //   y,
+    //   x + xAxis.x * 100,
+    //   y + xAxis.y * 100,
+    //   Color(255, 0, 0)
+    // );
+    // DebugLine2D(
+    //   svg,
+    //   viewport,
+    //   x,
+    //   y,
+    //   x + yAxis.x * 100,
+    //   y + yAxis.y * 100,
+    //   Color(0, 255, 0)
+    // );
   }
-
-  return C;
+  renderTextStackSlice();
 }

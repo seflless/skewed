@@ -33,12 +33,13 @@ export default function () {
     strokeWidth: 10,
   });
 
-  const position = Vector3(0, 0, 0);
+  const position = Vector3(0, 200, 0);
   const text = Text({
     id: "text",
     text: "Hello, world!",
     position,
     fontSize: 48,
+    scale: 1,
     // radius: referenceRadius,
     fill: Color(255, 255, 255),
     stroke: Color(0, 0, 0),
@@ -61,7 +62,7 @@ export default function () {
     ...getLighting("black and white"),
     shapes: [
       getEnvironment("grid"),
-      Axii(Vector3(-referenceRadius * 3, 0, 0)),
+      // Axii(Vector3(-referenceRadius * 3, 0, 0)),
       // Group({
       //   position: Vector3(0, 0, 0),
       //   rotation: Vector3(45, 0, 0),
@@ -127,9 +128,12 @@ export default function () {
 
     // updateCamera(45, 20);
 
+    // text.rotation.y = 90;
     // text.rotation.x = (now * 90 * rotationSpeed) % 360;
-    text.rotation.y = (now * 90 * rotationSpeed) % 360;
-    text.rotation.x = 20;
+    // text.rotation.z = (now * 90 * rotationSpeed) % 360;
+    // text.rotation.z = 45;
+    // text.rotation.y = (now * 90 * rotationSpeed) % 360;
+    // text.rotation.x = 20;
     referenceBox.rotation = text.rotation.clone();
     // text.rotation.y = (now * 120 * rotationSpeed) % 360;
     // cylinder.rotation.x = 45;
