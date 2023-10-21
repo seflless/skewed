@@ -37,17 +37,25 @@ export function renderText(
     .extractRotation()
     .applyToVector3(directionalLightInCameraSpace);
 
-  const faceNormalInCameraSpace = Vector3(
-    -transformMatrixCameraSpace.elements[5],
-    -transformMatrixCameraSpace.elements[6],
-    -transformMatrixCameraSpace.elements[7]
+  const faceNormalInCameraSpace = Vector3(0, 0, 0);
+  transformMatrixCameraSpace.extractBasis(
+    undefined,
+    undefined,
+    faceNormalInCameraSpace
   );
+
+  const facingWayFromCamera = faceNormalInCameraSpace.z < 0;
+  console.log(`facingWayFromCamera: ${facingWayFromCamera}`);
 
   const fill = applyLighting(
     scene.directionalLight.color,
     textShape.fill,
     scene.ambientLightColor,
-    directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace)
+    directionalLightInCameraSpace.dotProduct(
+      facingWayFromCamera
+        ? faceNormalInCameraSpace.multiply(-1)
+        : faceNormalInCameraSpace
+    )
   );
 
   function renderTextStackSlice() {
@@ -63,13 +71,23 @@ export function renderText(
       viewport
     );
 
+    DebugLine2D(
+      svg,
+      viewport,
+      x,
+      y,
+      x + faceNormalInCameraSpace.x * 100,
+      y - faceNormalInCameraSpace.y * 100,
+      Color(255, 0, 0)
+    );
+
     //   textElement.setAttribute("x", x.toFixed(2));
     //   textElement.setAttribute("y", y.toFixed(2));
 
     textElement.setAttribute("font-size", textShape.fontSize.toFixed(2));
     textElement.setAttribute("font-family", textShape.fontFamily);
-    textElement.setAttribute("fill", ColorToCSS(textShape.fill));
-    // textElement.setAttribute("fill", fill);
+    // textElement.setAttribute("fill", ColorToCSS(textShape.fill));
+    textElement.setAttribute("fill", fill);
 
     textElement.setAttribute("stroke", ColorToCSS(textShape.stroke));
     textElement.setAttribute("stroke-width", textShape.strokeWidth.toFixed(2));

@@ -38,7 +38,7 @@ export default function () {
     id: "text",
     text: "Hello, world!",
     position,
-    fontSize: 48,
+    fontSize: 124,
     scale: 1,
     // radius: referenceRadius,
     fill: Color(255, 255, 255),
@@ -76,7 +76,7 @@ export default function () {
 
   lightSphere.position = Vector3(1, 1, -1);
 
-  const { viewport, camera, updateCamera } = getCamera("front");
+  const { viewport, camera, updateCamera } = getCamera("isometric");
 
   const onPointerEvent = (event: PointerEvent) => {
     // return;
@@ -119,18 +119,19 @@ export default function () {
   document.addEventListener("pointermove", onPointerEvent);
   document.addEventListener("pointerup", onPointerEvent);
 
-  const rotationSpeed = 1;
+  const overallSpeed = 0.5;
+  const rotationSpeed = 1 * overallSpeed;
 
   onUpdate(({ now, deltaTime }) => {
-    // const cameraSpeed = 0.1;
-    const cameraSpeed = 0.0;
+    const cameraSpeed = 0.1 * overallSpeed;
+    // const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     // updateCamera(45, 20);
 
     // text.rotation.y = 90;
-    // text.rotation.x = (now * 90 * rotationSpeed) % 360;
-    // text.rotation.z = (now * 90 * rotationSpeed) % 360;
+    text.rotation.x = (now * 90 * rotationSpeed) % 360;
+    text.rotation.z = (now * 90 * rotationSpeed) % 360;
     // text.rotation.z = 45;
     // text.rotation.y = (now * 90 * rotationSpeed) % 360;
     // text.rotation.x = 20;
