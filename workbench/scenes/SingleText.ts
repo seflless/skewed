@@ -36,14 +36,15 @@ export default function () {
   const position = Vector3(0, 200, 0);
   const text = Text({
     id: "text",
-    text: "Hello, world!",
+    text: "Hello",
     position,
-    fontSize: 124,
+    fontSize: 200,
     scale: 1,
     // radius: referenceRadius,
-    fill: Color(255, 255, 255),
+    fill: Color(255, 0, 255),
     stroke: Color(0, 0, 0),
-    strokeWidth: 1,
+    // strokeWidth: 10,
+    strokeWidth: 0,
   });
 
   const referenceBox = Box({
@@ -59,9 +60,9 @@ export default function () {
   });
 
   const scene: Scene = {
-    ...getLighting("black and white"),
+    ...getLighting("moonlit"),
     shapes: [
-      getEnvironment("grid"),
+      // getEnvironment("grid"),
       // Axii(Vector3(-referenceRadius * 3, 0, 0)),
       // Group({
       //   position: Vector3(0, 0, 0),
@@ -69,12 +70,14 @@ export default function () {
       //   scale: 3,
       //   children: [
       text,
-      referenceBox,
-      lightSphere,
+      // referenceBox,
+      // lightSphere,
     ],
   };
 
   lightSphere.position = Vector3(1, 1, -1);
+
+  lightSphere.fill = scene.directionalLight.color;
 
   const { viewport, camera, updateCamera } = getCamera("isometric");
 
@@ -119,7 +122,7 @@ export default function () {
   document.addEventListener("pointermove", onPointerEvent);
   document.addEventListener("pointerup", onPointerEvent);
 
-  const overallSpeed = 0.5;
+  const overallSpeed = 0.25;
   const rotationSpeed = 1 * overallSpeed;
 
   onUpdate(({ now, deltaTime }) => {
@@ -129,9 +132,9 @@ export default function () {
 
     // updateCamera(45, 20);
 
-    // text.rotation.y = 90;
-    text.rotation.x = (now * 90 * rotationSpeed) % 360;
-    text.rotation.z = (now * 90 * rotationSpeed) % 360;
+    text.rotation.y = 90;
+    // text.rotation.x = (now * 90 * rotationSpeed) % 360;
+    // text.rotation.z = (now * 90 * rotationSpeed) % 360;
     // text.rotation.z = 45;
     // text.rotation.y = (now * 90 * rotationSpeed) % 360;
     // text.rotation.x = 20;

@@ -6,7 +6,7 @@ import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 import { Color, ColorToCSS } from "../colors/Color";
 import { Euler, EulerOrder } from "../math/Euler";
-import { DebugLine2D } from "./DebugRenderer";
+// import { DebugLine2D } from "./DebugRenderer";
 import { applyLighting } from "../lighting/LightingModel";
 
 export function renderText(
@@ -28,6 +28,21 @@ export function renderText(
     .clone()
     .multiply(worldTransform)
     .extractRotation();
+  const faceNormalInWorldSpace = Vector3(0, 0, 0);
+  worldTransform.extractBasis(undefined, undefined, faceNormalInWorldSpace);
+
+  // const { x, y } = projectToScreenCoordinate(
+  //   worldTransform
+  //     .getTranslation()
+  //     .add(faceNormalInWorldSpace.clone().multiply(offset)),
+  //   inverseAndProjectionMatrix,
+  //   viewport
+  // );
+
+  const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  // g.setAttribute("transform", `translate(${x},${y})`);
+  group.id = textShape.text;
+  svg.appendChild(group);
 
   // Convert the light direction into camera space (not projected into screen space)
   const directionalLightInCameraSpace = scene.directionalLight.direction
@@ -43,22 +58,25 @@ export function renderText(
     undefined,
     faceNormalInCameraSpace
   );
-
   const facingWayFromCamera = faceNormalInCameraSpace.z < 0;
-  console.log(`facingWayFromCamera: ${facingWayFromCamera}`);
+  if (facingWayFromCamera) {
+    faceNormalInCameraSpace.multiply(-1);
+  }
+
+  // console.log(`facingWayFromCamera: ${facingWayFromCamera}`);
 
   const fill = applyLighting(
     scene.directionalLight.color,
     textShape.fill,
     scene.ambientLightColor,
-    directionalLightInCameraSpace.dotProduct(
-      facingWayFromCamera
-        ? faceNormalInCameraSpace.multiply(-1)
-        : faceNormalInCameraSpace
-    )
+    directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace)
   );
 
-  function renderTextStackSlice() {
+  function renderTextStackSlice(
+    offset: number,
+    fillString: string,
+    strokeString: string
+  ) {
     const textElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "text"
@@ -66,20 +84,22 @@ export function renderText(
     textElement.setAttribute("id", "text");
 
     const { x, y } = projectToScreenCoordinate(
-      worldTransform.getTranslation(),
+      worldTransform
+        .getTranslation()
+        .add(faceNormalInWorldSpace.clone().multiply(offset)),
       inverseAndProjectionMatrix,
       viewport
     );
 
-    DebugLine2D(
-      svg,
-      viewport,
-      x,
-      y,
-      x + faceNormalInCameraSpace.x * 100,
-      y - faceNormalInCameraSpace.y * 100,
-      Color(255, 0, 0)
-    );
+    // DebugLine2D(
+    //   svg,
+    //   viewport,
+    //   x,
+    //   y,
+    //   x + faceNormalInCameraSpace.x * 100,
+    //   y - faceNormalInCameraSpace.y * 100,
+    //   Color(255, 0, 0)
+    // );
 
     //   textElement.setAttribute("x", x.toFixed(2));
     //   textElement.setAttribute("y", y.toFixed(2));
@@ -87,9 +107,9 @@ export function renderText(
     textElement.setAttribute("font-size", textShape.fontSize.toFixed(2));
     textElement.setAttribute("font-family", textShape.fontFamily);
     // textElement.setAttribute("fill", ColorToCSS(textShape.fill));
-    textElement.setAttribute("fill", fill);
+    textElement.setAttribute("fill", fillString);
 
-    textElement.setAttribute("stroke", ColorToCSS(textShape.stroke));
+    textElement.setAttribute("stroke", strokeString);
     textElement.setAttribute("stroke-width", textShape.strokeWidth.toFixed(2));
     // Align the text to the center
     textElement.setAttribute("text-anchor", "middle");
@@ -102,14 +122,17 @@ export function renderText(
     const xAxis = { x: e[0] * textScaleFactor, y: -e[1] * textScaleFactor };
     const yAxis = { x: -e[4] * textScaleFactor, y: e[5] * textScaleFactor };
 
-    const transformMatrixText = `matrix(${xAxis.x.toFixed(2)} ${xAxis.y.toFixed(
-      2
-    )} ${yAxis.x.toFixed(2)} ${yAxis.y.toFixed(2)} ${x.toFixed(1)} ${y.toFixed(
-      1
+    const precision = 3;
+    const transformMatrixText = `matrix(${xAxis.x.toFixed(
+      precision
+    )} ${xAxis.y.toFixed(precision)} ${yAxis.x.toFixed(
+      precision
+    )} ${yAxis.y.toFixed(precision)} ${x.toFixed(precision)} ${y.toFixed(
+      precision
     )})`;
     textElement.setAttribute("transform", transformMatrixText);
 
-    svg.appendChild(textElement);
+    group.appendChild(textElement);
 
     // DebugLine2D(
     //   svg,
@@ -130,5 +153,22 @@ export function renderText(
     //   Color(0, 255, 0)
     // );
   }
-  renderTextStackSlice();
+
+  const layerColorString = "black";
+
+  const layerCount = 20;
+  const layerSeparation = 1;
+
+  for (let i = 0; i < layerCount; i++) {
+    const offset =
+      (facingWayFromCamera ? i + 1 : layerCount - i - 1) * layerSeparation;
+
+    renderTextStackSlice(offset, layerColorString, layerColorString);
+  }
+
+  renderTextStackSlice(
+    facingWayFromCamera ? 0 : layerSeparation * layerCount,
+    fill,
+    ColorToCSS(textShape.stroke)
+  );
 }
