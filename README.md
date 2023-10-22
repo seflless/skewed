@@ -6,7 +6,7 @@ Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files fo
 
 [Live demo](https://vgyf3c.csb.app/)
 
-<img width="300px" src="./docs/images/octopus.gif"/><img width="309px" src="./docs/images/worm.gif"/><img width="265px" src="./docs/images/rotating-text.gif"/><img width="300px" src="./docs/images/light-spinning-around-shapes.gif"/>
+<img width="150px" src="./docs/images/octopus.gif"/><img width="155px" src="./docs/images/worm.gif"/><img width="176px" src="./docs/images/light-spinning-around-shapes.gif"/><img width="156px" src="./docs/images/rotating-text.gif"/>
 
 # Usage
 
