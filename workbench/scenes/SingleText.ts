@@ -40,6 +40,7 @@ export default function () {
     position,
     fontSize: 200,
     scale: 1,
+    thickness: 100,
     // radius: referenceRadius,
     fill: Color(255, 0, 255),
     stroke: Color(0, 0, 0),
@@ -59,10 +60,21 @@ export default function () {
     strokeWidth: 0,
   });
 
+  const fakeShadow = Box({
+    id: "reference",
+    width: 400,
+    height: 1,
+    depth: text.thickness,
+    // radius: referenceRadius,
+    fill: Color(64, 64, 64, 0.5),
+    stroke: Color(0, 0, 0),
+    strokeWidth: 0,
+  });
+
   const scene: Scene = {
     ...getLighting("moonlit"),
     shapes: [
-      // getEnvironment("grid"),
+      getEnvironment("grid"),
       // Axii(Vector3(-referenceRadius * 3, 0, 0)),
       // Group({
       //   position: Vector3(0, 0, 0),
@@ -70,6 +82,7 @@ export default function () {
       //   scale: 3,
       //   children: [
       text,
+      // fakeShadow,
       // referenceBox,
       // lightSphere,
     ],
@@ -122,23 +135,32 @@ export default function () {
   document.addEventListener("pointermove", onPointerEvent);
   document.addEventListener("pointerup", onPointerEvent);
 
-  const overallSpeed = 0.25;
+  const overallSpeed = 1;
   const rotationSpeed = 1 * overallSpeed;
 
   onUpdate(({ now, deltaTime }) => {
-    const cameraSpeed = 0.1 * overallSpeed;
-    // const cameraSpeed = 0.0;
+    // const cameraSpeed = 0.1 * overallSpeed;
+    const cameraSpeed = 0.0;
     updateCamera(now * cameraSpeed * 360 + 45, 20);
 
     // updateCamera(45, 20);
 
-    text.rotation.y = 90;
+    // text.rotation.y = 90;
     // text.rotation.x = (now * 90 * rotationSpeed) % 360;
     // text.rotation.z = (now * 90 * rotationSpeed) % 360;
     // text.rotation.z = 45;
+
+    // Amount to make it fully invisible when in isometric view and the camera
+    // isn't rotated
+    text.rotation.y = 135;
+
     // text.rotation.y = (now * 90 * rotationSpeed) % 360;
     // text.rotation.x = 20;
     referenceBox.rotation = text.rotation.clone();
+
+    fakeShadow.position = text.position.clone().setY(0);
+    fakeShadow.rotation.y = text.rotation.y;
+    fakeShadow.scale = text.scale;
     // text.rotation.y = (now * 120 * rotationSpeed) % 360;
     // cylinder.rotation.x = 45;
     // cylinder.rotation.x = 90;

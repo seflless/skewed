@@ -122,6 +122,16 @@ export function renderText(
     const xAxis = { x: e[0] * textScaleFactor, y: -e[1] * textScaleFactor };
     const yAxis = { x: -e[4] * textScaleFactor, y: e[5] * textScaleFactor };
 
+    // Attempt to prevent fully grazing view angles by slightly purturbing the
+    // face normal to make the slices have a minimal silhouette
+    const amount = 0.1;
+    if (Math.abs(yAxis.x) < amount) {
+      yAxis.x = amount;
+
+      console.log("grazing angle");
+      // faceNormalInCameraSpace.x *= amount;
+    }
+
     const precision = 3;
     const transformMatrixText = `matrix(${xAxis.x.toFixed(
       precision
@@ -154,20 +164,29 @@ export function renderText(
     // );
   }
 
-  const layerColorString = "black";
+  const layerColorString = "rgb(48,48,48)";
 
-  const layerCount = 20;
+  const pixelThickness = textScaleFactor * textShape.thickness;
+  // const layerCount = 20;
+  const layerCount = pixelThickness;
   const layerSeparation = 1;
+  const offsetToMiddle = (layerCount * layerSeparation) / 2;
 
   for (let i = 0; i < layerCount; i++) {
     const offset =
       (facingWayFromCamera ? i + 1 : layerCount - i - 1) * layerSeparation;
 
-    renderTextStackSlice(offset, layerColorString, layerColorString);
+    renderTextStackSlice(
+      offset - offsetToMiddle,
+      layerColorString,
+      layerColorString
+    );
   }
 
   renderTextStackSlice(
-    facingWayFromCamera ? 0 : layerSeparation * layerCount,
+    facingWayFromCamera
+      ? -offsetToMiddle
+      : layerSeparation * layerCount - offsetToMiddle,
     fill,
     ColorToCSS(textShape.stroke)
   );

@@ -58,6 +58,7 @@ export type TextShape = BasicShapeProperties & {
   type: "text";
   id: string;
   text: string;
+  thickness: number;
   fontSize: number;
   fontFamily: string;
 };

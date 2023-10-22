@@ -9,12 +9,14 @@ export type TextProperties = {
   text: string;
   fontSize: number;
   fontFamily: string;
+  thickness: number;
 } & BasicShapeProperties;
 
 const DefaultSphereProperties: TextProperties = {
   text: "",
   fontSize: DefaultFontSize,
   fontFamily: "Arial",
+  thickness: 10,
   ...DefaultBasicShapeProperties(),
 };
 
