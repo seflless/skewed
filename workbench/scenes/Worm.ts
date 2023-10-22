@@ -21,7 +21,7 @@ import {
 export default function () {
   const scene: Scene = {
     ...getLighting("moonlit"),
-    shapes: [getEnvironment("white-floor")],
+    shapes: [getEnvironment("white floor")],
   };
 
   const scale = 1.5;

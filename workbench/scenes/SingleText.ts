@@ -33,18 +33,17 @@ export default function () {
     strokeWidth: 10,
   });
 
-  const position = Vector3(-200, 200, 0);
+  const position = Vector3(0, 200, 0);
   const text = Text({
     id: "text",
     text: "Hello",
     position,
-    fontSize: 200,
+    fontSize: 270,
     scale: 1,
     // radius: referenceRadius,
-    fill: Color(255, 0, 255),
+    fill: Color(255, 0, 0),
     stroke: Color(0, 0, 0),
-    // strokeWidth: 10,
-    strokeWidth: 0,
+    strokeWidth: 10,
   });
 
   const referenceBox = Box({
@@ -70,10 +69,12 @@ export default function () {
     strokeWidth: 0,
   });
 
+  const lighting = getLighting("moonlit");
+  lighting.ambientLightColor = Color(128, 128, 128);
   const scene: Scene = {
-    ...getLighting("moonlit"),
+    ...lighting,
     shapes: [
-      getEnvironment("grid"),
+      getEnvironment("white floor"),
       // Axii(Vector3(-referenceRadius * 3, 0, 0)),
       // Group({
       //   position: Vector3(0, 0, 0),
@@ -82,8 +83,8 @@ export default function () {
       //   children: [
       text,
       // fakeShadow,
-      referenceBox,
-      lightSphere,
+      // referenceBox,
+      // lightSphere,
     ],
   };
 
@@ -145,7 +146,7 @@ export default function () {
     // updateCamera(45, 20);
 
     // text.rotation.y = 90;
-    text.rotation.x = (now * 125 * rotationSpeed) % 360;
+    text.rotation.x = (now * 180 * rotationSpeed) % 360;
     text.rotation.z = (now * 90 * rotationSpeed) % 360;
     // text.rotation.z = 45;
 

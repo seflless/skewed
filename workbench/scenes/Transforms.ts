@@ -21,7 +21,7 @@ export default function () {
   const scene: Scene = {
     ...getLighting("moonlit"),
     shapes: [
-      getEnvironment("white-floor"),
+      getEnvironment("white floor"),
 
       Group({
         position: Vector3(-450, 50, -450),
