@@ -8,6 +8,7 @@ import { applyLighting } from "../lighting/LightingModel";
 import { renderSphere } from "./renderSphere";
 import { ColorToCSS } from "../colors/Color";
 import { renderCylinder } from "./renderCylinder";
+import { renderText } from "./renderText";
 
 const CrackFillingStrokeWidth = 0.5;
 
@@ -114,6 +115,20 @@ export function render(
         break;
       case "cylinder":
         renderCylinder(
+          scene,
+          svg,
+          defs,
+          shape,
+          viewport,
+          worldTransform,
+          cameraZoom,
+          cameraDirection,
+          inverseCameraMatrix,
+          inverseAndProjectionMatrix
+        );
+        break;
+      case "text":
+        renderText(
           scene,
           svg,
           defs,

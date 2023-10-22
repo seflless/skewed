@@ -30,6 +30,7 @@ export const DefaultBasicShapeProperties = (): BasicShapeProperties => ({
 });
 
 export const DefaultShapeDimension = 100;
+export const DefaultFontSize = 16;
 
 export type MeshShape = {
   type: "mesh";
@@ -53,6 +54,14 @@ export type GroupShape = TransformProperties & {
   children: Shape[];
 };
 
+export type TextShape = BasicShapeProperties & {
+  type: "text";
+  id: string;
+  text: string;
+  fontSize: number;
+  fontFamily: string;
+};
+
 export type GridShape = BasicShapeProperties & {
   type: "grid";
   id: string;
@@ -65,5 +74,6 @@ export type Shape =
   | MeshShape
   | SphereShape
   | CylinderShape
+  | TextShape
   | GroupShape
   | GridShape;

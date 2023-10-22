@@ -140,12 +140,12 @@ export function Vector3(x: number, y: number, z: number): Vector3;
  */
 export function Vector3(coords: { x: number; y: number; z: number }): Vector3;
 
-// /**
-//  * Creates a new Vector3 instance. The function supports various input formats for convenient instantiation.
-//  *
-//  * @returns A Vector3 instance initialized to (0, 0, 0) when called without arguments
-//  */
-// export function Vector3(): Vector3;
+/**
+ * Creates a new Vector3 instance. The function supports various input formats for convenient instantiation.
+ *
+ * @returns A Vector3 instance initialized to (0, 0, 0) when called without arguments
+ */
+export function Vector3(): Vector3;
 
 /**
  * Creates a new Vector3 instance with the specified coordinates from an array.
@@ -164,10 +164,17 @@ export function Vector3(coords: [number, number, number]): Vector3;
  * @returns A Vector3 instance with the specified x, y, and z coordinates, or initialized to (0, 0, 0) when called without arguments
  */
 export function Vector3(
-  x?: number | { x: number; y: number; z: number } | [number, number, number],
+  x?:
+    | number
+    | { x: number; y: number; z: number }
+    | [number, number, number]
+    | undefined,
   y?: number,
   z?: number
 ): Vector3 {
+  if (arguments.length === 0) {
+    return Vector3(0, 0, 0);
+  }
   if (typeof x === "object") {
     if (Array.isArray(x)) {
       return createVector3(x[0], x[1], x[2]);

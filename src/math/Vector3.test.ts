@@ -3,6 +3,7 @@ import { Vector3 } from "./Vector3";
 
 describe("Vector3", () => {
   it("Factory variants should work", () => {
+    expect(Vector3()).toEqual(Vector3(0, 0, 0));
     expect(Vector3(1, 2, 3)).toEqual(Vector3(1, 2, 3));
     expect(Vector3([3, 4, 5])).toEqual(Vector3(3, 4, 5));
     expect(Vector3(6, 7, 8)).toEqual(Vector3(6, 7, 8));

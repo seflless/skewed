@@ -228,7 +228,7 @@ export function getCamera(choice: CameraChoice, zoom: number = 1) {
   };
 }
 
-export type Environment = "none" | "underwater" | "grid" | "white-floor";
+export type Environment = "none" | "underwater" | "grid" | "white floor";
 
 export function getEnvironment(environment: Environment = "grid"): Shape {
   switch (environment) {
@@ -248,7 +248,7 @@ export function getEnvironment(environment: Environment = "grid"): Shape {
         stroke: Color(0, 0, 0),
         strokeWidth: 4,
       });
-    case "white-floor":
+    case "white floor":
       document.body.style.backgroundColor = "rgb(32,32,32)";
       return Box({
         id: "background",

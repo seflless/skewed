@@ -4,15 +4,16 @@ Skewed is a Typescript package for generating SVG of 3D graphics in real-time. I
 
 Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files for importing into vector editors like Figma/Illustrator (Ie. make 3D icons).
 
-[Live demo](https://vgyf3c.csb.app/)
+Here's a [Live demo](https://vgyf3c.csb.app/). Docs coming soon.
 
+<!-- <img width="150px" src="./docs/images/octopus.gif"/><img width="155px" src="./docs/images/worm.gif"/><img width="176px" src="./docs/images/light-spinning-around-shapes.gif"/><img width="156 px" src="./docs/images/rotating-text.gif"/> -->
 
-<img width="100%" src="./docs/images/skewed-screen-capture.gif"/>
+<img width="50%" src="./docs/images/octopus.gif"/><img width="50%" src="./docs/images/worm.gif"/><img width="50%" src="./docs/images/rotating-text.gif"/><img width="50%" src="./docs/images/light-spinning-around-shapes.gif"/>
 
 # Usage
 
- 1. `npm install skewed`
- 1. Reference the [live demo](https://vgyf3c.csb.app/)'s [source code](https://codesandbox.io/s/skewed-demo-vgyf3c?file=/src/index.ts). More API examples coming soon. In the meantime
+1.  `npm install skewed`
+1.  Reference the [live demo](https://vgyf3c.csb.app/)'s [source code](https://codesandbox.io/s/skewed-demo-vgyf3c?file=/src/index.ts). More API examples coming soon. In the meantime
 
 ## Contributing
 

@@ -8,14 +8,16 @@ import Worm from "./scenes/Worm";
 import { getPaused, setPaused } from "./Settings";
 import Cylinders from "./scenes/Cylinders";
 import SingleCylinder from "./scenes/SingleCylinder";
+import SingleText from "./scenes/SingleText";
 
-KitchenSink();
+// KitchenSink();
 // Transforms();
 // Octopus();
 // Spheres();
 // Cylinders();
 // SingleSphere();
 // SingleCylinder();
+SingleText();
 // Worm();
 
 document
