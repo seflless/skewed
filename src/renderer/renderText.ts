@@ -8,6 +8,7 @@ import { Color, ColorToCSS } from "../colors/Color";
 import { Euler, EulerOrder } from "../math/Euler";
 // import { DebugLine2D } from "./DebugRenderer";
 import { applyLighting } from "../lighting/LightingModel";
+import { generateSVGTransformMatrix } from "./svgUtils";
 
 export function renderText(
   scene: Scene,
@@ -89,19 +90,12 @@ export function renderText(
 
     textElement.textContent = textShape.text;
 
-    const e = transformMatrixCameraSpace.elements;
-
-    const xAxis = { x: e[0] * textScaleFactor, y: -e[1] * textScaleFactor };
-    const yAxis = { x: -e[4] * textScaleFactor, y: e[5] * textScaleFactor };
-
-    const precision = 3;
-    const transformMatrixText = `matrix(${xAxis.x.toFixed(
-      precision
-    )} ${xAxis.y.toFixed(precision)} ${yAxis.x.toFixed(
-      precision
-    )} ${yAxis.y.toFixed(precision)} ${x.toFixed(precision)} ${y.toFixed(
-      precision
-    )})`;
+    const transformMatrixText = generateSVGTransformMatrix(
+      x,
+      y,
+      transformMatrixCameraSpace,
+      textScaleFactor
+    );
     textElement.setAttribute("transform", transformMatrixText);
 
     svg.appendChild(textElement);

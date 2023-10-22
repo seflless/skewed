@@ -56,10 +56,19 @@ export type GroupShape = TransformProperties & {
 
 export type TextShape = BasicShapeProperties & {
   type: "text";
-  id: string;
   text: string;
   fontSize: number;
   fontFamily: string;
+};
+
+export type SVGShape = BasicShapeProperties & {
+  type: "svg";
+  svg: SVGElement;
+};
+
+export type ImageShape = BasicShapeProperties & {
+  type: "image";
+  image: HTMLImageElement;
 };
 
 export type GridShape = BasicShapeProperties & {
