@@ -24,7 +24,7 @@ export default function () {
   const referenceRadius = 75;
 
   const lightSpeed = 0.3;
-  const lightDistance = 100;
+  const lightDistance = 200;
   const lightSphere = Sphere({
     // id: "light",
     radius: 5,
@@ -33,14 +33,13 @@ export default function () {
     strokeWidth: 10,
   });
 
-  const position = Vector3(0, 200, 0);
+  const position = Vector3(-200, 200, 0);
   const text = Text({
     id: "text",
     text: "Hello",
     position,
     fontSize: 200,
     scale: 1,
-    thickness: 100,
     // radius: referenceRadius,
     fill: Color(255, 0, 255),
     stroke: Color(0, 0, 0),
@@ -50,13 +49,13 @@ export default function () {
 
   const referenceBox = Box({
     id: "reference",
-    position: position.clone().add(Vector3(200, 0, 0)),
-    width: 200,
-    height: 48,
-    depth: 4,
+    position: position.clone().add(Vector3(400, 0, 0)),
+    width: 430,
+    height: 130,
+    depth: 2,
     // radius: referenceRadius,
-    fill: Color(255, 255, 255),
-    stroke: Color(0, 0, 0),
+    fill: text.fill,
+    stroke: text.stroke,
     strokeWidth: 0,
   });
 
@@ -64,7 +63,7 @@ export default function () {
     id: "reference",
     width: 400,
     height: 1,
-    depth: text.thickness,
+    depth: 3,
     // radius: referenceRadius,
     fill: Color(64, 64, 64, 0.5),
     stroke: Color(0, 0, 0),
@@ -83,8 +82,8 @@ export default function () {
       //   children: [
       text,
       // fakeShadow,
-      // referenceBox,
-      // lightSphere,
+      referenceBox,
+      lightSphere,
     ],
   };
 
@@ -146,8 +145,8 @@ export default function () {
     // updateCamera(45, 20);
 
     // text.rotation.y = 90;
-    // text.rotation.x = (now * 90 * rotationSpeed) % 360;
-    // text.rotation.z = (now * 90 * rotationSpeed) % 360;
+    text.rotation.x = (now * 125 * rotationSpeed) % 360;
+    text.rotation.z = (now * 90 * rotationSpeed) % 360;
     // text.rotation.z = 45;
 
     // Amount to make it fully invisible when in isometric view and the camera
@@ -158,9 +157,9 @@ export default function () {
     // text.rotation.x = 20;
     referenceBox.rotation = text.rotation.clone();
 
-    fakeShadow.position = text.position.clone().setY(0);
-    fakeShadow.rotation.y = text.rotation.y;
-    fakeShadow.scale = text.scale;
+    // fakeShadow.position = text.position.clone().setY(0);
+    // fakeShadow.rotation.y = text.rotation.y;
+    // fakeShadow.scale = text.scale;
     // text.rotation.y = (now * 120 * rotationSpeed) % 360;
     // cylinder.rotation.x = 45;
     // cylinder.rotation.x = 90;
