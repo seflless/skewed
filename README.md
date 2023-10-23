@@ -9,6 +9,7 @@ Here's a [Live demo](https://vgyf3c.csb.app/). Docs coming soon.
 <!-- <img width="150px" src="./docs/images/octopus.gif"/><img width="155px" src="./docs/images/worm.gif"/><img width="176px" src="./docs/images/light-spinning-around-shapes.gif"/><img width="156 px" src="./docs/images/rotating-text.gif"/> -->
 
 <img width="50%" src="./docs/images/octopus.gif"/><img width="50%" src="./docs/images/worm.gif"/><img width="50%" src="./docs/images/rotating-text.gif"/><img width="50%" src="./docs/images/light-spinning-around-shapes.gif"/>
+<img width="50%" src="./docs/images/rotating-angry-face-svg.gif"/>
 
 # Usage
 
