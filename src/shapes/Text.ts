@@ -11,7 +11,7 @@ export type TextProperties = {
   fontFamily: string;
 } & BasicShapeProperties;
 
-const DefaultSphereProperties: TextProperties = {
+const DefaultTextProperties: TextProperties = {
   text: "",
   fontSize: DefaultFontSize,
   fontFamily: "Arial",
@@ -21,7 +21,7 @@ const DefaultSphereProperties: TextProperties = {
 export function Text(props: Partial<TextProperties>): TextShape {
   const text: TextShape = {
     type: "text",
-    ...DefaultSphereProperties,
+    ...DefaultTextProperties,
     ...props,
   };
   return text;

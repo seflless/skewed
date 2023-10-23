@@ -61,7 +61,7 @@ export type TextShape = BasicShapeProperties & {
   fontFamily: string;
 };
 
-export type SVGShape = BasicShapeProperties & {
+export type SvgShape = BasicShapeProperties & {
   type: "svg";
   svg: SVGElement;
 };
@@ -84,5 +84,6 @@ export type Shape =
   | SphereShape
   | CylinderShape
   | TextShape
+  | SvgShape
   | GroupShape
   | GridShape;

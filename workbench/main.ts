@@ -9,6 +9,7 @@ import { getPaused, setPaused } from "./Settings";
 import Cylinders from "./scenes/Cylinders";
 import SingleCylinder from "./scenes/SingleCylinder";
 import SingleText from "./scenes/SingleText";
+import SingleSVG from "./scenes/SingleSVG";
 
 // KitchenSink();
 // Transforms();
@@ -17,8 +18,9 @@ import SingleText from "./scenes/SingleText";
 // Cylinders();
 // SingleSphere();
 // SingleCylinder();
-SingleText();
+// SingleText();
 // Worm();
+SingleSVG();
 
 document
   .getElementById("copy-svg")
