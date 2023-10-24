@@ -5,7 +5,7 @@ export function applyLighting(
   surfaceColor: Color,
   ambientLightColor: Color,
   brightness: number
-): string {
+): Color {
   brightness = Math.min(1.0, Math.max(0, brightness));
 
   const directionalLightCoefficients = Color(
@@ -45,5 +45,5 @@ export function applyLighting(
     surfaceColor.a
   );
 
-  return ColorToCSS(finalColor);
+  return finalColor;
 }

@@ -11,7 +11,7 @@ import SingleCylinder from "./scenes/SingleCylinder";
 import SingleText from "./scenes/SingleText";
 import SingleSVG from "./scenes/SingleSVG";
 
-// KitchenSink();
+KitchenSink();
 // Transforms();
 // Octopus();
 // Spheres();
@@ -20,7 +20,7 @@ import SingleSVG from "./scenes/SingleSVG";
 // SingleCylinder();
 // SingleText();
 // Worm();
-SingleSVG();
+// SingleSVG();
 
 document
   .getElementById("copy-svg")

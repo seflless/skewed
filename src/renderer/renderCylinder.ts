@@ -141,11 +141,13 @@ export function renderCylinder(
   );
   capPath.setAttribute("id", isTopVisible ? "cylinder-top" : "cylinder-bottom");
 
-  const capFill = applyLighting(
-    scene.directionalLight.color,
-    cylinder.fill,
-    scene.ambientLightColor,
-    reversedLightDirection.dotProduct(visibleUpAxisWorldSpace.clone())
+  const capFill = ColorToCSS(
+    applyLighting(
+      scene.directionalLight.color,
+      cylinder.fill,
+      scene.ambientLightColor,
+      reversedLightDirection.dotProduct(visibleUpAxisWorldSpace.clone())
+    )
   );
   capPath.setAttribute("fill", capFill);
 
@@ -250,11 +252,13 @@ export function renderCylinder(
     stopElement.setAttribute("offset", normalized.toFixed(3));
     stopElement.setAttribute(
       "stop-color",
-      applyLighting(
-        scene.directionalLight.color,
-        cylinder.fill,
-        scene.ambientLightColor,
-        directionalLightInCameraSpace.dotProduct(normal)
+      ColorToCSS(
+        applyLighting(
+          scene.directionalLight.color,
+          cylinder.fill,
+          scene.ambientLightColor,
+          directionalLightInCameraSpace.dotProduct(normal)
+        )
       )
     );
     linearGradient.appendChild(stopElement);

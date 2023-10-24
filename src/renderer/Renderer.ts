@@ -347,11 +347,13 @@ function renderMesh(
       face.normal
     );
 
-    const fill = applyLighting(
-      scene.directionalLight.color,
-      shape.fill,
-      scene.ambientLightColor,
-      brightness
+    const fill = ColorToCSS(
+      applyLighting(
+        scene.directionalLight.color,
+        shape.fill,
+        scene.ambientLightColor,
+        brightness
+      )
     );
 
     polygon.setAttribute("fill", fill);

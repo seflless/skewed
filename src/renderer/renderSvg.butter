@@ -1,7 +1,7 @@
 import { projectToScreenCoordinate } from "../cameras/Camera";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
-import { TextShape } from "../shapes/Shape";
+import { SvgShape, TextShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
 import { Color, ColorToCSS } from "../colors/Color";
@@ -10,11 +10,11 @@ import { Euler, EulerOrder } from "../math/Euler";
 import { applyLighting } from "../lighting/LightingModel";
 import { generateSVGTransformMatrix } from "./svgUtils";
 
-export function renderText(
+export function renderSvg(
   scene: Scene,
   svg: SVGElement,
   _defs: SVGDefsElement,
-  textShape: TextShape,
+  svgShape: SvgShape,
   viewport: Viewport,
   worldTransform: Matrix4x4,
   cameraZoom: number,
@@ -22,8 +22,7 @@ export function renderText(
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
-  const textScale = worldTransform.getScale().x;
-  const textScaleFactor = textScale * cameraZoom;
+  const svgScaleFactor = worldTransform.getScale().x;
 
   const transformMatrixCameraSpace = inverseCameraMatrix
     .clone()
@@ -54,17 +53,36 @@ export function renderText(
   const fill = ColorToCSS(
     applyLighting(
       scene.directionalLight.color,
-      textShape.fill,
+      svgShape.fill,
       scene.ambientLightColor,
       directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace)
     )
   );
 
-  const textElement = document.createElementNS(
+  const rootGroupElement = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "text"
+    "g"
   );
-  textElement.setAttribute("id", "text");
+
+  const multiplyGroupElement = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "g"
+  );
+
+  multiplyGroupElement.style.mixBlendMode = "multiply";
+
+  const multiplyRectElement = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "rect"
+  );
+  multiplyRectElement.setAttribute("x", "0");
+  multiplyRectElement.setAttribute("x", "0");
+  multiplyRectElement.setAttribute("x", "0");
+  multiplyRectElement.setAttribute("x", "0");
+
+  multiplyGroupElement.appendChild(multiplyRectElement);
+
+  rootGroupElement.appendChild(svgShape.svg);
 
   const { x, y } = projectToScreenCoordinate(
     worldTransform.getTranslation().add(faceNormalInWorldSpace),
@@ -72,26 +90,13 @@ export function renderText(
     viewport
   );
 
-  textElement.setAttribute("font-size", textShape.fontSize.toFixed(2));
-  textElement.setAttribute("font-family", textShape.fontFamily);
-  textElement.setAttribute("fill", fill);
-
-  textElement.setAttribute("stroke", ColorToCSS(textShape.stroke));
-  textElement.setAttribute("stroke-width", textShape.strokeWidth.toFixed(2));
-
-  // Align the text to the center
-  textElement.setAttribute("text-anchor", "middle");
-  textElement.setAttribute("dominant-baseline", "middle");
-
-  textElement.textContent = textShape.text;
-
   const transformMatrixText = generateSVGTransformMatrix(
     x,
     y,
     transformMatrixCameraSpace,
-    textScaleFactor
+    svgScaleFactor
   );
-  textElement.setAttribute("transform", transformMatrixText);
+  groupElement.setAttribute("transform", transformMatrixText);
 
-  svg.appendChild(textElement);
+  svg.appendChild(groupElement);
 }

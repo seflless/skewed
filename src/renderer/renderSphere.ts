@@ -192,11 +192,13 @@ function sphereLightSide(
 
     gradientStops.push({
       offset: offset * (1.0 - size) + size,
-      stopColor: applyLighting(
-        scene.directionalLight.color,
-        sphere.fill,
-        scene.ambientLightColor,
-        brightness
+      stopColor: ColorToCSS(
+        applyLighting(
+          scene.directionalLight.color,
+          sphere.fill,
+          scene.ambientLightColor,
+          brightness
+        )
       ),
     });
   }
@@ -344,11 +346,13 @@ function sphereDarkSide(
 
   // Inner half of gradient is pure black, then after that fades from black to
   // white
-  const darkSideFillColor = applyLighting(
-    scene.directionalLight.color,
-    sphere.fill,
-    scene.ambientLightColor,
-    0
+  const darkSideFillColor = ColorToCSS(
+    applyLighting(
+      scene.directionalLight.color,
+      sphere.fill,
+      scene.ambientLightColor,
+      0
+    )
   );
   gradientStops.push({
     offset: size,
@@ -373,11 +377,13 @@ function sphereDarkSide(
     gradientStops.push({
       // Offset of [0,1] maps to the last half of the gradient [0.5,1]
       offset: offset / 2 + 0.5,
-      stopColor: applyLighting(
-        scene.directionalLight.color,
-        sphere.fill,
-        scene.ambientLightColor,
-        brightness
+      stopColor: ColorToCSS(
+        applyLighting(
+          scene.directionalLight.color,
+          sphere.fill,
+          scene.ambientLightColor,
+          brightness
+        )
       ),
     });
   }

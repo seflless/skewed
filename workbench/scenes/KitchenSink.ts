@@ -15,6 +15,9 @@ import {
   Camera,
   Group,
   Grid,
+  Text,
+  deserializeSVG,
+  Svg,
 } from "../../src/index";
 import { svgPathParser } from "../../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../../src/svg/svg3d";
@@ -26,6 +29,7 @@ import {
   getPaused,
   onUpdate,
 } from "../Settings";
+import { angryFaceSVGSource } from "../assets/angrySVGFace";
 
 export default function () {
   // From this 1 diameter circle flattened into a path in Figma, exported as an SVG file, then copy/pasting out the path string
@@ -99,7 +103,7 @@ export default function () {
     return Math.random() * (max - min) + min;
   }
   const cylinder = Cylinder({
-    position: Vector3(0, 150, 300),
+    position: Vector3(0, 150, 0),
     rotation: Vector3(0, 0, 0),
     scale: 1.0,
     radius: 50,
@@ -161,15 +165,31 @@ export default function () {
     ];
   }
 
+  const tallTorquoiseBoxShadow = {
+    center: Vector3(0, 0, -180),
+    shape: Box({
+      position: Vector3(0, 0, -180),
+      rotation: Vector3(0, 0, 0),
+      scale: 1.0,
+      width: 120,
+      height: 1,
+      depth: 120,
+      fill: Color(0, 64, 128, 0.75),
+      stroke: Color(0, 0, 0, 0),
+      strokeWidth: 0.0,
+    }),
+  };
+
   const shadows = [
     {
       center: Vector3(0, 0, 300),
-      shape: Cylinder({
+      shape: Box({
         position: Vector3(0, 0, 300),
         rotation: Vector3(0, 0, 0),
         scale: 1.0,
-        radius: 55,
+        width: 120,
         height: 1,
+        depth: 120,
         fill: Color(0, 0, 0, 0.5),
         stroke: Color(0, 0, 0, 0),
         strokeWidth: 0.0,
@@ -191,32 +211,18 @@ export default function () {
     },
     {
       center: Vector3(0, 0, 0),
-      shape: Box({
+      shape: Cylinder({
         position: Vector3(0, 0, 0),
         rotation: Vector3(0, 0, 0),
         scale: 1.0,
-        width: 120,
+        radius: 58,
         height: 1,
-        depth: 120,
         fill: Color(0, 0, 0, 0.5),
         stroke: Color(0, 0, 0, 0),
         strokeWidth: 0.0,
       }),
     },
-    {
-      center: Vector3(0, 0, -180),
-      shape: Box({
-        position: Vector3(0, 0, -180),
-        rotation: Vector3(0, 0, 0),
-        scale: 1.0,
-        width: 120,
-        height: 1,
-        depth: 120,
-        fill: Color(0, 0, 0, 0.5),
-        stroke: Color(0, 0, 0, 0),
-        strokeWidth: 0.0,
-      }),
-    },
+    tallTorquoiseBoxShadow,
     {
       center: Vector3(0, 0, -350),
       shape: Box({
@@ -226,6 +232,19 @@ export default function () {
         width: 120,
         height: 1,
         depth: 120,
+        fill: Color(0, 0, 0, 0.5),
+        stroke: Color(0, 0, 0, 0),
+        strokeWidth: 0.0,
+      }),
+    },
+    {
+      center: Vector3(150, 70, 0),
+      shape: Cylinder({
+        position: Vector3(0, 0, -350),
+        rotation: Vector3(0, 0, 0),
+        scale: 1.0,
+        height: 0,
+        radius: 60,
         fill: Color(0, 0, 0, 0.5),
         stroke: Color(0, 0, 0, 0),
         strokeWidth: 0.0,
@@ -249,8 +268,39 @@ export default function () {
 
   const boxStrokeWidth = 3;
 
+  const text = Text({
+    id: "text",
+    text: "Kitchen Sink",
+    rotation: Vector3(0, 0, 0),
+    position: Vector3(0, 500, 0),
+    fontSize: 70,
+    scale: 1,
+    // radius: referenceRadius,
+    fill: Color(255, 255, 255),
+    stroke: Color(0, 0, 0),
+    strokeWidth: 4,
+  });
+
+  Vector3(0, 50, 150);
+  const angryFace = Group({
+    scale: 1,
+    position: Vector3(-55, 250, 100),
+    children: [
+      Svg({
+        svg: deserializeSVG(angryFaceSVGSource()),
+        position: Vector3(-50, 0, 0),
+        scale: 0.5,
+        rotation: Vector3(0, 0, 0),
+        // radius: referenceRadius,
+        fill: Color(255, 0, 0),
+        stroke: Color(0, 0, 0),
+        strokeWidth: 10,
+      }),
+    ],
+  });
+
   const transparentGreenBox = Box({
-    position: Vector3(0, 100, 0),
+    position: Vector3(0, 100, 300),
     rotation: Vector3(0, 0, 0),
     scale: 1.0,
     width: 100,
@@ -261,14 +311,14 @@ export default function () {
     stroke: Color(0, 0, 0),
     strokeWidth: boxStrokeWidth,
   });
-  const tallBlueBox = Box({
+  const tallTorquoiseBox = Box({
     position: Vector3(1, 200, -180),
     rotation: Vector3(0, 0, 0),
     scale: 1.0,
     width: 100,
     height: 400,
     depth: 100,
-    fill: Blue,
+    fill: Color(64, 255, 255, 0.75),
     stroke: Color(0, 0, 0),
     strokeWidth: boxStrokeWidth,
   });
@@ -290,8 +340,9 @@ export default function () {
         stroke: Color(0, 0, 0),
         strokeWidth: boxStrokeWidth,
       }),
+
       Sphere({
-        position: Vector3(200, 70, 0),
+        position: Vector3(150, 70, 0),
         radius: 70,
         fill: Color(255, 128, 0),
         stroke: Color(0, 0, 0, 1),
@@ -299,11 +350,13 @@ export default function () {
       }),
       // sphereScaleTestGroup,
       transparentGreenBox,
-      tallBlueBox,
+      tallTorquoiseBox,
       cylinder,
       lightSphere,
       ...shadowShapes,
       ...particles,
+      text,
+      angryFace,
       //   Octopus({ position: Vector3(-450, 0, 450) }),
       // ...Axii(Vector3(0, 0, 0)),
     ],
@@ -346,13 +399,23 @@ export default function () {
     // cylinder.rotation.x = 90;
     // cylinder.rotation.z = now * 360 * cylinderRotationSpeed;
 
+    const textSpinSpeed = 1.0;
+    text.rotation.y = 90;
+    text.rotation.x = now * 360 * textSpinSpeed;
+
+    angryFace.rotation.y = now * 360 * cylinderRotationSpeed;
+
     const boxRotationSpeed = 0.25;
     // transparentBox.rotation.y = now * 360 * boxRotationSpeed;
     // transparentGreenBox.rotation.x = 90;
 
     const boxScalingSpeed = 0.25;
-    tallBlueBox.scale =
+    tallTorquoiseBox.scale =
       (1 + Math.sin(now * Math.PI * 2 * boxScalingSpeed) * 0.5) / 2.0;
+    tallTorquoiseBox.rotation.y = now * 360 * cylinderRotationSpeed;
+
+    tallTorquoiseBoxShadow.shape.scale = tallTorquoiseBox.scale * 0.9;
+    tallTorquoiseBoxShadow.shape.rotation.y = tallTorquoiseBox.rotation.y;
     // console.log((now * cylinderRotationSpeed) % 1);
     // cylinder.position.x = ((now * cylinderRotationSpeed) % 1) * 500;
 

@@ -50,12 +50,17 @@ export function renderSvg(
     faceNormalInCameraSpace.multiply(-1);
   }
 
-  const groupElement = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "g"
+  const fillColor = applyLighting(
+    scene.directionalLight.color,
+    svgShape.fill,
+    scene.ambientLightColor,
+    directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace)
   );
+  const fillString = ColorToCSS(fillColor);
 
-  groupElement.appendChild(svgShape.svg);
+  const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+  group.appendChild(svgShape.svg);
 
   const { x, y } = projectToScreenCoordinate(
     worldTransform.getTranslation().add(faceNormalInWorldSpace),
@@ -69,7 +74,7 @@ export function renderSvg(
     transformMatrixCameraSpace,
     svgScaleFactor
   );
-  groupElement.setAttribute("transform", transformMatrixText);
+  group.setAttribute("transform", transformMatrixText);
 
-  svg.appendChild(groupElement);
+  svg.appendChild(group);
 }
