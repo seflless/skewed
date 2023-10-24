@@ -2,9 +2,7 @@ import { Vector3 } from "../math/Vector3";
 import {
   BasicShapeProperties,
   DefaultBasicShapeProperties,
-  DefaultFontSize,
   ArrowShape,
-  TextShape,
 } from "./Shape";
 
 export type ArrowProperties = {

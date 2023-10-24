@@ -1,9 +1,7 @@
 import {
   BasicShapeProperties,
   DefaultBasicShapeProperties,
-  DefaultFontSize,
   SvgShape,
-  TextShape,
 } from "./Shape";
 
 export type SvgProperties = {

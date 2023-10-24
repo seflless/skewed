@@ -4,14 +4,10 @@ import { Vector3 } from "../math/Vector3";
 import { ArrowShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
-import { Color, ColorToCSS } from "../colors/Color";
-import { Euler, EulerOrder } from "../math/Euler";
-// import { DebugLine2D } from "./DebugRenderer";
-import { applyLighting } from "../lighting/LightingModel";
-import { generateSVGTransformMatrix } from "./svgUtils";
+import { ColorToCSS } from "../colors/Color";
 
 export function renderArrow(
-  scene: Scene,
+  _scene: Scene,
   svg: SVGElement,
   _defs: SVGDefsElement,
   arrowShape: ArrowShape,
@@ -19,15 +15,10 @@ export function renderArrow(
   worldTransform: Matrix4x4,
   cameraZoom: number,
   _cameraDirection: Vector3,
-  inverseCameraMatrix: Matrix4x4,
+  _inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
   const arrowScaleFactor = worldTransform.getScale().x * cameraZoom;
-
-  const transformMatrixCameraSpace = inverseCameraMatrix
-    .clone()
-    .multiply(worldTransform)
-    .extractRotation();
 
   const pathElement = document.createElementNS(
     "http://www.w3.org/2000/svg",

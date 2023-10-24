@@ -4,9 +4,7 @@ import { Vector3 } from "../math/Vector3";
 import { TextShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
-import { Color, ColorToCSS } from "../colors/Color";
-import { Euler, EulerOrder } from "../math/Euler";
-// import { DebugLine2D } from "./DebugRenderer";
+import { ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { generateSVGTransformMatrix } from "./svgUtils";
 

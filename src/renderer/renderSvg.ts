@@ -1,13 +1,9 @@
 import { projectToScreenCoordinate } from "../cameras/Camera";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
-import { SvgShape, TextShape } from "../shapes/Shape";
+import { SvgShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
 import { Viewport } from "./Viewport";
-import { Color, ColorToCSS } from "../colors/Color";
-import { Euler, EulerOrder } from "../math/Euler";
-// import { DebugLine2D } from "./DebugRenderer";
-import { applyLighting } from "../lighting/LightingModel";
 import { generateSVGTransformMatrix } from "./svgUtils";
 
 export function renderSvg(
@@ -49,14 +45,6 @@ export function renderSvg(
   if (facingWayFromCamera) {
     faceNormalInCameraSpace.multiply(-1);
   }
-
-  const fillColor = applyLighting(
-    scene.directionalLight.color,
-    svgShape.fill,
-    scene.ambientLightColor,
-    directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace)
-  );
-  const fillString = ColorToCSS(fillColor);
 
   const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
 

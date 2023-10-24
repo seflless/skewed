@@ -3,7 +3,7 @@ import { Viewport } from "./Viewport";
 
 export function DebugLine2D(
   svg: SVGElement,
-  viewport: Viewport,
+  _viewport: Viewport,
   x: number,
   y: number,
   x2: number,
