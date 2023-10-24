@@ -22,7 +22,7 @@ export function renderSvg(
   inverseCameraMatrix: Matrix4x4,
   inverseAndProjectionMatrix: Matrix4x4
 ) {
-  const svgScaleFactor = worldTransform.getScale().x;
+  const svgScaleFactor = worldTransform.getScale().x * cameraZoom;
 
   const transformMatrixCameraSpace = inverseCameraMatrix
     .clone()

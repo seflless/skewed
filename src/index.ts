@@ -15,6 +15,7 @@ export * from "./shapes/Cylinder";
 export * from "./shapes/Sphere";
 export * from "./shapes/Text";
 export * from "./shapes/Svg";
+export * from "./shapes/Arrow";
 export * from "./meshes/Mesh";
 export * from "./meshes/BoxMesh";
 export * from "./math/Vector3";

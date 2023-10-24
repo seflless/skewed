@@ -48,12 +48,6 @@ export type CylinderShape = {
   height: number;
 } & BasicShapeProperties;
 
-export type GroupShape = TransformProperties & {
-  type: "group";
-  id: string;
-  children: Shape[];
-};
-
 export type TextShape = BasicShapeProperties & {
   type: "text";
   text: string;
@@ -66,9 +60,22 @@ export type SvgShape = BasicShapeProperties & {
   svg: SVGElement;
 };
 
+export type ArrowShape = BasicShapeProperties & {
+  type: "arrow";
+  start: Vector3;
+  middleOffset: number;
+  end: Vector3;
+};
+
 export type ImageShape = BasicShapeProperties & {
   type: "image";
   image: HTMLImageElement;
+};
+
+export type GroupShape = TransformProperties & {
+  type: "group";
+  id: string;
+  children: Shape[];
 };
 
 export type GridShape = BasicShapeProperties & {
@@ -85,5 +92,6 @@ export type Shape =
   | CylinderShape
   | TextShape
   | SvgShape
+  | ArrowShape
   | GroupShape
   | GridShape;

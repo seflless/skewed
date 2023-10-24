@@ -72,12 +72,23 @@ export function renderText(
     viewport
   );
 
-  textElement.setAttribute("font-size", textShape.fontSize.toFixed(2));
+  textElement.setAttribute(
+    "font-size",
+    (textShape.fontSize * textScaleFactor).toFixed(2)
+  );
   textElement.setAttribute("font-family", textShape.fontFamily);
   textElement.setAttribute("fill", fill);
 
-  textElement.setAttribute("stroke", ColorToCSS(textShape.stroke));
-  textElement.setAttribute("stroke-width", textShape.strokeWidth.toFixed(2));
+  if (textShape.strokeWidth && textShape.stroke.a > 0.0) {
+    textElement.setAttribute("stroke", ColorToCSS(textShape.stroke));
+
+    if (textShape.strokeWidth !== 1.0) {
+      textElement.setAttribute(
+        "stroke-width",
+        (textShape.strokeWidth * textScaleFactor).toString()
+      );
+    }
+  }
 
   // Align the text to the center
   textElement.setAttribute("text-anchor", "middle");

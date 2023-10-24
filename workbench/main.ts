@@ -10,8 +10,9 @@ import Cylinders from "./scenes/Cylinders";
 import SingleCylinder from "./scenes/SingleCylinder";
 import SingleText from "./scenes/SingleText";
 import SingleSVG from "./scenes/SingleSVG";
+import SingleArrow from "./scenes/SingleArrow";
 
-KitchenSink();
+// KitchenSink();
 // Transforms();
 // Octopus();
 // Spheres();
@@ -21,6 +22,7 @@ KitchenSink();
 // SingleText();
 // Worm();
 // SingleSVG();
+SingleArrow();
 
 document
   .getElementById("copy-svg")

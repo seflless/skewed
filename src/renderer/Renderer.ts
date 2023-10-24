@@ -10,6 +10,7 @@ import { ColorToCSS } from "../colors/Color";
 import { renderCylinder } from "./renderCylinder";
 import { renderText } from "./renderText";
 import { renderSvg } from "./renderSvg";
+import { renderArrow } from "./renderArrow";
 
 const CrackFillingStrokeWidth = 0.5;
 
@@ -144,6 +145,20 @@ export function render(
         break;
       case "svg":
         renderSvg(
+          scene,
+          svg,
+          defs,
+          shape,
+          viewport,
+          worldTransform,
+          cameraZoom,
+          cameraDirection,
+          inverseCameraMatrix,
+          inverseAndProjectionMatrix
+        );
+        break;
+      case "arrow":
+        renderArrow(
           scene,
           svg,
           defs,
