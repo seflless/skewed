@@ -1,4 +1,4 @@
-import { Color, ColorToCSS } from "../colors/Color";
+import { Color } from "../colors/Color";
 
 export function applyLighting(
   directionalLightColor: Color,
