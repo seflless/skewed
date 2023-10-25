@@ -299,6 +299,8 @@ export default function () {
     ],
   });
 
+  let startDrag: { x: number; y: number } | undefined;
+  let startTranslation: Vector3 | undefined;
   const transparentGreenBox = Box({
     position: Vector3(0, 100, 300),
     rotation: Vector3(0, 0, 0),
@@ -306,6 +308,29 @@ export default function () {
     width: 100,
     height: 200,
     depth: 100,
+    onPointerDown: (event) => {
+      startDrag = { x: event.clientX, y: event.clientY };
+      startTranslation = transparentGreenBox.position.clone();
+      console.log("transparentGreenBox onPointerDown", transparentGreenBox);
+    },
+    onPointerMove: (event) => {
+      if (startDrag && startTranslation) {
+        const delta = {
+          x: startDrag.x - event.clientX,
+          y: startDrag.y - event.clientY,
+        };
+
+        // transparentGreenBox.position.y = startTranslation.y + delta.y;
+
+        transparentGreenBox.position.x = startTranslation.x - delta.x;
+        transparentGreenBox.position.z = startTranslation.z - delta.y;
+      }
+      console.log("transparentGreenBox onPointerMove");
+    },
+    onPointerUp: (event) => {
+      startDrag = undefined;
+      console.log("transparentGreenBox onPointerUp");
+    },
     // fill: Color(0, 255, 0, 0.9),
     fill: Color(0, 255, 0, 1.0),
     stroke: Color(0, 0, 0),

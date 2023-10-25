@@ -12,7 +12,7 @@ import SingleText from "./scenes/SingleText";
 import SingleSVG from "./scenes/SingleSVG";
 import SingleArrow from "./scenes/SingleArrow";
 
-// KitchenSink();
+KitchenSink();
 // Transforms();
 // Octopus();
 // Spheres();
@@ -22,7 +22,7 @@ import SingleArrow from "./scenes/SingleArrow";
 // SingleText();
 // Worm();
 // SingleSVG();
-SingleArrow();
+// SingleArrow();
 
 document
   .getElementById("copy-svg")

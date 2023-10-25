@@ -333,6 +333,18 @@ function renderMesh(
   g.setAttribute("transform", `translate(${left},${top})`);
   g.id = shape.id;
 
+  if (shape.onPointerDown) {
+    g.addEventListener("pointerdown", shape.onPointerDown);
+  }
+
+  if (shape.onPointerMove) {
+    g.addEventListener("pointermove", shape.onPointerMove);
+  }
+
+  if (shape.onPointerUp) {
+    g.addEventListener("pointerup", shape.onPointerUp);
+  }
+
   const shapeSpaceCameraDirection = cameraDirection.clone();
 
   worldTransform.clone().invert().applyToVector3(shapeSpaceCameraDirection);

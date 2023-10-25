@@ -14,12 +14,19 @@ export const DefaultTransformProperties = (): TransformProperties => ({
   scale: 1,
 });
 
-export type BasicShapeProperties = TransformProperties & {
-  fill: Color;
-  stroke: Color;
-  strokeWidth: number;
-  id: string;
+export type EventProperties = {
+  onPointerDown?: (event: PointerEvent) => void;
+  onPointerMove?: (event: PointerEvent) => void;
+  onPointerUp?: (event: PointerEvent) => void;
 };
+
+export type BasicShapeProperties = EventProperties &
+  TransformProperties & {
+    fill: Color;
+    stroke: Color;
+    strokeWidth: number;
+    id: string;
+  };
 
 export const DefaultBasicShapeProperties = (): BasicShapeProperties => ({
   ...DefaultTransformProperties(),
@@ -72,11 +79,12 @@ export type ImageShape = BasicShapeProperties & {
   image: HTMLImageElement;
 };
 
-export type GroupShape = TransformProperties & {
-  type: "group";
-  id: string;
-  children: Shape[];
-};
+export type GroupShape = EventProperties &
+  TransformProperties & {
+    type: "group";
+    id: string;
+    children: Shape[];
+  };
 
 export type GridShape = BasicShapeProperties & {
   type: "grid";

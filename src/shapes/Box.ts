@@ -3,10 +3,11 @@ import {
   Shape,
   DefaultBasicShapeProperties,
   DefaultShapeDimension,
+  EventProperties,
 } from "./Shape";
 import { BoxMesh } from "../meshes/BoxMesh";
 
-export type BoxProperties = {
+export type BoxProperties = EventProperties & {
   width: number;
   height: number;
   depth: number;
