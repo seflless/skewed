@@ -11,17 +11,19 @@ export type ArrowProperties = {
   end: Vector3;
 } & BasicShapeProperties;
 
-const DefaultArrowProperties: ArrowProperties = {
-  start: Vector3(0, 0, 0),
-  middleOffset: 0.5,
-  end: Vector3(100, 0, 0),
-  ...DefaultBasicShapeProperties(),
-};
+function DefaultArrowProperties() {
+  return {
+    start: Vector3(0, 0, 0),
+    middleOffset: 0.5,
+    end: Vector3(100, 0, 0),
+    ...DefaultBasicShapeProperties(),
+  };
+}
 
 export function Arrow(props: Partial<ArrowProperties>): ArrowShape {
   const arrow: ArrowShape = {
     type: "arrow",
-    ...DefaultArrowProperties,
+    ...DefaultArrowProperties(),
     ...props,
   };
   return arrow;

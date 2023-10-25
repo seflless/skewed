@@ -1,4 +1,8 @@
-import { Camera, projectToScreenCoordinate } from "../cameras/Camera";
+import {
+  Camera,
+  extractOrthographicDimensions,
+  projectToScreenCoordinate,
+} from "../cameras/Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "../math/Vector3";
 import { Viewport } from "./Viewport";
@@ -438,28 +442,4 @@ function renderMesh(
     g.appendChild(polygon);
     svg.appendChild(g);
   }
-}
-
-function extractOrthographicDimensions(matrix: Matrix4x4): {
-  width: number;
-  height: number;
-  depth: number;
-} {
-  const elements = matrix.elements;
-
-  // These values represent how much the content is "squeezed" or "stretched"
-  const scaleX = elements[0];
-  const scaleY = elements[5];
-  const scaleZ = elements[10];
-
-  // Extracting the original width, height, and depth from the squeeze/stretch values.
-  const width = 2 / scaleX;
-  const height = 2 / scaleY;
-  const depth = -2 / scaleZ; // we use -2 since the scaleZ is typically negative in a right-handed system
-
-  return {
-    width: width,
-    height: height,
-    depth: depth,
-  };
 }

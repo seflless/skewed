@@ -20,6 +20,8 @@ import {
   Svg,
   Plane,
   Arrow,
+  pointerToWorldStartDirection,
+  ArrowShape,
 } from "../../src/index";
 import { svgPathParser } from "../../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../../src/svg/svg3d";
@@ -321,15 +323,46 @@ export default function () {
   });
 
   const dragOffsetX = Arrow({
-    fill: Red,
     stroke: Red,
+    strokeWidth: 50,
+  });
+  const dragOffsetY = Arrow({
+    stroke: Green,
     strokeWidth: 10,
-    start: Vector3(400, 0, 0),
-    end: Vector3(500, 0, 500),
   });
   const dragOffsetZ = Arrow({
-    fill: Blue,
+    stroke: Blue,
     strokeWidth: 10,
+  });
+
+  function setArrowHead(arrow: ArrowShape, event: PointerEvent) {
+    const { start, direction } = pointerToWorldStartDirection(
+      viewport,
+      camera,
+      event.clientX,
+      event.clientY
+    );
+
+    const floorIntersection = floorPlane.intersect(
+      start,
+      direction.clone().multiply(-1)
+    );
+    if (floorIntersection) {
+      arrow.end.x = floorIntersection.x;
+      arrow.end.z = floorIntersection.z;
+    }
+  }
+
+  document.addEventListener("pointerdown", (event) => {
+    setArrowHead(dragOffsetX, event);
+  });
+
+  document.addEventListener("pointermove", (event) => {
+    setArrowHead(dragOffsetZ, event);
+  });
+
+  document.addEventListener("pointerup", (event) => {
+    setArrowHead(dragOffsetY, event);
   });
 
   const transparentGreenBox = Box({
@@ -339,72 +372,72 @@ export default function () {
     width: 40,
     height: 2,
     depth: 40,
-    onPointerDown: (event, start, direction) => {
-      startDrag = floorPlane.intersect(start, direction.clone().multiply(-1));
-      console.log(
-        `startDrag: (${startDrag?.x},${startDrag?.y},${startDrag?.z})`
-      );
+    // onPointerDown: (event, start, direction) => {
+    //   startDrag = floorPlane.intersect(start, direction.clone().multiply(-1));
+    //   console.log(
+    //     `startDrag: (${startDrag?.x},${startDrag?.y},${startDrag?.z})`
+    //   );
 
-      startTranslation = transparentGreenBox.position.clone();
+    //   startTranslation = transparentGreenBox.position.clone();
 
-      if (startDrag) {
-        cursorRetical.position = startDrag.clone();
-      }
+    //   if (startDrag) {
+    //     cursorRetical.position = startDrag.clone();
+    //   }
 
-      // console.log("transparentGreenBox onPointerDown", transparentGreenBox);
-    },
-    onPointerMove: (event, start, direction) => {
-      if (startDrag && startTranslation) {
-        // console.log("-------------transparentGreenBox onPointerMove");
-        // console.log(`start = (${start.x},${start.y},${start.z})`);
-        // console.log(
-        //   `direction = (${direction.x},${direction.y},${direction.z})`
-        // );
-        const floorIntersection = floorPlane.intersect(
-          start,
-          direction.clone().multiply(-1)
-        );
+    //   // console.log("transparentGreenBox onPointerDown", transparentGreenBox);
+    // },
+    // onPointerMove: (event, start, direction) => {
+    //   if (startDrag && startTranslation) {
+    //     // console.log("-------------transparentGreenBox onPointerMove");
+    //     // console.log(`start = (${start.x},${start.y},${start.z})`);
+    //     // console.log(
+    //     //   `direction = (${direction.x},${direction.y},${direction.z})`
+    //     // );
+    //     const floorIntersection = floorPlane.intersect(
+    //       start,
+    //       direction.clone().multiply(-1)
+    //     );
 
-        if (floorIntersection) {
-          if (floorIntersection) {
-            cursorRetical.position = floorIntersection.clone();
-          }
+    //     if (floorIntersection) {
+    //       if (floorIntersection) {
+    //         cursorRetical.position = floorIntersection.clone();
+    //       }
 
-          // console.log("YES floor intersection");
+    //       // console.log("YES floor intersection");
 
-          // console.log(
-          //   `floorIntersection = (${floorIntersection?.x},${floorIntersection?.y},${floorIntersection?.z})`
-          // );
-          const delta = floorIntersection?.clone().subtract(startDrag);
-          // console.log(`delta = (${delta.x},${delta.y},${delta.z})`);
+    //       // console.log(
+    //       //   `floorIntersection = (${floorIntersection?.x},${floorIntersection?.y},${floorIntersection?.z})`
+    //       // );
+    //       const delta = floorIntersection?.clone().subtract(startDrag);
+    //       // console.log(`delta = (${delta.x},${delta.y},${delta.z})`);
 
-          if (delta) {
-            transparentGreenBox.position = Vector3(
-              startTranslation.x + delta.x,
-              startTranslation.y,
-              startTranslation.z + delta.z
-            );
+    //       if (delta) {
+    //         transparentGreenBox.position = Vector3(
+    //           startTranslation.x + delta.x,
+    //           startTranslation.y,
+    //           startTranslation.z + delta.z
+    //         );
 
-            dragOffsetX.start.x = startDrag.x;
-            dragOffsetX.start.z = startDrag.z;
+    //         // dragOffsetX.start.x = startDrag.x;
+    //         // dragOffsetX.start.z = startDrag.z;
 
-            dragOffsetX.end.x = floorIntersection.x;
-            dragOffsetX.end.z = floorIntersection.z;
-            // dragOffsetX.scale = delta.z;
-          }
-          console.log(
-            `transparentGreenBox.position = (${transparentGreenBox.position?.x},${transparentGreenBox.position?.y},${transparentGreenBox.position?.z})`
-          );
-        } else {
-          // console.log("NO floor intersection");
-        }
-        // console.log("transparentGreenBox onPointerMove-------------");
-      }
-    },
-    onPointerUp: (event) => {
-      startDrag = undefined;
-      console.log("transparentGreenBox onPointerUp");
-    },
+    //         // dragOffsetX.end.x = floorIntersection.x;
+    //         // dragOffsetX.end.z = floorIntersection.z;
+    //         // dragOffsetX.scale = delta.z;
+    //       }
+    //       console.log(
+    //         `transparentGreenBox.position = (${transparentGreenBox.position?.x},${transparentGreenBox.position?.y},${transparentGreenBox.position?.z})`
+    //       );
+    //     } else {
+    //       // console.log("NO floor intersection");
+    //     }
+    //     // console.log("transparentGreenBox onPointerMove-------------");
+    //   }
+    // },
+    // onPointerUp: (event) => {
+    //   startDrag = undefined;
+    //   console.log("transparentGreenBox onPointerUp");
+    // },
     // fill: Color(0, 255, 0, 0.9),
     fill: Color(0, 255, 0, 0.5),
     stroke: Color(0, 0, 0),
@@ -428,6 +461,7 @@ export default function () {
       getEnvironment(),
       cursorRetical,
       dragOffsetX,
+      dragOffsetY,
       dragOffsetZ,
       Box({
         position: Vector3(0, 50, 150),

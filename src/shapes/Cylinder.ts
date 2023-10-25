@@ -10,16 +10,18 @@ export type CylinderProperties = {
   height: number;
 } & BasicShapeProperties;
 
-const DefaultSphereProperties: CylinderProperties = {
-  radius: DefaultShapeDimension / 2,
-  height: DefaultShapeDimension,
-  ...DefaultBasicShapeProperties(),
-};
+function DefaultSphereProperties() {
+  return {
+    radius: DefaultShapeDimension / 2,
+    height: DefaultShapeDimension,
+    ...DefaultBasicShapeProperties(),
+  };
+}
 
 export function Cylinder(props: Partial<CylinderProperties>): CylinderShape {
   const cylinder: CylinderShape = {
     type: "cylinder",
-    ...DefaultSphereProperties,
+    ...DefaultSphereProperties(),
     ...props,
   };
   return cylinder;
