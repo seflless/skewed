@@ -338,8 +338,9 @@ function renderMesh(
   g.id = shape.id;
 
   function pointerToWorldVector(event: PointerEvent) {
+    console.log("cameraZoom", cameraZoom);
     const x = (event.clientX - viewport.width / 2) * cameraZoom;
-    const y = event.clientY * -cameraZoom;
+    const y = (event.clientY - viewport.height / 2) * -cameraZoom;
     const cameraPosition = camera.matrix.getTranslation();
     // console.log(`x/y: ${x}, ${y}`);
     // console.log(

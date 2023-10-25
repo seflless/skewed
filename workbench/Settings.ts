@@ -6,6 +6,7 @@ import {
   DirectionalLight,
   Grid,
   Group,
+  Matrix4x4,
   Shape,
   Vector3,
   Viewport,
@@ -176,9 +177,10 @@ export function getCamera(choice: CameraChoice, zoom: number = 1) {
           camera.matrix.makeTranslation(0, 0, 0);
           break;
         case "top":
-          camera.matrix.makeTranslation(0, 0, 0);
-
           camera.matrix.makeRotationX(-Math.PI / 2);
+
+          const translate = Matrix4x4().makeTranslation(0, 100, 0);
+          camera.matrix.multiply(translate);
           break;
         case "isometric":
           {
@@ -188,6 +190,9 @@ export function getCamera(choice: CameraChoice, zoom: number = 1) {
             camera.matrix[7] = eye.y;
             camera.matrix[11] = eye.z;
             camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+
+            const translate = Matrix4x4().makeTranslation(0, 100, 0);
+            camera.matrix.premultiply(translate);
           }
           break;
         case "front-tilted":

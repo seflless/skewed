@@ -19,6 +19,7 @@ import {
   deserializeSVG,
   Svg,
   Plane,
+  Arrow,
 } from "../../src/index";
 import { svgPathParser } from "../../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../../src/svg/svg3d";
@@ -311,13 +312,33 @@ export default function () {
   let startDrag: Vector3 | undefined;
   let startTranslation: Vector3 | undefined;
 
+  const cursorRetical = Box({
+    fill: Green,
+    width: 300,
+    height: 2,
+    depth: 300,
+    scale: 0.5,
+  });
+
+  const dragOffsetX = Arrow({
+    fill: Red,
+    stroke: Red,
+    strokeWidth: 10,
+    start: Vector3(400, 0, 0),
+    end: Vector3(500, 0, 500),
+  });
+  const dragOffsetZ = Arrow({
+    fill: Blue,
+    strokeWidth: 10,
+  });
+
   const transparentGreenBox = Box({
-    position: Vector3(0, 100, 300),
+    position: Vector3(0, 10, 300),
     rotation: Vector3(0, 0, 0),
     scale: 1.0,
-    width: 100,
-    height: 200,
-    depth: 100,
+    width: 40,
+    height: 2,
+    depth: 40,
     onPointerDown: (event, start, direction) => {
       startDrag = floorPlane.intersect(start, direction.clone().multiply(-1));
       console.log(
@@ -325,6 +346,11 @@ export default function () {
       );
 
       startTranslation = transparentGreenBox.position.clone();
+
+      if (startDrag) {
+        cursorRetical.position = startDrag.clone();
+      }
+
       // console.log("transparentGreenBox onPointerDown", transparentGreenBox);
     },
     onPointerMove: (event, start, direction) => {
@@ -338,7 +364,12 @@ export default function () {
           start,
           direction.clone().multiply(-1)
         );
+
         if (floorIntersection) {
+          if (floorIntersection) {
+            cursorRetical.position = floorIntersection.clone();
+          }
+
           // console.log("YES floor intersection");
 
           // console.log(
@@ -353,6 +384,13 @@ export default function () {
               startTranslation.y,
               startTranslation.z + delta.z
             );
+
+            dragOffsetX.start.x = startDrag.x;
+            dragOffsetX.start.z = startDrag.z;
+
+            dragOffsetX.end.x = floorIntersection.x;
+            dragOffsetX.end.z = floorIntersection.z;
+            // dragOffsetX.scale = delta.z;
           }
           console.log(
             `transparentGreenBox.position = (${transparentGreenBox.position?.x},${transparentGreenBox.position?.y},${transparentGreenBox.position?.z})`
@@ -368,7 +406,7 @@ export default function () {
       console.log("transparentGreenBox onPointerUp");
     },
     // fill: Color(0, 255, 0, 0.9),
-    fill: Color(0, 255, 0, 1.0),
+    fill: Color(0, 255, 0, 0.5),
     stroke: Color(0, 0, 0),
     strokeWidth: boxStrokeWidth,
   });
@@ -388,6 +426,9 @@ export default function () {
     ...getLighting("moonlit"),
     shapes: [
       getEnvironment(),
+      cursorRetical,
+      dragOffsetX,
+      dragOffsetZ,
       Box({
         position: Vector3(0, 50, 150),
         fill: Red,
@@ -414,7 +455,7 @@ export default function () {
       tallTorquoiseBox,
       cylinder,
       lightSphere,
-      ...shadowShapes,
+      // ...shadowShapes,
       ...particles,
       text,
       angryFace,
@@ -423,7 +464,7 @@ export default function () {
     ],
   };
 
-  const { viewport, camera, updateCamera } = getCamera("isometric");
+  const { viewport, camera, updateCamera } = getCamera("top");
 
   onUpdate(({ now, deltaTime }) => {
     const cameraSpeed = 0.0;
