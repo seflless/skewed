@@ -18,6 +18,7 @@ import {
   Text,
   deserializeSVG,
   Svg,
+  Plane,
 } from "../../src/index";
 import { svgPathParser } from "../../src/svg/svgPathParser";
 import { svgPathToSvg3DCommands } from "../../src/svg/svg3d";
@@ -299,8 +300,17 @@ export default function () {
     ],
   });
 
-  let startDrag: { x: number; y: number } | undefined;
+  const floorPlane = Plane(Vector3(0, 1, 0), 0);
+
+  const result = floorPlane.intersect(
+    Vector3(-167.30924568333444, 0.5055356057837699, 223.1628528682963),
+    Vector3(-0.49999999999999994, -0.7071067811865475, -0.5)
+  );
+  console.log(`intersect = (${result?.x},${result?.y},${result?.z})`);
+
+  let startDrag: Vector3 | undefined;
   let startTranslation: Vector3 | undefined;
+
   const transparentGreenBox = Box({
     position: Vector3(0, 100, 300),
     rotation: Vector3(0, 0, 0),
@@ -308,24 +318,50 @@ export default function () {
     width: 100,
     height: 200,
     depth: 100,
-    onPointerDown: (event) => {
-      startDrag = { x: event.clientX, y: event.clientY };
+    onPointerDown: (event, start, direction) => {
+      startDrag = floorPlane.intersect(start, direction.clone().multiply(-1));
+      console.log(
+        `startDrag: (${startDrag?.x},${startDrag?.y},${startDrag?.z})`
+      );
+
       startTranslation = transparentGreenBox.position.clone();
-      console.log("transparentGreenBox onPointerDown", transparentGreenBox);
+      // console.log("transparentGreenBox onPointerDown", transparentGreenBox);
     },
-    onPointerMove: (event) => {
+    onPointerMove: (event, start, direction) => {
       if (startDrag && startTranslation) {
-        const delta = {
-          x: startDrag.x - event.clientX,
-          y: startDrag.y - event.clientY,
-        };
+        // console.log("-------------transparentGreenBox onPointerMove");
+        // console.log(`start = (${start.x},${start.y},${start.z})`);
+        // console.log(
+        //   `direction = (${direction.x},${direction.y},${direction.z})`
+        // );
+        const floorIntersection = floorPlane.intersect(
+          start,
+          direction.clone().multiply(-1)
+        );
+        if (floorIntersection) {
+          // console.log("YES floor intersection");
 
-        // transparentGreenBox.position.y = startTranslation.y + delta.y;
+          // console.log(
+          //   `floorIntersection = (${floorIntersection?.x},${floorIntersection?.y},${floorIntersection?.z})`
+          // );
+          const delta = floorIntersection?.clone().subtract(startDrag);
+          // console.log(`delta = (${delta.x},${delta.y},${delta.z})`);
 
-        transparentGreenBox.position.x = startTranslation.x - delta.x;
-        transparentGreenBox.position.z = startTranslation.z - delta.y;
+          if (delta) {
+            transparentGreenBox.position = Vector3(
+              startTranslation.x + delta.x,
+              startTranslation.y,
+              startTranslation.z + delta.z
+            );
+          }
+          console.log(
+            `transparentGreenBox.position = (${transparentGreenBox.position?.x},${transparentGreenBox.position?.y},${transparentGreenBox.position?.z})`
+          );
+        } else {
+          // console.log("NO floor intersection");
+        }
+        // console.log("transparentGreenBox onPointerMove-------------");
       }
-      console.log("transparentGreenBox onPointerMove");
     },
     onPointerUp: (event) => {
       startDrag = undefined;
@@ -356,14 +392,14 @@ export default function () {
         position: Vector3(0, 50, 150),
         fill: Red,
         stroke: Color(0, 0, 0),
-        strokeWidth: boxStrokeWidth,
+        strokeWidth: 0,
       }),
       Box({
         position: Vector3(0, 200, -350),
         height: 400,
         fill: Color(255, 255, 255),
         stroke: Color(0, 0, 0),
-        strokeWidth: boxStrokeWidth,
+        strokeWidth: 0,
       }),
 
       Sphere({
@@ -383,7 +419,7 @@ export default function () {
       text,
       angryFace,
       //   Octopus({ position: Vector3(-450, 0, 450) }),
-      // ...Axii(Vector3(0, 0, 0)),
+      ...Axii(Vector3(-400, 0, -400)),
     ],
   };
 

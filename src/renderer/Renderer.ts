@@ -99,7 +99,7 @@ export function render(
           worldTransform,
           cameraZoom,
           inverseAndProjectionMatrix,
-          cameraDirection
+          camera
         );
         break;
       case "sphere":
@@ -288,11 +288,15 @@ function renderMesh(
   worldTransform: Matrix4x4,
   cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
-  cameraDirection: Vector3
+  camera: Camera
 ) {
+  const xAxis = Vector3(0, 0, 0);
+  const yAxis = Vector3(0, 0, 0);
+  const zAxis = Vector3(0, 0, 0);
+  camera.matrix.extractBasis(xAxis, yAxis, zAxis);
   const shapeInverseRotationMatrix = worldTransform.extractRotation().invert();
 
-  const cameraDirectionInShapeSpaceAndInverted = cameraDirection.clone();
+  const cameraDirectionInShapeSpaceAndInverted = zAxis.clone();
   shapeInverseRotationMatrix.applyToVector3(
     cameraDirectionInShapeSpaceAndInverted
   );
@@ -333,19 +337,42 @@ function renderMesh(
   g.setAttribute("transform", `translate(${left},${top})`);
   g.id = shape.id;
 
+  function pointerToWorldVector(event: PointerEvent) {
+    const x = (event.clientX - viewport.width / 2) * cameraZoom;
+    const y = event.clientY * -cameraZoom;
+    const cameraPosition = camera.matrix.getTranslation();
+    // console.log(`x/y: ${x}, ${y}`);
+    // console.log(
+    //   `cameraPosition: ${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}`
+    // );
+    const point = cameraPosition
+      .clone()
+      .add(xAxis.clone().multiply(x))
+      .add(yAxis.clone().multiply(y));
+
+    // console.log(`point: ${point.x}, ${point.y}, ${point.z}`);
+    return point;
+  }
+
   if (shape.onPointerDown) {
-    g.addEventListener("pointerdown", shape.onPointerDown);
+    g.addEventListener("pointerdown", (event) => {
+      const start = pointerToWorldVector(event);
+      shape.onPointerDown?.(event, start, zAxis.clone());
+    });
   }
 
   if (shape.onPointerMove) {
-    g.addEventListener("pointermove", shape.onPointerMove);
+    g.addEventListener("pointermove", (event) => {
+      const start = pointerToWorldVector(event);
+      shape.onPointerMove?.(event, start, zAxis.clone());
+    });
   }
 
   if (shape.onPointerUp) {
     g.addEventListener("pointerup", shape.onPointerUp);
   }
 
-  const shapeSpaceCameraDirection = cameraDirection.clone();
+  const shapeSpaceCameraDirection = zAxis.clone();
 
   worldTransform.clone().invert().applyToVector3(shapeSpaceCameraDirection);
 

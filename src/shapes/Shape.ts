@@ -15,8 +15,16 @@ export const DefaultTransformProperties = (): TransformProperties => ({
 });
 
 export type EventProperties = {
-  onPointerDown?: (event: PointerEvent) => void;
-  onPointerMove?: (event: PointerEvent) => void;
+  onPointerDown?: (
+    event: PointerEvent,
+    start: Vector3,
+    direction: Vector3
+  ) => void;
+  onPointerMove?: (
+    event: PointerEvent,
+    start: Vector3,
+    direction: Vector3
+  ) => void;
   onPointerUp?: (event: PointerEvent) => void;
 };
 
