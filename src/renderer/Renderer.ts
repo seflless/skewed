@@ -44,6 +44,8 @@ export function render(
   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.id = "scene";
 
+  svg.setAttribute("width", viewport.width.toString());
+  svg.setAttribute("height", viewport.height.toString());
   svg.setAttribute(
     "viewBox",
     `0 0 ${viewport.width.toString()} ${viewport.height.toString()}`

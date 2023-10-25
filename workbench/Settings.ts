@@ -134,21 +134,36 @@ export function getLighting(lighting: LightingChoice): {
 
 export type CameraChoice = "front" | "top" | "isometric" | "front-tilted"; //| "cabinet" ;
 
-export function getCamera(choice: CameraChoice, zoom: number = 1) {
+export function getCamera(
+  choice: CameraChoice,
+  splitScreen: "horizontally" | "vertically" | "fullscreen" = "fullscreen",
+  zoom: number = 1
+) {
   const camera = Camera();
 
   const viewport: Viewport = {
     left: 0,
     top: 0,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 0,
+    height: 0,
   };
 
   function resize() {
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    if (splitScreen === "horizontally") {
+      width /= 2;
+    } else if (splitScreen === "vertically") {
+      height /= 2;
+    } else {
+      // Do nothing
+    }
+
     viewport.left = 0;
     viewport.top = 0;
-    viewport.width = window.innerWidth;
-    viewport.height = window.innerHeight;
+    viewport.width = width;
+    viewport.height = height;
 
     camera.projectionMatrix.makeOrthographic(
       0,
