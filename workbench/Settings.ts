@@ -258,14 +258,18 @@ export function getEnvironment(environment: Environment = "grid"): Shape {
       return Group({});
     case "grid":
       document.body.style.backgroundColor = "#e1e1e1";
-      return Grid({
-        id: "background",
-        rotation: Vector3(0, 0, 0),
-        cellCount: 10,
-        cellSize: 100,
-        fill: Color(0, 0, 0, 0),
-        stroke: Color(0, 0, 0),
-        strokeWidth: 4,
+      return Group({
+        children: [
+          Grid({
+            id: "background",
+            rotation: Vector3(0, 0, 0),
+            cellCount: 10,
+            cellSize: 100,
+            fill: Color(255, 0, 0, 1),
+            stroke: Color(0, 0, 0),
+            strokeWidth: 1,
+          }),
+        ],
       });
     case "white floor":
       document.body.style.backgroundColor = "rgb(32,32,32)";
