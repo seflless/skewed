@@ -31,9 +31,9 @@ const PlaneProto = {
     const t = -(start.dotProduct(this.normal) + this.distance) / denominator;
     // const t = - ( line.start.dot( this.normal ) + this.constant ) / denominator;
 
-    if (t < 0 || t > 1) {
-      return undefined;
-    }
+    // if (t < 0 || t > 1) {
+    //   return undefined;
+    // }
 
     return start.clone().add(delta.clone().multiply(t));
   },

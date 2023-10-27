@@ -401,7 +401,7 @@ export default function () {
         ) {
           // setArrowHead(dragOffsetX, event);
 
-          const startDrag = floorPlane.intersect(start, direction.clone());
+          startDrag = floorPlane.intersect(start, direction.clone());
 
           if (startDrag) {
             startTranslation = shape.position.clone();
