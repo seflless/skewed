@@ -36,6 +36,7 @@ import {
   onUpdate,
 } from "../Settings";
 import { angryFaceSVGSource } from "../assets/angrySVGFace";
+import { panZoom } from "../utils/panZoom";
 
 export default function () {
   const leftContainer = document.createElement("div");
@@ -513,19 +514,41 @@ export default function () {
       ],
     };
 
-    const { viewport, camera, updateCamera } = getCamera(
+    const { viewport, camera, updateCamera, updateZoom } = getCamera(
       cameraChoice,
       "fullscreen"
     );
+
+    updateCamera(45, 20);
+
+    panZoom((delta) => {
+      if (delta.type === "pan") {
+        camera.matrix.setTranslation(
+          camera.matrix
+            .getTranslation()
+            .add(camera.matrix.getRight().multiply(delta.x * camera.zoom))
+            .add(camera.matrix.getUp().multiply(-delta.y * camera.zoom))
+        );
+      } else if (delta.type === "zoom") {
+        const d = -delta.zoom / 60;
+        console.log(`d = ${d}`);
+
+        camera.zoom = camera.zoom - d * camera.zoom;
+        console.log(`camera.zoom = ${camera.zoom}`);
+        // camera.zoom += delta.zoom * 0.01;
+        updateZoom();
+      }
+    });
+
+    // const cameraSpeed = 0.25;
 
     const displayVector = (v: Vector3) => {
       return `(${v.x.toFixed(2)}, ${v.y.toFixed(2)}, ${v.z.toFixed(2)})`;
     };
 
     onUpdate(({ now, deltaTime }) => {
+      // updateCamera(now * cameraSpeed * 360 + 45, 20);
       const cameraSpeed = 0.0;
-      // const cameraSpeed = 0.25;
-      updateCamera(now * cameraSpeed * 360 + 45, 20);
 
       cameraPosition.text = `Pos: ${displayVector(
         camera.matrix.getTranslation()

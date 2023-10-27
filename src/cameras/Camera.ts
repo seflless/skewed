@@ -5,25 +5,32 @@ import { Viewport } from "../renderer/Viewport";
 export interface Camera {
   matrix: Matrix4x4;
   projectionMatrix: Matrix4x4;
+  zoom: number;
 }
 
 const CameraProto = {};
 
 export function Camera(): Camera;
-export function Camera(matrix: Matrix4x4): Camera;
+export function Camera(zoom?: number): Camera;
+export function Camera(zoom: number, matrix: Matrix4x4): Camera;
 
-export function Camera(matrix?: Matrix4x4): Camera {
+export function Camera(zoom: number = 1, matrix?: Matrix4x4): Camera {
   if (matrix) {
-    return createCamera(matrix, Matrix4x4.identity());
+    return createCamera(matrix, Matrix4x4.identity(), zoom);
   } else {
-    return createCamera(Matrix4x4.identity(), Matrix4x4.identity());
+    return createCamera(Matrix4x4.identity(), Matrix4x4.identity(), zoom);
   }
 }
 
-function createCamera(matrix: Matrix4x4, projectionMatrix: Matrix4x4): Camera {
+function createCamera(
+  matrix: Matrix4x4,
+  projectionMatrix: Matrix4x4,
+  zoom: number
+): Camera {
   return Object.assign(Object.create(CameraProto), {
     matrix,
     projectionMatrix,
+    zoom,
   });
 }
 

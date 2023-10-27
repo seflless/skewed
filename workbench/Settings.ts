@@ -136,8 +136,7 @@ export type CameraChoice = "front" | "top" | "isometric" | "front-tilted"; //| "
 
 export function getCamera(
   choice: CameraChoice,
-  splitScreen: "horizontally" | "vertically" | "fullscreen" = "fullscreen",
-  zoom: number = 1
+  splitScreen: "horizontally" | "vertically" | "fullscreen" = "fullscreen"
 ) {
   const camera = Camera();
 
@@ -167,9 +166,9 @@ export function getCamera(
 
     camera.projectionMatrix.makeOrthographic(
       0,
-      viewport.width / zoom,
+      viewport.width * camera.zoom,
       0,
-      viewport.height / zoom,
+      viewport.height * camera.zoom,
       0,
       10000
     );
@@ -181,6 +180,9 @@ export function getCamera(
   return {
     viewport,
     camera,
+    updateZoom() {
+      resize();
+    },
     updateCamera(rotationDegrees: number, distance: number = 20) {
       const x = Math.sin((rotationDegrees / 180) * Math.PI) * distance;
       const z = Math.cos((rotationDegrees / 180) * Math.PI) * distance;
