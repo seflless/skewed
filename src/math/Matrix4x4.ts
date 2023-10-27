@@ -24,7 +24,14 @@ export interface Matrix4x4 {
   clone: () => Matrix4x4;
   copy(matrix: Matrix4x4): Matrix4x4;
   copyPosition(matrix: Matrix4x4): Matrix4x4;
+  setTranslation(position: Vector3): Matrix4x4;
   getTranslation(): Vector3;
+  getForward(): Vector3;
+  getBackwards(): Vector3;
+  getRight(): Vector3;
+  getLeft(): Vector3;
+  getUp(): Vector3;
+  getDown(): Vector3;
   getScale(): Vector3;
   extractBasis(xAxis?: Vector3, yAxis?: Vector3, zAxis?: Vector3): Matrix4x4;
   extractRotation(): Matrix4x4;
@@ -274,10 +281,50 @@ const Matrix4x4Proto = {
     return this;
   },
 
+  setTranslation(this: Matrix4x4, position: Vector3): Matrix4x4 {
+    const te = this.elements;
+
+    te[12] = position.x;
+    te[13] = position.y;
+    te[14] = position.z;
+
+    return this;
+  },
+
   getTranslation(this: Matrix4x4): Vector3 {
     const te = this.elements;
 
     return Vector3(te[12], te[13], te[14]);
+  },
+
+  getForward(this: Matrix4x4): Vector3 {
+    const forward = Vector3();
+    setVector3FromMatrixElements(forward, this.elements, 8);
+    return forward;
+  },
+
+  getBackwards(this: Matrix4x4): Vector3 {
+    return this.getForward().negate();
+  },
+
+  getRight(this: Matrix4x4): Vector3 {
+    const right = Vector3();
+    setVector3FromMatrixElements(right, this.elements, 0);
+    return right;
+  },
+
+  getLeft(this: Matrix4x4): Vector3 {
+    return this.getRight().negate();
+  },
+
+  getUp(this: Matrix4x4): Vector3 {
+    const up = Vector3();
+    setVector3FromMatrixElements(up, this.elements, 4);
+    return up;
+  },
+
+  getDown(this: Matrix4x4): Vector3 {
+    return this.getUp().negate();
   },
 
   getScale(this: Matrix4x4): Vector3 {

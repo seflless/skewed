@@ -189,35 +189,34 @@ export function getCamera(
 
       switch (choice) {
         case "front":
-          camera.matrix.makeTranslation(0, 0, 0);
+          camera.matrix.makeTranslation(0, 0, distance);
           break;
         case "top":
           camera.matrix.makeRotationX(-Math.PI / 2);
 
-          const translate = Matrix4x4().makeTranslation(0, 100, 0);
+          const translate = Matrix4x4().makeTranslation(0, distance, 0);
           camera.matrix.multiply(translate);
           break;
         case "isometric":
           {
-            camera.matrix.makeTranslation(x, 20, z);
-            const eye = Vector3(x, 20, z);
-            camera.matrix[3] = eye.x;
-            camera.matrix[7] = eye.y;
-            camera.matrix[11] = eye.z;
+            const eye = Vector3(x, distance, z);
+
             camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
 
-            const translate = Matrix4x4().makeTranslation(0, 100, 0);
-            camera.matrix.premultiply(translate);
+            camera.matrix.setTranslation(
+              eye.add(camera.matrix.getBackwards().multiply(1))
+            );
           }
           break;
         case "front-tilted":
           {
-            camera.matrix.makeTranslation(0, 20, 20);
-            const eye = Vector3(0, 20, 20);
-            camera.matrix[3] = eye.x;
-            camera.matrix[7] = eye.y;
-            camera.matrix[11] = eye.z;
-            camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+            camera.matrix.makeTranslation(0, distance, distance);
+
+            camera.matrix.lookAt(
+              camera.matrix.getTranslation(),
+              Vector3(0, 0, 0),
+              Vector3(0, 1, 0)
+            );
           }
           break;
           // case "cabinet":

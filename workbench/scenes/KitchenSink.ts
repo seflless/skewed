@@ -318,20 +318,20 @@ export default function () {
     const floorPlane = Plane(Vector3(0, 1, 0), 0);
 
     const result = floorPlane.intersect(
-      Vector3(-167.30924568333444, 0.5055356057837699, 223.1628528682963),
-      Vector3(-0.49999999999999994, -0.7071067811865475, -0.5)
+      Vector3(767.71, -299.26, -287.92),
+      Vector3(0.5, 0.71, 0.5)
     );
+
     console.log(`intersect = (${result?.x},${result?.y},${result?.z})`);
 
     let startDrag: Vector3 | undefined;
     let startTranslation: Vector3 | undefined;
 
-    const cursorRetical = Box({
-      fill: Green,
-      width: 300,
+    const cursorRetical = Cylinder({
+      fill: Red,
+      radius: 10,
       height: 2,
-      depth: 300,
-      scale: 0.5,
+      scale: 1,
     });
 
     const dragOffsetX = Arrow({
@@ -347,7 +347,7 @@ export default function () {
       strokeWidth: 10,
     });
 
-    function setArrowHead(arrow: ArrowShape, event: PointerEvent) {
+    function setArrowHead(position: Vector3, event: PointerEvent) {
       const { start, direction } = pointerToWorldStartDirection(
         viewport,
         camera,
@@ -355,35 +355,91 @@ export default function () {
         event.clientY
       );
 
+      // console.log(
+      //   `start = (${start.x.toFixed(2)},${start.y.toFixed(2)},${start.z.toFixed(
+      //     2
+      //   )}). direction = (${direction.x.toFixed(2)},${direction.y.toFixed(
+      //     2
+      //   )},${direction.z.toFixed(2)})`
+      // );
+
       const floorIntersection = floorPlane.intersect(
         start,
         direction.clone().multiply(-1)
       );
       if (floorIntersection) {
-        arrow.end.x = floorIntersection.x;
-        arrow.end.z = floorIntersection.z;
+        position.x = floorIntersection.x;
+        position.y = floorIntersection.y;
+        position.z = floorIntersection.z;
+
+        cursorRetical.position = floorIntersection.clone();
       }
     }
 
-    document.addEventListener("pointerdown", (event) => {
-      setArrowHead(dragOffsetX, event);
-    });
+    // document.addEventListener("pointerdown", (event) => {
+    //   setArrowHead(dragOffsetX, event);
+    // });
 
-    document.addEventListener("pointermove", (event) => {
-      setArrowHead(dragOffsetZ, event);
-    });
+    // document.addEventListener("pointermove", (event) => {
+    //   setArrowHead(dragOffsetZ, event);
+    // });
 
-    document.addEventListener("pointerup", (event) => {
-      setArrowHead(dragOffsetY, event);
-    });
+    // document.addEventListener("pointerup", (event) => {
+    //   setArrowHead(dragOffsetY, event);
+    // });
+
+    // let startDrag: Vector3 | undefined;
+    // let startTranslation: Vector3 | undefined;
+
+    const createDraggableEventHandlers = () => {
+      return {
+        onPointerDown(
+          shape: Shape,
+          _event: PointerEvent,
+          start: Vector3,
+          direction: Vector3
+        ) {
+          // setArrowHead(dragOffsetX, event);
+
+          const startDrag = floorPlane.intersect(start, direction.clone());
+
+          if (startDrag) {
+            startTranslation = shape.position.clone();
+          }
+        },
+        onPointerMove(
+          shape: Shape,
+          _event: PointerEvent,
+          start: Vector3,
+          direction: Vector3
+        ) {
+          if (startDrag) {
+            const intersection = floorPlane.intersect(start, direction.clone());
+            if (intersection && startTranslation) {
+              const delta = intersection.clone().subtract(startDrag);
+              shape.position = Vector3(
+                startTranslation.x + delta.x,
+                startTranslation.y,
+                startTranslation.z + delta.z
+              );
+            }
+          }
+        },
+
+        onPointerUp(shape: Shape, event: PointerEvent) {
+          startDrag = undefined;
+        },
+      };
+    };
 
     const transparentGreenBox = Box({
-      position: Vector3(0, 10, 300),
+      position: Vector3(0, 50, 300),
       rotation: Vector3(0, 0, 0),
       scale: 1.0,
-      width: 40,
-      height: 2,
-      depth: 40,
+      width: 100,
+      height: 100,
+      depth: 100,
+      ...createDraggableEventHandlers(),
       // onPointerDown: (event, start, direction) => {
       //   startDrag = floorPlane.intersect(start, direction.clone().multiply(-1));
       //   console.log(
@@ -451,7 +507,7 @@ export default function () {
       //   console.log("transparentGreenBox onPointerUp");
       // },
       // fill: Color(0, 255, 0, 0.9),
-      fill: Color(0, 255, 0, 0.5),
+      fill: Color(0, 255, 0, 1),
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
     });
@@ -467,14 +523,35 @@ export default function () {
       strokeWidth: boxStrokeWidth,
     });
 
+    const cameraPosition = Text({
+      text: "Camera Position",
+      fontSize: 50,
+      fill: Color(0, 255, 0),
+      stroke: Color(255, 255, 255),
+      strokeWidth: 1,
+      rotation: Vector3(-20, 45, 0),
+      position: Vector3(-400, 200, -400),
+    });
+
+    const cameraDirection = Text({
+      text: "Camera Direction",
+      fontSize: 50,
+
+      fill: Color(255, 0, 0),
+      stroke: Color(255, 255, 255),
+      strokeWidth: 1,
+      rotation: Vector3(-20, 45, 0),
+      position: Vector3(400, 0, 400),
+    });
+
     const scene: Scene = {
       ...getLighting(lightingChoice),
       shapes: [
         getEnvironment(),
         cursorRetical,
-        dragOffsetX,
-        dragOffsetY,
-        dragOffsetZ,
+        // dragOffsetX,
+        // dragOffsetY,
+        // dragOffsetZ,
         Box({
           position: Vector3(0, 50, 150),
           fill: Red,
@@ -501,10 +578,12 @@ export default function () {
         tallTorquoiseBox,
         cylinder,
         lightSphere,
-        // ...shadowShapes,
+        ...shadowShapes,
         ...particles,
         text,
         angryFace,
+        // cameraDirection,
+        // cameraPosition,
         //   Octopus({ position: Vector3(-450, 0, 450) }),
         ...Axii(Vector3(-400, 0, -400)),
       ],
@@ -512,13 +591,25 @@ export default function () {
 
     const { viewport, camera, updateCamera } = getCamera(
       cameraChoice,
-      "horizontally"
+      "fullscreen"
     );
+
+    const displayVector = (v: Vector3) => {
+      return `(${v.x.toFixed(2)}, ${v.y.toFixed(2)}, ${v.z.toFixed(2)})`;
+    };
 
     onUpdate(({ now, deltaTime }) => {
       const cameraSpeed = 0.0;
       // const cameraSpeed = 0.25;
       updateCamera(now * cameraSpeed * 360 + 45, 20);
+
+      cameraPosition.text = `Pos: ${displayVector(
+        camera.matrix.getTranslation()
+      )}`;
+
+      cameraDirection.text = `Dir: ${displayVector(
+        camera.matrix.getForward()
+      )}`;
 
       // const sphereSpeed = 0.0;
       // const sphereSpeed = 0.1;
@@ -619,5 +710,5 @@ export default function () {
   }
 
   doIt(leftContainer, "isometric", "moonlit");
-  doIt(rightContainer, "top", "underwater");
+  // doIt(rightContainer, "top", "underwater");
 }

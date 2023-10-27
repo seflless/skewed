@@ -14,30 +14,28 @@ export function pointerToWorldStartDirection(
   clientX: number,
   clientY: number
 ): { start: Vector3; direction: Vector3 } {
-  const xAxis = Vector3(0, 0, 0);
-  const yAxis = Vector3(0, 0, 0);
-  const zAxis = Vector3(0, 0, 0);
-  camera.matrix.extractBasis(xAxis, yAxis, zAxis);
-
   const extractOrthographicDimensionsResult = extractOrthographicDimensions(
     camera.projectionMatrix
   );
   const cameraZoom = viewport.width / extractOrthographicDimensionsResult.width;
   const x = (clientX - viewport.width / 2) * cameraZoom;
   const y = (clientY - viewport.height / 2) * -cameraZoom;
-  const cameraPosition = camera.matrix.getTranslation();
   // console.log(`x/y: ${x}, ${y}`);
   // console.log(
   //   `cameraPosition: ${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}`
   // );
-  const point = cameraPosition
-    .clone()
-    .add(xAxis.clone().multiply(x))
-    .add(yAxis.clone().multiply(y));
+  const start = camera.matrix
+    .getTranslation()
+    .add(camera.matrix.getRight().multiply(x))
+    .add(camera.matrix.getUp().multiply(y))
+    // Move far back from the camera plane to ensure the ray intersects with things projected
+    // onto the camera plane. Number should be bigger than any possible screen dimension and then
+    // some
+    .add(camera.matrix.getBackwards().multiply(-1000));
 
   // console.log(`point: ${point.x}, ${point.y}, ${point.z}`);
   return {
-    start: point.clone(),
-    direction: zAxis.clone(),
+    start,
+    direction: camera.matrix.getForward(),
   };
 }

@@ -9,6 +9,7 @@ export interface Vector3 {
   add(vec: Vector3): Vector3;
   subtract(vec: Vector3): Vector3;
   multiply(scalar: number): Vector3;
+  negate(): Vector3;
   clone(): Vector3;
   normalize(): Vector3;
   length(): number;
@@ -70,6 +71,10 @@ const Vector3Proto = {
     this.y *= scalar;
     this.z *= scalar;
     return this;
+  },
+
+  negate(this: Vector3): Vector3 {
+    return this.multiply(-1);
   },
 
   clone(this: Vector3): Vector3 {

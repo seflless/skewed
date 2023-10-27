@@ -6,40 +6,36 @@ export interface Plane {
   intersect(start: Vector3, direction: Vector3): Vector3 | undefined;
 }
 
+const A_Far_Away_Distance = 1_000_000;
+
 const PlaneProto = {
   intersect(
     this: Plane,
     start: Vector3,
     direction: Vector3
   ): Vector3 | undefined {
-    const end = start.clone().add(direction.clone().multiply(100000));
+    const delta = direction.clone().multiply(A_Far_Away_Distance);
 
-    const denom = this.normal.dotProduct(direction);
-    if (Math.abs(denom) < 1e-6) {
-      // Ray and plane are parallel
+    const denominator = this.normal.dotProduct(delta);
+
+    if (denominator === 0) {
+      // line is coplanar, return origin
+      // if (this.distanceToPoint(line.start) === 0) {
+      //   return target.copy(line.start);
+      // }
+
+      // Unsure if this is the correct method to handle this case.
       return undefined;
     }
 
-    /*
-        start(0,1000,0)
+    const t = -(start.dotProduct(this.normal) + this.distance) / denominator;
+    // const t = - ( line.start.dot( this.normal ) + this.constant ) / denominator;
 
-           ^
-           | (0,1,0)
-        _______
-
-        end(0,-100,0)
-
-        t = start/(end-start[1100])
-    */
-
-    const startD = start.dotProduct(this.normal);
-    const endD = end.dotProduct(this.normal);
-    const t = startD / (endD - startD);
-    if (t < 0) {
-      // Intersection is behind the ray's origin
+    if (t < 0 || t > 1) {
       return undefined;
     }
-    return start.clone().add(direction.clone().multiply(t));
+
+    return start.clone().add(delta.clone().multiply(t));
   },
 };
 

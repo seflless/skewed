@@ -5,7 +5,7 @@ import {
 } from "../cameras/Camera";
 import { Scene } from "./Scene";
 import { Vector3 } from "../math/Vector3";
-import { Viewport } from "./Viewport";
+import { Viewport, pointerToWorldStartDirection } from "./Viewport";
 import { MeshShape, Shape, TransformProperties } from "../shapes/Shape";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { applyLighting } from "../lighting/LightingModel";
@@ -343,40 +343,37 @@ function renderMesh(
   g.setAttribute("transform", `translate(${left},${top})`);
   g.id = shape.id;
 
-  function pointerToWorldVector(event: PointerEvent) {
-    console.log("cameraZoom", cameraZoom);
-    const x = (event.clientX - viewport.width / 2) * cameraZoom;
-    const y = (event.clientY - viewport.height / 2) * -cameraZoom;
-    const cameraPosition = camera.matrix.getTranslation();
-    // console.log(`x/y: ${x}, ${y}`);
-    // console.log(
-    //   `cameraPosition: ${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}`
-    // );
-    const point = cameraPosition
-      .clone()
-      .add(xAxis.clone().multiply(x))
-      .add(yAxis.clone().multiply(y));
-
-    // console.log(`point: ${point.x}, ${point.y}, ${point.z}`);
-    return point;
-  }
-
   if (shape.onPointerDown) {
     g.addEventListener("pointerdown", (event) => {
-      const start = pointerToWorldVector(event);
-      shape.onPointerDown?.(event, start, zAxis.clone());
+      const { start, direction } = pointerToWorldStartDirection(
+        viewport,
+        camera,
+        event.clientX,
+        event.clientY
+      );
+
+      shape.onPointerDown?.(shape, event, start, direction);
     });
   }
 
   if (shape.onPointerMove) {
     g.addEventListener("pointermove", (event) => {
-      const start = pointerToWorldVector(event);
-      shape.onPointerMove?.(event, start, zAxis.clone());
+      const { start, direction } = pointerToWorldStartDirection(
+        viewport,
+        camera,
+        event.clientX,
+        event.clientY
+      );
+      shape.onPointerMove?.(shape, event, start, direction);
     });
   }
 
   if (shape.onPointerUp) {
-    g.addEventListener("pointerup", shape.onPointerUp);
+    g.addEventListener("pointerup", (event) => {
+      if (shape.onPointerUp) {
+        shape.onPointerUp(shape, event);
+      }
+    });
   }
 
   const shapeSpaceCameraDirection = zAxis.clone();
