@@ -1,9 +1,9 @@
-import { projectToScreenCoordinate } from "../cameras/Camera";
+import { Camera, projectToScreenCoordinate } from "../cameras/Camera";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
 import { TextShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
-import { Viewport } from "./Viewport";
+import { Viewport, pointerToWorldStartDirection } from "./Viewport";
 import { ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { generateSVGTransformMatrix } from "./svgUtils";
@@ -14,6 +14,7 @@ export function renderText(
   _defs: SVGDefsElement,
   textShape: TextShape,
   viewport: Viewport,
+  camera: Camera,
   worldTransform: Matrix4x4,
   cameraZoom: number,
   _cameraDirection: Vector3,
@@ -103,4 +104,35 @@ export function renderText(
   textElement.setAttribute("transform", transformMatrixText);
 
   svg.appendChild(textElement);
+
+  textElement.addEventListener("pointerdown", (event) => {
+    const { start, direction } = pointerToWorldStartDirection(
+      viewport,
+      camera,
+      event.clientX,
+      event.clientY
+    );
+
+    textShape.onPointerDown?.(textShape, event, start, direction);
+  });
+
+  if (textShape.onPointerMove) {
+    textElement.addEventListener("pointermove", (event) => {
+      const { start, direction } = pointerToWorldStartDirection(
+        viewport,
+        camera,
+        event.clientX,
+        event.clientY
+      );
+      textShape.onPointerMove?.(textShape, event, start, direction);
+    });
+  }
+
+  if (textShape.onPointerUp) {
+    textElement.addEventListener("pointerup", (event) => {
+      if (textShape.onPointerUp) {
+        textShape.onPointerUp(textShape, event);
+      }
+    });
+  }
 }

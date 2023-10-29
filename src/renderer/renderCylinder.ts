@@ -3,14 +3,14 @@
 // and this Observable Notebook
 // https://observablehq.com/d/011f054fc7eaf966
 
-import { projectToScreenCoordinate } from "../cameras/Camera";
+import { Camera, projectToScreenCoordinate } from "../cameras/Camera";
 import { ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
 import { CylinderShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
-import { Viewport } from "./Viewport";
+import { Viewport, pointerToWorldStartDirection } from "./Viewport";
 
 enum CylinderEnds {
   Top = 0,
@@ -25,6 +25,7 @@ export function renderCylinder(
   defs: SVGDefsElement,
   cylinder: CylinderShape,
   viewport: Viewport,
+  camera: Camera,
   worldTransform: Matrix4x4,
   cameraZoom: number,
   _cameraDirection: Vector3,
@@ -135,6 +136,8 @@ export function renderCylinder(
     .clone()
     .multiply(-1);
 
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
   const capPath = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "path"
@@ -152,7 +155,7 @@ export function renderCylinder(
   capPath.setAttribute("fill", capFill);
 
   addStrokeAttribute(capPath, cylinder, cylinderScaleFactor, capFill);
-  svg.appendChild(capPath);
+  g.appendChild(capPath);
 
   capPath.setAttribute(
     "d",
@@ -185,7 +188,7 @@ export function renderCylinder(
   );
 
   addStrokeAttribute(tubePath, cylinder, cylinderScaleFactor);
-  svg.appendChild(tubePath);
+  g.appendChild(tubePath);
 
   // Convert the light direction into camera space (not projected into screen space)
   const directionalLightInCameraSpace = reversedLightDirection.clone();
@@ -265,6 +268,38 @@ export function renderCylinder(
   }
 
   defs.appendChild(linearGradient);
+  svg.appendChild(g);
+
+  g.addEventListener("pointerdown", (event) => {
+    const { start, direction } = pointerToWorldStartDirection(
+      viewport,
+      camera,
+      event.clientX,
+      event.clientY
+    );
+
+    cylinder.onPointerDown?.(cylinder, event, start, direction);
+  });
+
+  if (cylinder.onPointerMove) {
+    g.addEventListener("pointermove", (event) => {
+      const { start, direction } = pointerToWorldStartDirection(
+        viewport,
+        camera,
+        event.clientX,
+        event.clientY
+      );
+      cylinder.onPointerMove?.(cylinder, event, start, direction);
+    });
+  }
+
+  if (cylinder.onPointerUp) {
+    g.addEventListener("pointerup", (event) => {
+      if (cylinder.onPointerUp) {
+        cylinder.onPointerUp(cylinder, event);
+      }
+    });
+  }
 
   // Add Cap last
 

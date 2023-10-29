@@ -17,9 +17,9 @@ export function pointerToWorldStartDirection(
   const extractOrthographicDimensionsResult = extractOrthographicDimensions(
     camera.projectionMatrix
   );
-  const cameraZoom = viewport.width / extractOrthographicDimensionsResult.width;
-  const x = (clientX - viewport.width / 2) * cameraZoom;
-  const y = (clientY - viewport.height / 2) * -cameraZoom;
+  const cameraZoom = camera;
+  const x = (clientX - viewport.width / 2) * camera.zoom;
+  const y = (clientY - viewport.height / 2) * -camera.zoom;
   // console.log(`x/y: ${x}, ${y}`);
   // console.log(
   //   `cameraPosition: ${cameraPosition.x}, ${cameraPosition.y}, ${cameraPosition.z}`

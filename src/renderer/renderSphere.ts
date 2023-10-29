@@ -3,14 +3,14 @@
 // and this Observable Notebook
 // https://observablehq.com/d/011f054fc7eaf966
 
-import { projectToScreenCoordinate } from "../cameras/Camera";
+import { Camera, projectToScreenCoordinate } from "../cameras/Camera";
 import { ColorToCSS } from "../colors/Color";
 import { applyLighting } from "../lighting/LightingModel";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
 import { SphereShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
-import { Viewport } from "./Viewport";
+import { Viewport, pointerToWorldStartDirection } from "./Viewport";
 
 const Debug = false;
 
@@ -61,6 +61,7 @@ export function renderSphere(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  camera: Camera,
   worldTransform: Matrix4x4,
   cameraZoom: number,
   inverseCameraMatrix: Matrix4x4,
@@ -96,6 +97,7 @@ export function renderSphere(
       defs,
       sphere,
       viewport,
+      camera,
       worldTransform,
       cameraZoom,
       inverseAndProjectionMatrix,
@@ -110,6 +112,7 @@ export function renderSphere(
       defs,
       sphere,
       viewport,
+      camera,
       worldTransform,
       cameraZoom,
       inverseAndProjectionMatrix,
@@ -159,6 +162,7 @@ function sphereLightSide(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  camera: Camera,
   worldTransform: Matrix4x4,
   cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
@@ -294,6 +298,37 @@ function sphereLightSide(
   defs.appendChild(radialGradient);
 
   svg.appendChild(circle);
+
+  circle.addEventListener("pointerdown", (event) => {
+    const { start, direction } = pointerToWorldStartDirection(
+      viewport,
+      camera,
+      event.clientX,
+      event.clientY
+    );
+
+    sphere.onPointerDown?.(sphere, event, start, direction);
+  });
+
+  if (sphere.onPointerMove) {
+    circle.addEventListener("pointermove", (event) => {
+      const { start, direction } = pointerToWorldStartDirection(
+        viewport,
+        camera,
+        event.clientX,
+        event.clientY
+      );
+      sphere.onPointerMove?.(sphere, event, start, direction);
+    });
+  }
+
+  if (sphere.onPointerUp) {
+    circle.addEventListener("pointerup", (event) => {
+      if (sphere.onPointerUp) {
+        sphere.onPointerUp(sphere, event);
+      }
+    });
+  }
 }
 
 function calculateVerticalRadius(
@@ -324,6 +359,7 @@ function sphereDarkSide(
   defs: SVGDefsElement,
   sphere: SphereShape,
   viewport: Viewport,
+  camera: Camera,
   worldTransform: Matrix4x4,
   cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
@@ -475,4 +511,35 @@ function sphereDarkSide(
   defs.appendChild(radialGradient);
 
   svg.appendChild(circle);
+
+  circle.addEventListener("pointerdown", (event) => {
+    const { start, direction } = pointerToWorldStartDirection(
+      viewport,
+      camera,
+      event.clientX,
+      event.clientY
+    );
+
+    sphere.onPointerDown?.(sphere, event, start, direction);
+  });
+
+  if (sphere.onPointerMove) {
+    circle.addEventListener("pointermove", (event) => {
+      const { start, direction } = pointerToWorldStartDirection(
+        viewport,
+        camera,
+        event.clientX,
+        event.clientY
+      );
+      sphere.onPointerMove?.(sphere, event, start, direction);
+    });
+  }
+
+  if (sphere.onPointerUp) {
+    circle.addEventListener("pointerup", (event) => {
+      if (sphere.onPointerUp) {
+        sphere.onPointerUp(sphere, event);
+      }
+    });
+  }
 }

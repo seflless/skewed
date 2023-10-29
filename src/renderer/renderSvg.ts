@@ -1,9 +1,9 @@
-import { projectToScreenCoordinate } from "../cameras/Camera";
+import { Camera, projectToScreenCoordinate } from "../cameras/Camera";
 import { Matrix4x4 } from "../math/Matrix4x4";
 import { Vector3 } from "../math/Vector3";
 import { SvgShape } from "../shapes/Shape";
 import { Scene } from "./Scene";
-import { Viewport } from "./Viewport";
+import { Viewport, pointerToWorldStartDirection } from "./Viewport";
 import { generateSVGTransformMatrix } from "./svgUtils";
 
 export function renderSvg(
@@ -12,6 +12,7 @@ export function renderSvg(
   _defs: SVGDefsElement,
   svgShape: SvgShape,
   viewport: Viewport,
+  camera: Camera,
   worldTransform: Matrix4x4,
   cameraZoom: number,
   _cameraDirection: Vector3,
@@ -46,9 +47,9 @@ export function renderSvg(
     faceNormalInCameraSpace.multiply(-1);
   }
 
-  const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
-  group.appendChild(svgShape.svg);
+  g.appendChild(svgShape.svg);
 
   const { x, y } = projectToScreenCoordinate(
     worldTransform.getTranslation().add(faceNormalInWorldSpace),
@@ -62,7 +63,38 @@ export function renderSvg(
     transformMatrixCameraSpace,
     svgScaleFactor
   );
-  group.setAttribute("transform", transformMatrixText);
+  g.setAttribute("transform", transformMatrixText);
 
-  svg.appendChild(group);
+  svg.appendChild(g);
+
+  g.addEventListener("pointerdown", (event) => {
+    const { start, direction } = pointerToWorldStartDirection(
+      viewport,
+      camera,
+      event.clientX,
+      event.clientY
+    );
+
+    svgShape.onPointerDown?.(svgShape, event, start, direction);
+  });
+
+  if (svgShape.onPointerMove) {
+    g.addEventListener("pointermove", (event) => {
+      const { start, direction } = pointerToWorldStartDirection(
+        viewport,
+        camera,
+        event.clientX,
+        event.clientY
+      );
+      svgShape.onPointerMove?.(svgShape, event, start, direction);
+    });
+  }
+
+  if (svgShape.onPointerUp) {
+    g.addEventListener("pointerup", (event) => {
+      if (svgShape.onPointerUp) {
+        svgShape.onPointerUp(svgShape, event);
+      }
+    });
+  }
 }

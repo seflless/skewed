@@ -115,10 +115,72 @@ export default function () {
         )
       );
     }
+    const greenBoxShadow = {
+      center: Vector3(0, 0, 300),
+      shape: Box({
+        position: Vector3(0, 0, 300),
+        rotation: Vector3(0, 0, 0),
+        scale: 1.0,
+        width: 120,
+        height: 1,
+        depth: 120,
+        fill: Color(0, 0, 0, 0.5),
+        stroke: Color(0, 0, 0, 0),
+        strokeWidth: 0.0,
+      }),
+    };
 
     function randomRange(min: number, max: number) {
       return Math.random() * (max - min) + min;
     }
+
+    const createDraggableEventHandlers = (shadowCenter?: Vector3) => {
+      return {
+        onPointerDown(
+          shape: Shape,
+          _event: PointerEvent,
+          start: Vector3,
+          direction: Vector3
+        ) {
+          // setArrowHead(dragOffsetX, event);
+
+          startDrag = floorPlane.intersect(start, direction.clone());
+
+          if (startDrag) {
+            startTranslation = shape.position.clone();
+
+            cursorRetical.position = shape.position.clone();
+          }
+        },
+        onPointerMove(
+          shape: Shape,
+          _event: PointerEvent,
+          start: Vector3,
+          direction: Vector3
+        ) {
+          if (startDrag) {
+            const intersection = floorPlane.intersect(start, direction.clone());
+            if (intersection && startTranslation) {
+              const delta = intersection.clone().subtract(startDrag);
+              shape.position = Vector3(
+                startTranslation.x + delta.x,
+                startTranslation.y,
+                startTranslation.z + delta.z
+              );
+
+              if (shadowCenter) {
+                // shadowCenter.set(shape.position).setY(0);
+              }
+            }
+          }
+        },
+
+        onPointerUp(shape: Shape, event: PointerEvent) {
+          startDrag = undefined;
+        },
+      };
+    };
+
     const cylinder = Cylinder({
       position: Vector3(0, 150, 0),
       rotation: Vector3(0, 0, 0),
@@ -128,6 +190,7 @@ export default function () {
       fill: Color(255, 0, 255),
       stroke: Color(0, 0, 0),
       strokeWidth: 2,
+      ...createDraggableEventHandlers(greenBoxShadow.center),
     });
 
     document.addEventListener("pointermove", (event) => {
@@ -192,21 +255,6 @@ export default function () {
         height: 1,
         depth: 120,
         fill: Color(0, 64, 128, 0.75),
-        stroke: Color(0, 0, 0, 0),
-        strokeWidth: 0.0,
-      }),
-    };
-
-    const greenBoxShadow = {
-      center: Vector3(0, 0, 300),
-      shape: Box({
-        position: Vector3(0, 0, 300),
-        rotation: Vector3(0, 0, 0),
-        scale: 1.0,
-        width: 120,
-        height: 1,
-        depth: 120,
-        fill: Color(0, 0, 0, 0.5),
         stroke: Color(0, 0, 0, 0),
         strokeWidth: 0.0,
       }),
@@ -298,6 +346,7 @@ export default function () {
       fill: Color(255, 255, 255),
       stroke: Color(0, 0, 0),
       strokeWidth: 4,
+      ...createDraggableEventHandlers(greenBoxShadow.center),
     });
 
     Vector3(0, 50, 150);
@@ -379,51 +428,6 @@ export default function () {
       }
     }
 
-    const createDraggableEventHandlers = (shadowCenter?: Vector3) => {
-      return {
-        onPointerDown(
-          shape: Shape,
-          _event: PointerEvent,
-          start: Vector3,
-          direction: Vector3
-        ) {
-          // setArrowHead(dragOffsetX, event);
-
-          startDrag = floorPlane.intersect(start, direction.clone());
-
-          if (startDrag) {
-            startTranslation = shape.position.clone();
-          }
-        },
-        onPointerMove(
-          shape: Shape,
-          _event: PointerEvent,
-          start: Vector3,
-          direction: Vector3
-        ) {
-          if (startDrag) {
-            const intersection = floorPlane.intersect(start, direction.clone());
-            if (intersection && startTranslation) {
-              const delta = intersection.clone().subtract(startDrag);
-              shape.position = Vector3(
-                startTranslation.x + delta.x,
-                startTranslation.y,
-                startTranslation.z + delta.z
-              );
-
-              if (shadowCenter) {
-                shadowCenter.set(shape.position).setY(0);
-              }
-            }
-          }
-        },
-
-        onPointerUp(shape: Shape, event: PointerEvent) {
-          startDrag = undefined;
-        },
-      };
-    };
-
     const transparentGreenBox = Box({
       position: Vector3(0, 50, 300),
       rotation: Vector3(0, 0, 0),
@@ -431,10 +435,10 @@ export default function () {
       width: 100,
       height: 100,
       depth: 100,
-      ...createDraggableEventHandlers(greenBoxShadow.center),
       fill: Color(0, 255, 0, 1),
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
+      ...createDraggableEventHandlers(greenBoxShadow.center),
     });
     const tallTorquoiseBox = Box({
       position: Vector3(1, 200, -180),
@@ -446,6 +450,7 @@ export default function () {
       fill: Color(64, 255, 255, 0.75),
       stroke: Color(0, 0, 0),
       strokeWidth: boxStrokeWidth,
+      ...createDraggableEventHandlers(greenBoxShadow.center),
     });
 
     const cameraPosition = Text({
@@ -482,6 +487,7 @@ export default function () {
           fill: Red,
           stroke: Color(0, 0, 0),
           strokeWidth: 0,
+          ...createDraggableEventHandlers(greenBoxShadow.center),
         }),
         Box({
           position: Vector3(0, 200, -350),
@@ -489,6 +495,7 @@ export default function () {
           fill: Color(255, 255, 255),
           stroke: Color(0, 0, 0),
           strokeWidth: 0,
+          ...createDraggableEventHandlers(greenBoxShadow.center),
         }),
 
         Sphere({
@@ -497,6 +504,7 @@ export default function () {
           fill: Color(255, 128, 0),
           stroke: Color(0, 0, 0, 1),
           strokeWidth: 2,
+          ...createDraggableEventHandlers(greenBoxShadow.center),
         }),
         // sphereScaleTestGroup,
         transparentGreenBox,
@@ -589,7 +597,7 @@ export default function () {
       // cylinder.rotation.z = now * 360 * cylinderRotationSpeed;
 
       const textSpinSpeed = 1.0;
-      text.rotation.y = 90;
+      // text.rotation.y = 90;
       // text.rotation.x = now * 360 * textSpinSpeed;
 
       // angryFace.rotation.y = now * 360 * cylinderRotationSpeed;
