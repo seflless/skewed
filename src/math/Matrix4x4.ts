@@ -300,7 +300,7 @@ const Matrix4x4Proto = {
   getForward(this: Matrix4x4): Vector3 {
     const forward = Vector3();
     setVector3FromMatrixElements(forward, this.elements, 8);
-    return forward;
+    return forward.normalize();
   },
 
   getBackwards(this: Matrix4x4): Vector3 {
@@ -310,7 +310,7 @@ const Matrix4x4Proto = {
   getRight(this: Matrix4x4): Vector3 {
     const right = Vector3();
     setVector3FromMatrixElements(right, this.elements, 0);
-    return right;
+    return right.normalize();
   },
 
   getLeft(this: Matrix4x4): Vector3 {
@@ -320,7 +320,7 @@ const Matrix4x4Proto = {
   getUp(this: Matrix4x4): Vector3 {
     const up = Vector3();
     setVector3FromMatrixElements(up, this.elements, 4);
-    return up;
+    return up.normalize();
   },
 
   getDown(this: Matrix4x4): Vector3 {
