@@ -71,10 +71,7 @@ export function renderText(
     viewport
   );
 
-  textElement.setAttribute(
-    "font-size",
-    (textShape.fontSize * textScaleFactor).toFixed(2)
-  );
+  textElement.setAttribute("font-size", textShape.fontSize.toFixed(2));
   textElement.setAttribute("font-family", textShape.fontFamily);
   textElement.setAttribute("fill", fill);
 
