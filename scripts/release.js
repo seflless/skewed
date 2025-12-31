@@ -87,17 +87,26 @@ function main() {
   if (!args.version) die(`Usage: node scripts/release.js --version major|minor|patch`);
 
   const repoRoot = path.resolve(__dirname, "..");
-  const pkgs = [
-    path.join(repoRoot, "packages/core/package.json"),
-    path.join(repoRoot, "packages/react/package.json"),
-    path.join(repoRoot, "packages/skewed/package.json"),
-  ];
+  const publishPkgPath = path.join(repoRoot, "packages/skewed/package.json");
 
   const porcelain = sh("git", ["status", "--porcelain"], { cwd: repoRoot });
   if (porcelain) die("Working tree is not clean. Commit/stash your changes first.");
 
-  const corePkg = readJson(pkgs[0]);
-  const currentVersion = corePkg.version;
+  // Fail fast on npm auth, instead of halfway through publishing.
+  // (If your org enforces OTP, npm may still prompt during publish.)
+  try {
+    sh("npm", ["whoami"], { cwd: repoRoot });
+  } catch {
+    die(
+      [
+        "npm auth failed (token expired/revoked).",
+        "Fix by running `npm login` (or updating your token), then verify with `npm whoami`.",
+      ].join("\n")
+    );
+  }
+
+  const publishPkg = readJson(publishPkgPath);
+  const currentVersion = publishPkg.version;
   const newVersion = bumpVersion(currentVersion, args.version);
   const releaseBranch = `release/${newVersion}`;
   const baseBranch = getDefaultBaseBranch();
@@ -109,15 +118,12 @@ function main() {
   // Create and switch to release branch.
   sh("git", ["checkout", "-b", releaseBranch], { cwd: repoRoot });
 
-  // Bump versions (keep packages in lockstep).
-  for (const p of pkgs) {
-    const json = readJson(p);
-    json.version = newVersion;
-    writeJson(p, json);
-  }
+  // Bump version for the single publishable package.
+  publishPkg.version = newVersion;
+  writeJson(publishPkgPath, publishPkg);
 
   // Commit the bump.
-  sh("git", ["add", ...pkgs.map((p) => path.relative(repoRoot, p))], { cwd: repoRoot });
+  sh("git", ["add", path.relative(repoRoot, publishPkgPath)], { cwd: repoRoot });
   sh("git", ["commit", "-m", `chore(release): v${newVersion}`], { cwd: repoRoot });
 
   // Push release branch.
@@ -143,19 +149,14 @@ function main() {
   );
 
   // Build packages before publish (safer for tsdx outputs).
-  sh("pnpm", ["-r", "--filter", "./packages/**", "build"], { cwd: repoRoot });
+  sh("pnpm", ["--filter", "skewed", "build"], { cwd: repoRoot });
 
-  // Publish packages. `--no-git-checks` because we are intentionally publishing from a release branch.
+  // Publish ONLY the top-level package. `--no-git-checks` because we are intentionally
+  // publishing from a release branch.
   // NOTE: This may prompt for OTP if the npm account enforces it.
   sh(
     "pnpm",
     [
-      "-r",
-      "--filter",
-      "@skewed/core",
-      "--filter",
-      "@skewed/react",
-      "--filter",
       "skewed",
       "publish",
       "--no-git-checks",
