@@ -1,6 +1,6 @@
 {
   "name": "@skewed/core",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Skewed core engine (SVG 3D scene graph + renderer)",
   "license": "MIT",
   "sideEffects": false,
@@ -30,5 +30,3 @@
     "typescript": "^5.6.3"
   }
 }
-
-
