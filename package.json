@@ -15,7 +15,9 @@
     "typecheck": "pnpm -r --filter \"./packages/**\" typecheck",
     "storybook": "pnpm --filter @skewed/storybook storybook",
     "storybook:build": "pnpm --filter @skewed/storybook build-storybook",
-    "dev:workbench": "pnpm --filter @skewed/workbench dev"
+    "dev:workbench": "pnpm --filter @skewed/workbench dev",
+    "release": "node scripts/release.js",
+    "publish:release": "node scripts/release.js"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
