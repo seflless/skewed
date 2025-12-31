@@ -15,5 +15,3 @@ This repository contains the next-generation Skewed implementation: a React-firs
 ## Legacy
 
 The previous repo state is preserved under `old/`.
-
-
