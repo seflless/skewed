@@ -9,6 +9,7 @@ export * from "./lighting/LightingModel";
 export * from "./cameras/Camera";
 export * from "./shapes/Shape";
 export * from "./shapes/Box";
+export * from "./shapes/Axii";
 export * from "./shapes/Grid";
 export * from "./shapes/Group";
 export * from "./shapes/Cylinder";
