@@ -12,6 +12,7 @@ import {
   Camera as CoreCamera,
   Cylinder as CoreCylinder,
   Color as CoreColor,
+  DefaultBasicShapeProperties,
   DirectionalLight as CoreDirectionalLight,
   Html as CoreHtml,
   Grid as CoreGrid,
@@ -109,7 +110,10 @@ function nodeToShape(node: InstanceNode): Shape | null {
     case TYPE_TEXT:
       return CoreText(node.props);
     case TYPE_MESH:
-      return { type: "mesh", ...node.props } as any;
+      // Ensure mesh shapes always have full transform + material defaults.
+      // Without this, missing props like `scale`/`position` can propagate as NaN
+      // into the renderer.
+      return { type: "mesh", ...DefaultBasicShapeProperties(), ...node.props } as any;
     case TYPE_GROUP:
       return CoreGroup({ ...node.props, children: childShapes });
     case TYPE_GRID:
@@ -145,8 +149,20 @@ const hostConfig: any = {
   now: Date.now,
   supportsMutation: true,
   isPrimaryRenderer: true,
-  detachDeletedInstance() {
-    // no-op: instances are plain JS objects
+  detachDeletedInstance(instance: InstanceNode) {
+    // Important: unmounting nested ReactDOM roots synchronously during the custom
+    // renderer commit can trigger React re-entrancy warnings. Always defer.
+    if (instance.type === TYPE_HTML && instance.__domRoot) {
+      const root = instance.__domRoot;
+      instance.__domRoot = undefined;
+      setTimeout(() => {
+        try {
+          root.unmount();
+        } catch {
+          // ignore
+        }
+      }, 0);
+    }
   },
 
   getRootHostContext() {
@@ -206,19 +222,11 @@ const hostConfig: any = {
   removeChild(parent: InstanceNode, child: InstanceNode) {
     const idx = parent.children.indexOf(child);
     if (idx >= 0) parent.children.splice(idx, 1);
-    if (child.type === TYPE_HTML && child.__domRoot) {
-      child.__domRoot.unmount();
-      child.__domRoot = undefined;
-    }
   },
 
   removeChildFromContainer(container: SkewedHostContainer, child: InstanceNode) {
     const idx = container.children.indexOf(child);
     if (idx >= 0) container.children.splice(idx, 1);
-    if (child.type === TYPE_HTML && child.__domRoot) {
-      child.__domRoot.unmount();
-      child.__domRoot = undefined;
-    }
   },
 
   finalizeInitialChildren() {
