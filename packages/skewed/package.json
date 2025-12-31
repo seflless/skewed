@@ -1,0 +1,40 @@
+{
+  "name": "skewed",
+  "version": "0.0.0",
+  "description": "Skewed React-first SVG 3D renderer (meta-package)",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/skewed.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/skewed.esm.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "@skewed/core": "workspace:*",
+    "@skewed/react": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdx": "^0.14.1",
+    "typescript": "^5.6.3"
+  }
+}
+
+

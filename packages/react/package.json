@@ -1,0 +1,51 @@
+{
+  "name": "@skewed/react",
+  "version": "0.0.0",
+  "description": "Skewed React renderer (custom reconciler) for SVG 3D scenes",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/react.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/react.esm.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "test:watch": "tsdx test --watch",
+    "test:browser": "vitest --config vitest.browser.config.ts --run",
+    "lint": "tsdx lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "@skewed/core": "workspace:*",
+    "react-reconciler": "^0.29.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/react-reconciler": "^0.28.9",
+    "tsdx": "^0.14.1",
+    "typescript": "^5.6.3",
+    "vitest": "^4.0.16",
+    "@vitest/browser": "^4.0.16",
+    "@vitest/browser-playwright": "^4.0.16",
+    "@vitest/coverage-v8": "^4.0.16",
+    "playwright": "^1.50.0"
+  }
+}
+
+

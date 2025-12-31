@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`visual > basic scene screenshot > skewed-basic.png 1`] = `"/Users/francoislaberge/dev/skewed/packages/react/test/browser/__screenshots__/Skewed.visual.test.tsx/visual-basic-scene-screenshot-1.png"`;
