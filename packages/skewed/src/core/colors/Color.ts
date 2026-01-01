@@ -19,11 +19,11 @@ export const Blue: Color = Color(0, 0, 255);
 export function ColorToCSS(color: Color) {
   if (color.a < 1) {
     return `rgba(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(
-      color.b
+      color.b,
     )},${color.a.toFixed(3)})`;
   } else {
     return `rgb(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(
-      color.b
+      color.b,
     )})`;
   }
 }

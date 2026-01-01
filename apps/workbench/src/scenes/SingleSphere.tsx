@@ -15,5 +15,3 @@ export function SingleSphereScene({ now }: { now: number }) {
     </Group>
   );
 }
-
-

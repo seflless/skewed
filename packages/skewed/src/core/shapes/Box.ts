@@ -20,7 +20,7 @@ const DefaultBoxProperties: BoxProperties & { id: string } = {
 };
 
 export function Box(
-  props: Partial<BoxProperties & BasicShapeProperties>
+  props: Partial<BoxProperties & BasicShapeProperties>,
 ): Shape {
   const dimensions: BoxProperties = {
     width: props.width || DefaultBoxProperties.width,

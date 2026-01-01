@@ -15,7 +15,7 @@ class Euler {
     private _x = 0,
     private _y = 0,
     private _z = 0,
-    private _order: EulerOrder = EulerOrder.DEFAULT_ORDER
+    private _order: EulerOrder = EulerOrder.DEFAULT_ORDER,
   ) {}
 
   get x() {

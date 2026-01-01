@@ -3,7 +3,11 @@ import { Camera, Vector3 } from "skewed";
 import type { Viewport } from "skewed";
 import { Skewed } from "skewed";
 
-export function StorySkewed(props: { children: React.ReactNode; width?: number; height?: number }) {
+export function StorySkewed(props: {
+  children: React.ReactNode;
+  width?: number;
+  height?: number;
+}) {
   const width = props.width ?? 600;
   const height = props.height ?? 400;
   const viewport: Viewport = { left: 0, top: 0, width, height };
@@ -27,5 +31,3 @@ export function StorySkewed(props: { children: React.ReactNode; width?: number; 
     </Skewed>
   );
 }
-
-

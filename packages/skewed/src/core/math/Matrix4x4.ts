@@ -18,7 +18,7 @@ export interface Matrix4x4 {
     n41: number,
     n42: number,
     n43: number,
-    n44: number
+    n44: number,
   ) => Matrix4x4;
   identity: () => Matrix4x4;
   clone: () => Matrix4x4;
@@ -52,7 +52,7 @@ export interface Matrix4x4 {
     yx: number,
     yz: number,
     zx: number,
-    zy: number
+    zy: number,
   ): Matrix4x4;
   makeOrthographic(
     left: number,
@@ -60,7 +60,7 @@ export interface Matrix4x4 {
     top: number,
     bottom: number,
     near: number,
-    far: number
+    far: number,
   ): Matrix4x4;
 
   equals(matrix: Matrix4x4): boolean;
@@ -85,7 +85,7 @@ export function Matrix4x4(
   n41: number,
   n42: number,
   n43: number,
-  n44: number
+  n44: number,
 ): Matrix4x4;
 
 export function Matrix4x4(
@@ -104,7 +104,7 @@ export function Matrix4x4(
   n41?: number,
   n42?: number,
   n43?: number,
-  n44?: number
+  n44?: number,
 ): Matrix4x4 {
   if (arguments.length === 0) {
     return Matrix4x4.identity();
@@ -125,7 +125,7 @@ export function Matrix4x4(
       n41!,
       n42!,
       n43!,
-      n44!
+      n44!,
     );
   } else {
     throw new Error("Invalid arguments to Matrix4x4 constructor");
@@ -148,7 +148,7 @@ function createMatrix4x4(
   n41: number,
   n42: number,
   n43: number,
-  n44: number
+  n44: number,
 ): Matrix4x4 {
   return Object.assign(Object.create(Matrix4x4Proto), {
     elements: [
@@ -202,7 +202,7 @@ const Matrix4x4Proto = {
     n41: number,
     n42: number,
     n43: number,
-    n44: number
+    n44: number,
   ) {
     const te = this.elements;
 
@@ -235,7 +235,7 @@ const Matrix4x4Proto = {
   clone(this: Matrix4x4) {
     return Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).fromArray(
       this.elements,
-      0
+      0,
     );
   },
 
@@ -286,7 +286,7 @@ const Matrix4x4Proto = {
     return Vector3(
       Vector3(te[0], te[4], te[8]).length(),
       Vector3(te[1], te[5], te[9]).length(),
-      Vector3(te[2], te[6], te[10]).length()
+      Vector3(te[2], te[6], te[10]).length(),
     );
   },
 
@@ -319,7 +319,7 @@ const Matrix4x4Proto = {
     this: Matrix4x4,
     xAxis?: Vector3,
     yAxis?: Vector3,
-    zAxis?: Vector3
+    zAxis?: Vector3,
   ) {
     if (xAxis !== undefined) {
       setVector3FromMatrixElements(xAxis, this.elements, 0);
@@ -351,7 +351,7 @@ const Matrix4x4Proto = {
       0,
       0,
       0,
-      1
+      1,
     );
 
     return this;
@@ -1053,7 +1053,7 @@ const Matrix4x4Proto = {
     yx: number,
     yz: number,
     zx: number,
-    zy: number
+    zy: number,
   ) {
     this.set(1, yx, zx, 0, xy, 1, zy, 0, xz, yz, 1, 0, 0, 0, 0, 1);
 
@@ -1200,7 +1200,7 @@ const Matrix4x4Proto = {
     top: number,
     bottom: number,
     near: number,
-    far: number
+    far: number,
   ) {
     const te = this.elements;
     const w = 1.0 / (right - left);
@@ -1298,7 +1298,7 @@ Matrix4x4.identity = function () {
 function setVector3FromMatrixElements(
   v: Vector3,
   array: number[],
-  offset: number
+  offset: number,
 ): Vector3 {
   v.x = array[offset];
   v.y = array[offset + 1];

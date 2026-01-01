@@ -24,5 +24,3 @@ export function useRafTime(paused: boolean) {
 
   return now;
 }
-
-

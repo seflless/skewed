@@ -16,5 +16,3 @@ export function SingleCylinderScene({ now }: { now: number }) {
     </Group>
   );
 }
-
-

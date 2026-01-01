@@ -14,7 +14,10 @@ export const Basic: Story = {
   render: () => (
     <StorySkewed width={800} height={400}>
       <AmbientLight color={Color(128, 128, 128)} />
-      <DirectionalLight direction={Vector3(-0.25, -1, -0.25).normalize()} color={Color(255, 252, 255)} />
+      <DirectionalLight
+        direction={Vector3(-0.25, -1, -0.25).normalize()}
+        color={Color(255, 252, 255)}
+      />
       <Text
         text="Hello"
         position={Vector3(0, 200, 0)}
@@ -27,5 +30,3 @@ export const Basic: Story = {
     </StorySkewed>
   ),
 };
-
-

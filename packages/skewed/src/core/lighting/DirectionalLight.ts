@@ -15,7 +15,7 @@ const DefaultDirectionalLightProperties = {
 };
 
 export function DirectionalLight(
-  props: Partial<DirectionalLightProperties>
+  props: Partial<DirectionalLightProperties>,
 ): DirectionalLight {
   const light: DirectionalLight = {
     type: "directional light",

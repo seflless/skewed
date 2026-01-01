@@ -113,7 +113,11 @@ function nodeToShape(node: InstanceNode): Shape | null {
       // Ensure mesh shapes always have full transform + material defaults.
       // Without this, missing props like `scale`/`position` can propagate as NaN
       // into the renderer.
-      return { type: "mesh", ...DefaultBasicShapeProperties(), ...node.props } as any;
+      return {
+        type: "mesh",
+        ...DefaultBasicShapeProperties(),
+        ...node.props,
+      } as any;
     case TYPE_GROUP:
       return CoreGroup({ ...node.props, children: childShapes });
     case TYPE_GRID:
@@ -125,7 +129,8 @@ function nodeToShape(node: InstanceNode): Shape | null {
       if (node.props.rotation) props.rotation = node.props.rotation;
       if (typeof node.props.scale === "number") props.scale = node.props.scale;
       if (typeof node.props.width === "number") props.width = node.props.width;
-      if (typeof node.props.height === "number") props.height = node.props.height;
+      if (typeof node.props.height === "number")
+        props.height = node.props.height;
       return CoreHtml(props);
     }
     default:
@@ -197,7 +202,11 @@ const hostConfig: any = {
     container.children.push(child);
   },
 
-  insertBefore(parent: InstanceNode, child: InstanceNode, beforeChild: InstanceNode) {
+  insertBefore(
+    parent: InstanceNode,
+    child: InstanceNode,
+    beforeChild: InstanceNode,
+  ) {
     const beforeIndex = parent.children.indexOf(beforeChild);
     if (beforeIndex === -1) {
       parent.children.push(child);
@@ -209,7 +218,7 @@ const hostConfig: any = {
   insertInContainerBefore(
     container: SkewedHostContainer,
     child: InstanceNode,
-    beforeChild: InstanceNode
+    beforeChild: InstanceNode,
   ) {
     const beforeIndex = container.children.indexOf(beforeChild);
     if (beforeIndex === -1) {
@@ -224,7 +233,10 @@ const hostConfig: any = {
     if (idx >= 0) parent.children.splice(idx, 1);
   },
 
-  removeChildFromContainer(container: SkewedHostContainer, child: InstanceNode) {
+  removeChildFromContainer(
+    container: SkewedHostContainer,
+    child: InstanceNode,
+  ) {
     const idx = container.children.indexOf(child);
     if (idx >= 0) container.children.splice(idx, 1);
   },
@@ -237,11 +249,21 @@ const hostConfig: any = {
     return true;
   },
 
-  commitUpdate(instance: InstanceNode, _updatePayload: any, _type: string, _oldProps: Props, newProps: Props) {
+  commitUpdate(
+    instance: InstanceNode,
+    _updatePayload: any,
+    _type: string,
+    _oldProps: Props,
+    newProps: Props,
+  ) {
     instance.props = newProps;
   },
 
-  commitTextUpdate(textInstance: InstanceNode, _oldText: string, newText: string) {
+  commitTextUpdate(
+    textInstance: InstanceNode,
+    _oldText: string,
+    newText: string,
+  ) {
     textInstance.props.text = newText;
   },
 
@@ -276,11 +298,11 @@ const hostConfig: any = {
         const id = n.props.id || n.__internalId;
         if (!id) continue;
         const fo = svg.querySelector(
-          `foreignObject[data-skewed-html-id="${escapeAttrValue(id)}"]`
+          `foreignObject[data-skewed-html-id="${escapeAttrValue(id)}"]`,
         ) as SVGForeignObjectElement | null;
         if (!fo) continue;
         const mount = fo.querySelector(
-          `[data-skewed-html-container="true"]`
+          `[data-skewed-html-container="true"]`,
         ) as HTMLElement | null;
         if (!mount) continue;
 
@@ -299,9 +321,15 @@ const hostConfig: any = {
 
 const SkewedReconciler = Reconciler(hostConfig);
 
-export type SkewedReconcilerRoot = ReturnType<typeof SkewedReconciler.createContainer>;
+export type SkewedReconcilerRoot = ReturnType<
+  typeof SkewedReconciler.createContainer
+>;
 
-export function createSkewedContainer(dom: HTMLElement, camera?: Camera, viewport?: Viewport) {
+export function createSkewedContainer(
+  dom: HTMLElement,
+  camera?: Camera,
+  viewport?: Viewport,
+) {
   const hostContainer: SkewedHostContainer = {
     dom,
     camera: camera || CoreCamera(),
@@ -321,9 +349,7 @@ export function createSkewedContainer(dom: HTMLElement, camera?: Camera, viewpor
       // eslint-disable-next-line no-console
       console.error(error);
     },
-    null // transitionCallbacks
+    null, // transitionCallbacks
   );
   return { root, hostContainer, reconciler: SkewedReconciler };
 }
-
-

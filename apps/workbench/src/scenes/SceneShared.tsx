@@ -2,7 +2,12 @@ import * as React from "react";
 import { AmbientLight, DirectionalLight, Grid } from "skewed";
 import { Color, Vector3 } from "skewed";
 
-export type LightingChoice = "reference" | "blackAndWhite" | "moonlit" | "underwater" | "none";
+export type LightingChoice =
+  | "reference"
+  | "blackAndWhite"
+  | "moonlit"
+  | "underwater"
+  | "none";
 export type EnvironmentChoice = "none" | "underwater" | "grid" | "whiteFloor";
 
 export function Lighting({ choice }: { choice: LightingChoice }) {
@@ -19,11 +24,18 @@ export function Lighting({ choice }: { choice: LightingChoice }) {
 
   if (choice === "underwater") {
     const ambient = Color(16, 55, 119);
-    const directional = Color(200 - ambient.r, 200 - ambient.g, 255 - ambient.b);
+    const directional = Color(
+      200 - ambient.r,
+      200 - ambient.g,
+      255 - ambient.b,
+    );
     return (
       <>
         <AmbientLight color={ambient} />
-        <DirectionalLight direction={Vector3(0, -1, 0).normalize()} color={directional} />
+        <DirectionalLight
+          direction={Vector3(0, -1, 0).normalize()}
+          color={directional}
+        />
       </>
     );
   }
@@ -57,9 +69,11 @@ export function Lighting({ choice }: { choice: LightingChoice }) {
 
 export function Environment({ choice }: { choice: EnvironmentChoice }) {
   React.useEffect(() => {
-    if (choice === "underwater") document.body.style.backgroundColor = "#104A8A";
+    if (choice === "underwater")
+      document.body.style.backgroundColor = "#104A8A";
     else if (choice === "grid") document.body.style.backgroundColor = "#e1e1e1";
-    else if (choice === "whiteFloor") document.body.style.backgroundColor = "rgb(32,32,32)";
+    else if (choice === "whiteFloor")
+      document.body.style.backgroundColor = "rgb(32,32,32)";
     else document.body.style.backgroundColor = "";
   }, [choice]);
 
@@ -79,5 +93,3 @@ export function Environment({ choice }: { choice: EnvironmentChoice }) {
 
   return null;
 }
-
-

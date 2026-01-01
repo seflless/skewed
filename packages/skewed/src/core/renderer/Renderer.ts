@@ -17,14 +17,14 @@ export function render(
   container: HTMLElement,
   scene: Scene,
   viewport: Viewport,
-  camera: Camera
+  camera: Camera,
 ) {
   const inverseCameraMatrix = camera.matrix.clone().invert();
   const inverseAndProjectionMatrix = camera.projectionMatrix
     .clone()
     .multiply(inverseCameraMatrix);
   const extractOrthographicDimensionsResult = extractOrthographicDimensions(
-    camera.projectionMatrix
+    camera.projectionMatrix,
   );
   const cameraZoom = viewport.width / extractOrthographicDimensionsResult.width;
 
@@ -51,7 +51,7 @@ export function render(
 
   svg.setAttribute(
     "viewBox",
-    `0 0 ${viewport.width.toString()} ${viewport.height.toString()}`
+    `0 0 ${viewport.width.toString()} ${viewport.height.toString()}`,
   );
 
   // Create the 'defs' element, which is where we'll put shared definitions, gradients, and etc.
@@ -72,7 +72,7 @@ export function render(
   cameraRotationMatrix.extractBasis(
     Vector3(0, 0, 0),
     Vector3(0, 0, 0),
-    cameraDirection
+    cameraDirection,
   );
 
   const allShapes = collectShapes(scene.shapes);
@@ -117,7 +117,7 @@ export function render(
           worldTransform,
           cameraZoom,
           inverseAndProjectionMatrix,
-          cameraDirection
+          cameraDirection,
         );
         break;
       case "sphere":
@@ -130,7 +130,7 @@ export function render(
           worldTransform,
           cameraZoom,
           inverseCameraMatrix,
-          inverseAndProjectionMatrix
+          inverseAndProjectionMatrix,
         );
         break;
       case "cylinder":
@@ -144,7 +144,7 @@ export function render(
           cameraZoom,
           cameraDirection,
           inverseCameraMatrix,
-          inverseAndProjectionMatrix
+          inverseAndProjectionMatrix,
         );
         break;
       case "text":
@@ -158,7 +158,7 @@ export function render(
           cameraZoom,
           cameraDirection,
           inverseCameraMatrix,
-          inverseAndProjectionMatrix
+          inverseAndProjectionMatrix,
         );
         break;
       case "html":
@@ -169,7 +169,7 @@ export function render(
           worldTransform,
           cameraZoom,
           inverseAndProjectionMatrix,
-          reusedHtmlForeignObjects.get(shape.id)
+          reusedHtmlForeignObjects.get(shape.id),
         );
         break;
       default:
@@ -192,7 +192,7 @@ export function render(
 function generateWorldTransforms(
   shapes: Shape[],
   parentMatrix: Matrix4x4 | undefined = undefined,
-  map: Map<Shape, Matrix4x4> | undefined = undefined
+  map: Map<Shape, Matrix4x4> | undefined = undefined,
 ): Map<Shape, Matrix4x4> {
   map = map || new Map<Shape, Matrix4x4>();
   parentMatrix = parentMatrix || Matrix4x4();
@@ -219,7 +219,7 @@ function generateWorldTransforms(
 function collectShapes(
   shapes: Shape[],
   list: { shape: Shape; sortCategory: "background" | "default" }[] = [],
-  sortCategory: "background" | "default" = "default"
+  sortCategory: "background" | "default" = "default",
 ) {
   for (let shape of shapes) {
     const isBackground =
@@ -230,7 +230,7 @@ function collectShapes(
       collectShapes(
         shape.children,
         list,
-        isBackground ? "background" : "default"
+        isBackground ? "background" : "default",
       );
     } else {
       list.push({
@@ -247,21 +247,21 @@ function transformToMatrix(transform: TransformProperties) {
   const translateMatrix = Matrix4x4().makeTranslation(
     transform.position.x,
     transform.position.y,
-    transform.position.z
+    transform.position.z,
   );
   const scaleMatrix = Matrix4x4().makeScale(
     transform.scale,
     transform.scale,
-    transform.scale
+    transform.scale,
   );
   const rotationXMatrix = Matrix4x4().makeRotationX(
-    (transform.rotation.x / 180) * Math.PI
+    (transform.rotation.x / 180) * Math.PI,
   );
   const rotationYMatrix = Matrix4x4().makeRotationY(
-    (transform.rotation.y / 180) * Math.PI
+    (transform.rotation.y / 180) * Math.PI,
   );
   const rotationZMatrix = Matrix4x4().makeRotationZ(
-    (transform.rotation.z / 180) * Math.PI
+    (transform.rotation.z / 180) * Math.PI,
   );
 
   const transformMatrix =
@@ -293,19 +293,19 @@ function renderMesh(
   worldTransform: Matrix4x4,
   cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
-  cameraDirection: Vector3
+  cameraDirection: Vector3,
 ) {
   const shapeInverseRotationMatrix = worldTransform.extractRotation().invert();
 
   const cameraDirectionInShapeSpaceAndInverted = cameraDirection.clone();
   shapeInverseRotationMatrix.applyToVector3(
-    cameraDirectionInShapeSpaceAndInverted
+    cameraDirectionInShapeSpaceAndInverted,
   );
 
   const directionalLightInShapeSpaceAndInverted =
     scene.directionalLight.direction.clone().multiply(-1);
   shapeInverseRotationMatrix.applyToVector3(
-    directionalLightInShapeSpaceAndInverted
+    directionalLightInShapeSpaceAndInverted,
   );
 
   // Transform the shape's mesh's points to screen space
@@ -317,7 +317,7 @@ function renderMesh(
     return projectToScreenCoordinate(
       vertex,
       inverseAndProjectionMatrix,
-      viewport
+      viewport,
     );
   });
 
@@ -346,7 +346,7 @@ function renderMesh(
   // TODO: Add in backface culling
   for (let face of shape.mesh.faces) {
     const cameraFaceDot = cameraDirectionInShapeSpaceAndInverted.dotProduct(
-      face.normal
+      face.normal,
     );
     if (cameraFaceDot < 0) continue;
 
@@ -358,20 +358,20 @@ function renderMesh(
 
     const polygon = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "polygon"
+      "polygon",
     );
 
     polygon.setAttribute("points", points);
 
     const brightness = directionalLightInShapeSpaceAndInverted.dotProduct(
-      face.normal
+      face.normal,
     );
 
     const fill = applyLighting(
       scene.directionalLight.color,
       shape.fill,
       scene.ambientLightColor,
-      brightness
+      brightness,
     );
 
     polygon.setAttribute("fill", fill);
@@ -383,13 +383,13 @@ function renderMesh(
       polygon.setAttribute("stroke", ColorToCSS(shape.stroke));
       polygon.setAttribute(
         "stroke-width",
-        (shape.strokeWidth * cameraZoom).toString()
+        (shape.strokeWidth * cameraZoom).toString(),
       );
     } else {
       polygon.setAttribute("stroke", fill);
       polygon.setAttribute(
         "stroke-width",
-        (CrackFillingStrokeWidth * cameraZoom).toString()
+        (CrackFillingStrokeWidth * cameraZoom).toString(),
       );
     }
 

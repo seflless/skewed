@@ -29,7 +29,10 @@ export function KitchenSinkScene({ now }: { now: number }) {
           position={Vector3(0, 100, 0)}
         />
 
-        <Group position={Vector3(220, 90, 0)} rotation={Vector3(90, now * 30, 0)}>
+        <Group
+          position={Vector3(220, 90, 0)}
+          rotation={Vector3(90, now * 30, 0)}
+        >
           <Cylinder
             id="cylinder"
             radius={70}
@@ -61,14 +64,25 @@ export function KitchenSinkScene({ now }: { now: number }) {
         />
       </Group>
 
-      <Html id="kitchen-sink-hint" position={Vector3(260, 40, 0)} width={260} height={110}>
-        <div style={{ background: "rgba(255,255,255,0.9)", border: "2px solid black", padding: 12 }}>
+      <Html
+        id="kitchen-sink-hint"
+        position={Vector3(260, 40, 0)}
+        width={260}
+        height={110}
+      >
+        <div
+          style={{
+            background: "rgba(255,255,255,0.9)",
+            border: "2px solid black",
+            padding: 12,
+          }}
+        >
           <strong>KitchenSink</strong>
-          <div style={{ fontSize: 12 }}>Box, Sphere, Cylinder, Mesh, Text, Html</div>
+          <div style={{ fontSize: 12 }}>
+            Box, Sphere, Cylinder, Mesh, Text, Html
+          </div>
         </div>
       </Html>
     </>
   );
 }
-
-

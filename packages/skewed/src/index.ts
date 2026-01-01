@@ -17,5 +17,3 @@ export {
 } from "./core";
 
 export type { Viewport } from "./core";
-
-

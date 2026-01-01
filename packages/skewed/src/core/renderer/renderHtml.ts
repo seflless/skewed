@@ -12,12 +12,12 @@ export function renderHtml(
   worldTransform: Matrix4x4,
   cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
-  reusedForeignObject?: SVGForeignObjectElement
+  reusedForeignObject?: SVGForeignObjectElement,
 ) {
   const { x, y } = projectToScreenCoordinate(
     worldTransform.getTranslation(),
     inverseAndProjectionMatrix,
-    viewport
+    viewport,
   );
 
   const scale = worldTransform.getScale().x;
@@ -28,7 +28,7 @@ export function renderHtml(
     reusedForeignObject ||
     (document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "foreignObject"
+      "foreignObject",
     ) as unknown as SVGForeignObjectElement);
 
   fo.setAttribute("id", shape.id);
@@ -46,7 +46,7 @@ export function renderHtml(
     }
     const div = document.createElementNS(
       "http://www.w3.org/1999/xhtml",
-      "div"
+      "div",
     ) as unknown as HTMLDivElement;
     div.setAttribute(HTML_CONTAINER_ATTR, "true");
     div.style.width = "100%";
@@ -56,5 +56,3 @@ export function renderHtml(
 
   svg.appendChild(fo);
 }
-
-

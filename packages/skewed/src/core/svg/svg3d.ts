@@ -37,7 +37,7 @@ function xyToFloorPlane(x: number, y: number): Vector3 {
 export function svgPathToSvg3DCommands(pathSegments: any): SVG3DCommand[] {
   invariant(
     Array.isArray(pathSegments),
-    "Expected path segments to be an array"
+    "Expected path segments to be an array",
   );
   invariant(pathSegments.length > 0, "Expected path segments to be non-empty");
 

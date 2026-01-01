@@ -12,19 +12,42 @@ function pingPongTime(scaleFactor: number, now: number): number {
 function Eye(props: { position: ReturnType<typeof Vector3> }) {
   return (
     <Group rotation={Vector3(-10, 0, 0)} position={props.position}>
-      <Sphere radius={28} fill={Color(255, 255, 255)} stroke={Color(0, 0, 0)} strokeWidth={2} />
-      <Sphere radius={10} position={Vector3(0, 0, 25)} fill={Color(0, 0, 0)} stroke={Color(0, 0, 0)} strokeWidth={0} />
+      <Sphere
+        radius={28}
+        fill={Color(255, 255, 255)}
+        stroke={Color(0, 0, 0)}
+        strokeWidth={2}
+      />
+      <Sphere
+        radius={10}
+        position={Vector3(0, 0, 25)}
+        fill={Color(0, 0, 0)}
+        stroke={Color(0, 0, 0)}
+        strokeWidth={0}
+      />
     </Group>
   );
 }
 
-function LegSegment(props: { heights: number[]; index: number; curlDegrees: number }) {
+function LegSegment(props: {
+  heights: number[];
+  index: number;
+  curlDegrees: number;
+}) {
   const h = props.heights[props.index];
   const nextIndex = props.index + 1;
   const hasNext = nextIndex < props.heights.length;
 
   return (
-    <Group id={`LegSegment-${props.index}`} position={Vector3(0, props.index === 0 ? 0 : props.heights[props.index - 1], 0)} rotation={Vector3(0, 0, props.index === 0 ? 0 : props.curlDegrees)}>
+    <Group
+      id={`LegSegment-${props.index}`}
+      position={Vector3(
+        0,
+        props.index === 0 ? 0 : props.heights[props.index - 1],
+        0,
+      )}
+      rotation={Vector3(0, 0, props.index === 0 ? 0 : props.curlDegrees)}
+    >
       <Cylinder
         position={Vector3(0, h / 2, 0)}
         fill={BodyColor}
@@ -33,7 +56,11 @@ function LegSegment(props: { heights: number[]; index: number; curlDegrees: numb
         radius={h / 4}
       />
       {hasNext ? (
-        <LegSegment heights={props.heights} index={nextIndex} curlDegrees={props.curlDegrees} />
+        <LegSegment
+          heights={props.heights}
+          index={nextIndex}
+          curlDegrees={props.curlDegrees}
+        />
       ) : null}
     </Group>
   );
@@ -51,22 +78,30 @@ function Leg(props: { curlDegrees: number; rotationY: number }) {
 export function OctopusScene({ now }: { now: number }) {
   const legRotationSpeedPerSecond = 1.0;
   const maxLegCurlDegreesAbsolute = 15;
-  const legCurlDegrees = maxLegCurlDegreesAbsolute * pingPongTime(legRotationSpeedPerSecond, now);
+  const legCurlDegrees =
+    maxLegCurlDegreesAbsolute * pingPongTime(legRotationSpeedPerSecond, now);
 
   const legCount = 8;
 
   return (
     <Group id="Octopus" position={Vector3(0, 0, 0)}>
-      <Sphere position={Vector3(0, 150, 0)} fill={BodyColor} radius={150} strokeWidth={0} />
+      <Sphere
+        position={Vector3(0, 150, 0)}
+        fill={BodyColor}
+        radius={150}
+        strokeWidth={0}
+      />
       <Group id="Eyes" position={Vector3(0, 150, 0)}>
         <Eye position={Vector3(50, 0, 150)} />
         <Eye position={Vector3(-50, 0, 150)} />
       </Group>
       {Array.from({ length: legCount }).map((_, i) => (
-        <Leg key={i} curlDegrees={legCurlDegrees} rotationY={(i / legCount) * 360} />
+        <Leg
+          key={i}
+          curlDegrees={legCurlDegrees}
+          rotationY={(i / legCount) * 360}
+        />
       ))}
     </Group>
   );
 }
-
-

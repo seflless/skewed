@@ -70,7 +70,7 @@ export function renderSphere(
   worldTransform: Matrix4x4,
   cameraZoom: number,
   inverseCameraMatrix: Matrix4x4,
-  inverseAndProjectionMatrix: Matrix4x4
+  inverseAndProjectionMatrix: Matrix4x4,
 ) {
   // Convert the light direction into camera space (not projected into screen space)
   const directionalLightInCameraSpace =
@@ -81,16 +81,16 @@ export function renderSphere(
 
   let rotationAngle = calculateRotationAngle(
     -directionalLightInCameraSpace.x,
-    -directionalLightInCameraSpace.y
+    -directionalLightInCameraSpace.y,
   );
 
   const reversedLightDirection = directionalLightInCameraSpace.multiply(-1);
 
   const lightSideDotProduct = Vector3(0, 0, 1).dotProduct(
-    reversedLightDirection
+    reversedLightDirection,
   );
   const darkSideLightProduct = Vector3(0, 0, -1).dotProduct(
-    reversedLightDirection
+    reversedLightDirection,
   );
 
   let cycleAngle;
@@ -106,7 +106,7 @@ export function renderSphere(
       cameraZoom,
       inverseAndProjectionMatrix,
       cycleAngle,
-      rotationAngle
+      rotationAngle,
     );
   } else {
     cycleAngle = 90 - dotProductToDegrees(darkSideLightProduct);
@@ -120,7 +120,7 @@ export function renderSphere(
       cameraZoom,
       inverseAndProjectionMatrix,
       cycleAngle,
-      rotationAngle
+      rotationAngle,
     );
   }
 
@@ -137,24 +137,24 @@ export function renderSphere(
   cycleAngle: ${cycleAngle}, 
   rotationAngle: ${rotationAngle},
   directionalLightInCameraSpace.x = ${directionalLightInCameraSpace.x.toFixed(
-    1
+    1,
   )},
   directionalLightInCameraSpace.y = ${directionalLightInCameraSpace.y.toFixed(
-    1
+    1,
   )},
   directionalLightInCameraSpace.z = ${directionalLightInCameraSpace.z.toFixed(
-    1
+    1,
   )}
   scene.directionalLight.direction.x = ${scene.directionalLight.direction.x.toFixed(
-    1
+    1,
   )},
   scene.directionalLight.direction.y = ${scene.directionalLight.direction.y.toFixed(
-    1
+    1,
   )},
   scene.directionalLight.direction.z = ${scene.directionalLight.direction.z.toFixed(
-    1
+    1,
   )}
-  `
+  `,
     );
   }
 }
@@ -169,7 +169,7 @@ function sphereLightSide(
   cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
   cycleAngle: number,
-  rotationAngle: number
+  rotationAngle: number,
 ) {
   const sphereScale = worldTransform.getScale().x;
   const sphereScaleFactor = sphereScale * cameraZoom;
@@ -202,7 +202,7 @@ function sphereLightSide(
         scene.directionalLight.color,
         sphere.fill,
         scene.ambientLightColor,
-        brightness
+        brightness,
       ),
     });
   }
@@ -216,7 +216,7 @@ function sphereLightSide(
   const { x, y } = projectToScreenCoordinate(
     worldTransform.getTranslation(),
     inverseAndProjectionMatrix,
-    viewport
+    viewport,
   );
   //   const { x, y } = { x: 320, y: 320 };
 
@@ -231,7 +231,7 @@ function sphereLightSide(
   const verticalScale = calculateVerticalRadius(
     horizontalScale,
     -offsetX,
-    Radius
+    Radius,
   );
   const scale = { x: horizontalScale, y: verticalScale };
 
@@ -241,7 +241,7 @@ function sphereLightSide(
   // Create a 'circle' element
   const circle = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "circle"
+    "circle",
   );
 
   circle.id = "sphere";
@@ -258,7 +258,7 @@ function sphereLightSide(
     if (sphere.strokeWidth !== 1.0) {
       circle.setAttribute(
         "stroke-width",
-        (sphere.strokeWidth * sphereScaleFactor).toString()
+        (sphere.strokeWidth * sphereScaleFactor).toString(),
       );
     }
   }
@@ -269,7 +269,7 @@ function sphereLightSide(
   // Create the 'radialGradient' element
   const radialGradient = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "radialGradient"
+    "radialGradient",
   );
 
   radialGradient.setAttribute("id", fillUuid);
@@ -281,13 +281,13 @@ function sphereLightSide(
     "gradientTransform",
     `translate(${translate.x} ${translate.y}) rotate(${-rotationAngle}) scale(${
       scale.x
-    } ${scale.y})`
+    } ${scale.y})`,
   );
 
   for (let stop of gradientStops) {
     const stopElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "stop"
+      "stop",
     );
 
     stopElement.setAttribute("offset", stop.offset.toString());
@@ -303,7 +303,7 @@ function sphereLightSide(
 function calculateVerticalRadius(
   horizontalRadius: number,
   x: number,
-  y: number
+  y: number,
 ): number {
   let factor = 1 - (x * x) / (horizontalRadius * horizontalRadius);
   if (factor === 0) {
@@ -332,7 +332,7 @@ function sphereDarkSide(
   cameraZoom: number,
   inverseAndProjectionMatrix: Matrix4x4,
   cycleAngle: number,
-  rotationAngle: number
+  rotationAngle: number,
 ) {
   const sphereScale = worldTransform.getScale().x;
   const sphereScaleFactor = sphereScale * cameraZoom;
@@ -354,7 +354,7 @@ function sphereDarkSide(
     scene.directionalLight.color,
     sphere.fill,
     scene.ambientLightColor,
-    0
+    0,
   );
   gradientStops.push({
     offset: size,
@@ -383,7 +383,7 @@ function sphereDarkSide(
         scene.directionalLight.color,
         sphere.fill,
         scene.ambientLightColor,
-        brightness
+        brightness,
       ),
     });
   }
@@ -391,7 +391,7 @@ function sphereDarkSide(
   const { x, y } = projectToScreenCoordinate(
     worldTransform.getTranslation(),
     inverseAndProjectionMatrix,
-    viewport
+    viewport,
   );
 
   // Calculate the non-rotated center of gradient
@@ -410,7 +410,7 @@ function sphereDarkSide(
   const verticalScale = calculateVerticalRadius(
     horizontalScale,
     offsetX,
-    Radius
+    Radius,
   );
   const scale = { x: horizontalScale, y: verticalScale };
 
@@ -420,7 +420,7 @@ function sphereDarkSide(
   // Create a 'circle' element
   const circle = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "circle"
+    "circle",
   );
 
   circle.id = "sphere";
@@ -437,7 +437,7 @@ function sphereDarkSide(
     if (sphere.strokeWidth !== 1.0) {
       circle.setAttribute(
         "stroke-width",
-        (sphere.strokeWidth * sphereScaleFactor).toString()
+        (sphere.strokeWidth * sphereScaleFactor).toString(),
       );
     }
   }
@@ -446,7 +446,7 @@ function sphereDarkSide(
   // Create the 'radialGradient' element
   const radialGradient = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "radialGradient"
+    "radialGradient",
   );
 
   radialGradient.setAttribute("id", fillUuid);
@@ -458,13 +458,13 @@ function sphereDarkSide(
     "gradientTransform",
     `translate(${translation.x + x} ${
       translation.y + y
-    }) rotate(${-rotationAngle}) scale(${scale.x * 2} ${scale.y * 2})`
+    }) rotate(${-rotationAngle}) scale(${scale.x * 2} ${scale.y * 2})`,
   );
 
   for (let stop of gradientStops) {
     const stopElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "stop"
+      "stop",
     );
 
     stopElement.setAttribute("offset", stop.offset.toString());

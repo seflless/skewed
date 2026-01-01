@@ -24,5 +24,3 @@ export function useViewport(): Viewport {
 
   return vp;
 }
-
-

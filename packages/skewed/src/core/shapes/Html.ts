@@ -16,5 +16,3 @@ export function Html(props: Partial<HtmlProperties>): HtmlShape {
     ...props,
   };
 }
-
-

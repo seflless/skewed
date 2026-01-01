@@ -49,6 +49,6 @@ export function BoxMesh(width: number, height: number, depth: number) {
       Vector3(width / 2, 0, depth / 2),
       Vector3(-width / 2, 0, depth / 2),
     ],
-    height
+    height,
   );
 }

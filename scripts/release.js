@@ -28,7 +28,7 @@ function sh(cmd, args, opts = {}) {
     const err = (res.stderr || "").trim();
     const detail = [out, err].filter(Boolean).join("\n");
     throw new Error(
-      `Command failed: ${cmd} ${args.join(" ")}\n${detail || "(no output)"}`
+      `Command failed: ${cmd} ${args.join(" ")}\n${detail || "(no output)"}`,
     );
   }
   return (res.stdout || "").trim();
@@ -83,7 +83,7 @@ function getDefaultBaseBranch(repoRoot) {
     const ref = sh(
       "git",
       ["symbolic-ref", "--short", "refs/remotes/origin/HEAD"],
-      { cwd: repoRoot }
+      { cwd: repoRoot },
     );
     const parts = ref.split("/");
     return parts[1] || "main";
@@ -94,13 +94,15 @@ function getDefaultBaseBranch(repoRoot) {
 
 function main() {
   const args = parseArgs(process.argv);
-  if (!args.version) die(`Usage: node scripts/release.js --version major|minor|patch`);
+  if (!args.version)
+    die(`Usage: node scripts/release.js --version major|minor|patch`);
 
   const repoRoot = path.resolve(__dirname, "..");
   const publishPkgPath = path.join(repoRoot, "packages/skewed/package.json");
 
   const porcelain = sh("git", ["status", "--porcelain"], { cwd: repoRoot });
-  if (porcelain) die("Working tree is not clean. Commit/stash your changes first.");
+  if (porcelain)
+    die("Working tree is not clean. Commit/stash your changes first.");
 
   // Fail fast on npm auth. (If your org enforces OTP, publish may still prompt.)
   try {
@@ -110,7 +112,7 @@ function main() {
       [
         "npm auth failed (token expired/revoked).",
         "Fix by running `npm login` (or updating your token), then verify with `npm whoami`.",
-      ].join("\n")
+      ].join("\n"),
     );
   }
 
@@ -129,8 +131,12 @@ function main() {
   publishPkg.version = newVersion;
   writeJson(publishPkgPath, publishPkg);
 
-  sh("git", ["add", path.relative(repoRoot, publishPkgPath)], { cwd: repoRoot });
-  sh("git", ["commit", "-m", `chore(release): v${newVersion}`], { cwd: repoRoot });
+  sh("git", ["add", path.relative(repoRoot, publishPkgPath)], {
+    cwd: repoRoot,
+  });
+  sh("git", ["commit", "-m", `chore(release): v${newVersion}`], {
+    cwd: repoRoot,
+  });
 
   sh("git", ["push", "-u", "origin", releaseBranch], { cwd: repoRoot });
 
@@ -148,7 +154,7 @@ function main() {
       "--head",
       releaseBranch,
     ],
-    { cwd: repoRoot }
+    { cwd: repoRoot },
   );
 
   sh("pnpm", ["--filter", "skewed", "build"], { cwd: repoRoot });
@@ -157,7 +163,7 @@ function main() {
   sh(
     "pnpm",
     ["--filter", "skewed", "publish", "--no-git-checks", "--access", "public"],
-    { cwd: repoRoot, stdio: "inherit" }
+    { cwd: repoRoot, stdio: "inherit" },
   );
 
   console.log(`Done: v${newVersion}`);
@@ -168,5 +174,3 @@ try {
 } catch (e) {
   die(e && e.message ? e.message : String(e));
 }
-
-

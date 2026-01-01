@@ -30,7 +30,7 @@ export function Grid(props: Partial<GridProperties>): GridShape {
         0,
         0,
         i * grid.cellSize -
-          (grid.cellSize * grid.cellCount) / 2 /*+ props.cellSize / 2*/
+          (grid.cellSize * grid.cellCount) / 2 /*+ props.cellSize / 2*/,
       ),
       rotation: Vector3(0, 0, 0),
       scale: 1.0,
@@ -48,7 +48,7 @@ export function Grid(props: Partial<GridProperties>): GridShape {
       position: Vector3(
         i * grid.cellSize - (grid.cellSize * grid.cellCount) / 2,
         0,
-        0 /*+ props.cellSize / 2*/
+        0 /*+ props.cellSize / 2*/,
       ),
       rotation: Vector3(0, 0, 0),
       scale: 1.0,

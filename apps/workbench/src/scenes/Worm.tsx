@@ -15,7 +15,11 @@ export function WormScene({ now }: { now: number }) {
           <Sphere
             key={i}
             radius={35 - i * 0.8}
-            position={Vector3(i * spacing, Math.sin(phase) * amplitude + 40, Math.cos(phase) * amplitude)}
+            position={Vector3(
+              i * spacing,
+              Math.sin(phase) * amplitude + 40,
+              Math.cos(phase) * amplitude,
+            )}
             fill={Color(180, 120, 180)}
             stroke={Color(0, 0, 0)}
             strokeWidth={2}
@@ -25,5 +29,3 @@ export function WormScene({ now }: { now: number }) {
     </Group>
   );
 }
-
-

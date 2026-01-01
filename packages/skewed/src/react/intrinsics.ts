@@ -9,5 +9,3 @@ export const TYPE_HTML = "skewed.html";
 
 export const TYPE_DIRECTIONAL_LIGHT = "skewed.directionalLight";
 export const TYPE_AMBIENT_LIGHT = "skewed.ambientLight";
-
-

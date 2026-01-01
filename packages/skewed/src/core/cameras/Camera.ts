@@ -31,7 +31,7 @@ export function point3DToIsometric(
   x: number,
   y: number,
   z: number,
-  viewport: Viewport
+  viewport: Viewport,
 ) {
   return {
     x: (x - z) * Math.cos(Math.PI / 6) + viewport.width / 2,
@@ -43,7 +43,7 @@ export function point3DToCabinet(
   x: number,
   y: number,
   z: number,
-  viewport: Viewport
+  viewport: Viewport,
 ) {
   // Oblique angle usually is 45 degrees for cabinet projection.
   let alpha = Math.PI / 4;
@@ -60,7 +60,7 @@ export function point3DToCabinet(
 export function projectToScreenCoordinate(
   vertex: Vector3,
   inverseAndProjectionMatrix: Matrix4x4,
-  viewport: Viewport
+  viewport: Viewport,
 ): Vector3 {
   const v = Vector3(vertex);
   inverseAndProjectionMatrix.applyToVector3(v);

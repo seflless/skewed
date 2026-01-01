@@ -68,10 +68,20 @@ export function App() {
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
       <h1>Skewed Workbench</h1>
-      <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          alignItems: "center",
+          marginBottom: 12,
+        }}
+      >
         <label>
           Scene{" "}
-          <select value={scene} onChange={(e) => setScene(e.target.value as any)}>
+          <select
+            value={scene}
+            onChange={(e) => setScene(e.target.value as any)}
+          >
             <option value="kitchenSink">KitchenSink</option>
             <option value="transforms">Transforms</option>
             <option value="spheres">Spheres</option>
@@ -83,7 +93,9 @@ export function App() {
             <option value="worm">Worm</option>
           </select>
         </label>
-        <button onClick={() => setPaused((p) => !p)}>{paused ? "Play" : "Pause"}</button>
+        <button onClick={() => setPaused((p) => !p)}>
+          {paused ? "Play" : "Pause"}
+        </button>
         <button onClick={onStep} disabled={!paused}>
           Step
         </button>
@@ -91,7 +103,11 @@ export function App() {
         <button onClick={onCopySvg}>Copy SVG</button>
       </div>
 
-      <Skewed camera={camera} viewport={viewport} style={{ width: viewport.width, height: viewport.height }}>
+      <Skewed
+        camera={camera}
+        viewport={viewport}
+        style={{ width: viewport.width, height: viewport.height }}
+      >
         <Environment choice="grid" />
         <Lighting choice="reference" />
         {scene === "kitchenSink" && <KitchenSinkScene now={now} />}
@@ -107,5 +123,3 @@ export function App() {
     </div>
   );
 }
-
-

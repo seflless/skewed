@@ -98,5 +98,3 @@ export function Axii(props?: Partial<AxiiProperties>): GroupShape {
     })),
   });
 }
-
-

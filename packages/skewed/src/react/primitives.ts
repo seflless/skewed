@@ -17,7 +17,10 @@ import {
   TYPE_SPHERE,
   TYPE_TEXT,
 } from "./intrinsics";
-import type { SkewedCommonShapeProps, SkewedCommonTransformProps } from "./types";
+import type {
+  SkewedCommonShapeProps,
+  SkewedCommonTransformProps,
+} from "./types";
 
 export type BoxProps = SkewedCommonShapeProps &
   Partial<{
@@ -76,8 +79,14 @@ export type AxiiProps = SkewedCommonTransformProps &
  * Implemented as composition of primitives so we don't need a special reconciler intrinsic.
  */
 export function Axii(props: AxiiProps) {
-  const { id = "axii", position, rotation, scale, stroke, strokeWidth } =
-    (props ?? {}) as AxiiProps;
+  const {
+    id = "axii",
+    position,
+    rotation,
+    scale,
+    stroke,
+    strokeWidth,
+  } = (props ?? {}) as AxiiProps;
   const L = DefaultShapeDimension;
   const t = DefaultShapeDimension / 10;
   const s = stroke ?? CoreColor(0, 0, 0);
@@ -131,8 +140,6 @@ export function Axii(props: AxiiProps) {
       fill: Blue,
       stroke: s,
       strokeWidth: sw,
-    })
+    }),
   );
 }
-
-

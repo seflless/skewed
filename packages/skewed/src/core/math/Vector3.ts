@@ -170,7 +170,7 @@ export function Vector3(
     | [number, number, number]
     | undefined,
   y?: number,
-  z?: number
+  z?: number,
 ): Vector3 {
   if (arguments.length === 0) {
     return Vector3(0, 0, 0);

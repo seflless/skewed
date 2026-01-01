@@ -8,7 +8,7 @@ export function DebugLine2D(
   y: number,
   x2: number,
   y2: number,
-  stroke: Color = Color(0, 0, 0)
+  stroke: Color = Color(0, 0, 0),
 ) {
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
   line.style.zIndex = "1000";

@@ -11,11 +11,11 @@ import { Viewport } from "./Viewport";
 export function renderToSvgString(
   scene: Scene,
   viewport: Viewport,
-  camera: Camera
+  camera: Camera,
 ): string {
   if (typeof document === "undefined") {
     throw new Error(
-      "renderToSvgString requires a DOM. Use a jsdom test environment."
+      "renderToSvgString requires a DOM. Use a jsdom test environment.",
     );
   }
 
@@ -25,5 +25,3 @@ export function renderToSvgString(
   if (!svg) throw new Error("No <svg> produced by renderer");
   return svg.outerHTML;
 }
-
-

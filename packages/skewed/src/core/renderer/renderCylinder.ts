@@ -35,7 +35,7 @@ export function renderCylinder(
   cameraZoom: number,
   _cameraDirection: Vector3,
   inverseCameraMatrix: Matrix4x4,
-  inverseAndProjectionMatrix: Matrix4x4
+  inverseAndProjectionMatrix: Matrix4x4,
 ) {
   // Get screen space coordinates for the top and bottom of the cylinder
   const capsInScreenSpace: Vector3[] = [
@@ -49,7 +49,7 @@ export function renderCylinder(
     return projectToScreenCoordinate(
       point,
       inverseAndProjectionMatrix,
-      viewport
+      viewport,
     );
   });
 
@@ -94,7 +94,7 @@ export function renderCylinder(
   const visibleUpAxisScreenSpace = Vector3(
     visibleUpAxisCameraSpace.x,
     -visibleUpAxisCameraSpace.y,
-    0
+    0,
   ).normalize();
   // .multiply(isTopVisible ? 1 : -1);
 
@@ -109,12 +109,12 @@ export function renderCylinder(
   const leftNormal = Vector3(
     -visibleUpAxisScreenSpace.y,
     visibleUpAxisScreenSpace.x,
-    0
+    0,
   );
   const rightNormal = Vector3(
     visibleUpAxisScreenSpace.y,
     -visibleUpAxisScreenSpace.x,
-    0
+    0,
   );
   const visibleLeftPoint = leftNormal
     .clone()
@@ -143,7 +143,7 @@ export function renderCylinder(
 
   const capPath = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "path"
+    "path",
   );
   capPath.setAttribute("id", isTopVisible ? "cylinder-top" : "cylinder-bottom");
 
@@ -151,7 +151,7 @@ export function renderCylinder(
     scene.directionalLight.color,
     cylinder.fill,
     scene.ambientLightColor,
-    reversedLightDirection.dotProduct(visibleUpAxisWorldSpace.clone())
+    reversedLightDirection.dotProduct(visibleUpAxisWorldSpace.clone()),
   );
   capPath.setAttribute("fill", capFill);
 
@@ -168,12 +168,12 @@ export function renderCylinder(
     } ${visibleRightPoint.y}
     A ${Radius} ${ShortRadius} ${xAxisRotation} ${1} ${sweepFlag} ${
       visibleLeftPoint.x
-    } ${visibleLeftPoint.y}`
+    } ${visibleLeftPoint.y}`,
   );
 
   const tubePath = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "path"
+    "path",
   );
   tubePath.setAttribute("id", "cylinder-tube");
   tubePath.setAttribute("fill", "purple");
@@ -185,7 +185,7 @@ export function renderCylinder(
     L ${hiddenRightPoint.x} ${hiddenRightPoint.y}
     A ${Radius} ${ShortRadius} ${xAxisRotation} 0 0 ${hiddenLeftPoint.x} ${hiddenLeftPoint.y}
     Z
-    `
+    `,
   );
 
   addStrokeAttribute(tubePath, cylinder, cylinderScaleFactor);
@@ -206,7 +206,7 @@ export function renderCylinder(
   // Create the 'radialGradient' element
   const linearGradient = document.createElementNS(
     "http://www.w3.org/2000/svg",
-    "linearGradient"
+    "linearGradient",
   );
 
   linearGradient.setAttribute("id", fillUuid);
@@ -235,7 +235,7 @@ export function renderCylinder(
   const lightingSpace = Matrix4x4().lookAt(
     Vector3(0, 0, 0),
     leftEdgeNormal,
-    visibleUpAxisCameraSpace
+    visibleUpAxisCameraSpace,
   );
 
   // Add the gradient stops
@@ -251,7 +251,7 @@ export function renderCylinder(
 
     const stopElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "stop"
+      "stop",
     );
     stopElement.setAttribute("offset", normalized.toFixed(3));
     stopElement.setAttribute(
@@ -260,8 +260,8 @@ export function renderCylinder(
         scene.directionalLight.color,
         cylinder.fill,
         scene.ambientLightColor,
-        directionalLightInCameraSpace.dotProduct(normal)
-      )
+        directionalLightInCameraSpace.dotProduct(normal),
+      ),
     );
     linearGradient.appendChild(stopElement);
   }
@@ -309,7 +309,7 @@ function addStrokeAttribute(
   svgShape: SVGElement,
   cylinderShape: CylinderShape,
   scaleFactor: number,
-  fillColor?: string
+  fillColor?: string,
 ) {
   if (cylinderShape.strokeWidth && cylinderShape.stroke.a > 0.0) {
     svgShape.setAttribute("stroke", ColorToCSS(cylinderShape.stroke));
@@ -317,14 +317,14 @@ function addStrokeAttribute(
     if (cylinderShape.strokeWidth !== 1.0) {
       svgShape.setAttribute(
         "stroke-width",
-        (cylinderShape.strokeWidth * scaleFactor).toString()
+        (cylinderShape.strokeWidth * scaleFactor).toString(),
       );
     }
   } else if (fillColor !== undefined) {
     svgShape.setAttribute("stroke", fillColor);
     svgShape.setAttribute(
       "stroke-width",
-      (CrackFillingStrokeWidth * scaleFactor).toString()
+      (CrackFillingStrokeWidth * scaleFactor).toString(),
     );
   }
 }

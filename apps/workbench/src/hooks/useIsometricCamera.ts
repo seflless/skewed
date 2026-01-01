@@ -13,7 +13,7 @@ export function useIsometricCamera(viewport: Viewport, zoom: number = 1) {
     0,
     Math.max(1, viewport.height) / zoom,
     0,
-    10000
+    10000,
   );
 
   const updateCamera = React.useCallback(
@@ -24,10 +24,8 @@ export function useIsometricCamera(viewport: Viewport, zoom: number = 1) {
       const eye = Vector3(x, 20, z);
       camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
     },
-    [camera]
+    [camera],
   );
 
   return { camera, updateCamera };
 }
-
-

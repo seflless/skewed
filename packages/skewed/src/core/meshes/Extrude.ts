@@ -30,10 +30,10 @@ export function extrude(polyline: Vector3[], thickness: number): Mesh {
   });
 
   mesh.vertices = mesh.vertices.concat(
-    polyline.map((point) => Vector3(point.x, point.y + thickness / 2, point.z))
+    polyline.map((point) => Vector3(point.x, point.y + thickness / 2, point.z)),
   );
   mesh.vertices = mesh.vertices.concat(
-    polyline.map((point) => Vector3(point.x, point.y - thickness / 2, point.z))
+    polyline.map((point) => Vector3(point.x, point.y - thickness / 2, point.z)),
   );
 
   // Fill top/bottom face vertices

@@ -19,7 +19,13 @@ export function SingleTextScene({ now }: { now: number }) {
         />
       </Group>
       <Html position={Vector3(200, 40, 0)} width={260} height={90}>
-        <div style={{ background: "rgba(255,255,255,0.9)", border: "2px solid black", padding: 12 }}>
+        <div
+          style={{
+            background: "rgba(255,255,255,0.9)",
+            border: "2px solid black",
+            padding: 12,
+          }}
+        >
           <strong>SingleText</strong>
           <div style={{ fontSize: 12 }}>Rotating Text + Html</div>
         </div>
@@ -27,5 +33,3 @@ export function SingleTextScene({ now }: { now: number }) {
     </>
   );
 }
-
-

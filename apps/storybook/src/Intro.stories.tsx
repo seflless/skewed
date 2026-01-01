@@ -13,10 +13,9 @@ export const ComingSoon: Story = {
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
       <h2>Skewed React renderer</h2>
       <p>
-        Stories will be added for each primitive once the reconciler is wired up.
+        Stories will be added for each primitive once the reconciler is wired
+        up.
       </p>
     </div>
   ),
 };
-
-

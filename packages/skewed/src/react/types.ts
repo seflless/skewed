@@ -1,4 +1,10 @@
-import type { Camera, Color, DirectionalLight, Vector3, Viewport } from "../core";
+import type {
+  Camera,
+  Color,
+  DirectionalLight,
+  Vector3,
+  Viewport,
+} from "../core";
 import type * as React from "react";
 
 export type SkewedCameraProp = Camera;
@@ -40,5 +46,3 @@ export type SkewedHtmlProps = SkewedCommonTransformProps & {
   height?: number;
   children?: React.ReactNode;
 };
-
-

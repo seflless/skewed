@@ -25,5 +25,3 @@ export function SpheresScene({ now }: { now: number }) {
     </Group>
   );
 }
-
-

@@ -19,7 +19,7 @@ export function renderText(
   cameraZoom: number,
   _cameraDirection: Vector3,
   inverseCameraMatrix: Matrix4x4,
-  inverseAndProjectionMatrix: Matrix4x4
+  inverseAndProjectionMatrix: Matrix4x4,
 ) {
   const textScale = worldTransform.getScale().x;
   const textScaleFactor = textScale * cameraZoom;
@@ -43,7 +43,7 @@ export function renderText(
   transformMatrixCameraSpace.extractBasis(
     undefined,
     undefined,
-    faceNormalInCameraSpace
+    faceNormalInCameraSpace,
   );
   const facingWayFromCamera = faceNormalInCameraSpace.z < 0;
   if (facingWayFromCamera) {
@@ -54,17 +54,17 @@ export function renderText(
     scene.directionalLight.color,
     textShape.fill,
     scene.ambientLightColor,
-    directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace)
+    directionalLightInCameraSpace.dotProduct(faceNormalInCameraSpace),
   );
 
   function renderTextStackSlice(
     offset: number,
     fillString: string,
-    strokeString: string
+    strokeString: string,
   ) {
     const textElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "text"
+      "text",
     );
     textElement.setAttribute("id", "text");
 
@@ -73,7 +73,7 @@ export function renderText(
         .getTranslation()
         .add(faceNormalInWorldSpace.clone().multiply(offset)),
       inverseAndProjectionMatrix,
-      viewport
+      viewport,
     );
 
     textElement.setAttribute("font-size", textShape.fontSize.toFixed(2));
@@ -96,11 +96,11 @@ export function renderText(
 
     const precision = 3;
     const transformMatrixText = `matrix(${xAxis.x.toFixed(
-      precision
+      precision,
     )} ${xAxis.y.toFixed(precision)} ${yAxis.x.toFixed(
-      precision
+      precision,
     )} ${yAxis.y.toFixed(precision)} ${x.toFixed(precision)} ${y.toFixed(
-      precision
+      precision,
     )})`;
     textElement.setAttribute("transform", transformMatrixText);
 

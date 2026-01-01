@@ -43,7 +43,14 @@ function App() {
 
   const camera = React.useMemo(() => {
     const c = Camera();
-    c.projectionMatrix.makeOrthographic(0, viewport.width, 0, viewport.height, 0, 10000);
+    c.projectionMatrix.makeOrthographic(
+      0,
+      viewport.width,
+      0,
+      viewport.height,
+      0,
+      10000,
+    );
     const eye = Vector3(20, 20, 20);
     c.matrix.makeTranslation(eye.x, eye.y, eye.z);
     c.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
@@ -51,9 +58,16 @@ function App() {
   }, []);
 
   return (
-    <Skewed camera={camera} viewport={viewport} style={{ width: viewport.width, height: viewport.height }}>
+    <Skewed
+      camera={camera}
+      viewport={viewport}
+      style={{ width: viewport.width, height: viewport.height }}
+    >
       <AmbientLight color={Color(64, 64, 64)} />
-      <DirectionalLight direction={Vector3(-0.25, -1, -0.25).normalize()} color={Color(255, 252, 255)} />
+      <DirectionalLight
+        direction={Vector3(-0.25, -1, -0.25).normalize()}
+        color={Color(255, 252, 255)}
+      />
 
       <Axii />
 
@@ -81,7 +95,14 @@ import { Html, Vector3 } from "skewed";
 export function Label() {
   return (
     <Html position={Vector3(0, 40, 0)} width={220} height={80}>
-      <div style={{ background: "white", border: "2px solid black", borderRadius: 8, padding: 8 }}>
+      <div
+        style={{
+          background: "white",
+          border: "2px solid black",
+          borderRadius: 8,
+          padding: 8,
+        }}
+      >
         Hello from &lt;Html&gt;
       </div>
     </Html>
