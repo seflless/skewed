@@ -13,7 +13,7 @@
 
   "prettier.requireConfig": true,
   "prettier.configPath": ".prettierrc",
-  "prettier.prettierPath": "./node_modules/prettier/index.cjs",
+  "prettier.prettierPath": "./node_modules/prettier",
 
   "files.eol": "\n",
   "files.insertFinalNewline": true,
