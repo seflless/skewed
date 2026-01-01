@@ -1,71 +1,9 @@
 import { useEffect, useMemo, useRef } from "react";
-import {
-  Box,
-  Camera,
-  Color,
-  Cylinder,
-  DirectionalLight,
-  Grid,
-  Group,
-  Scene,
-  Sphere,
-  Text,
-  Vector3,
-  Viewport,
-  render,
-} from "skewed";
-
-function Axii(position: Vector3 = Vector3(0, 0, 0)) {
-  // Half-size starter scene: keep the axii readable but smaller.
-  const Axii_Thickness = 2;
-  const Axii_Length = 50;
-  const strokeWidth = 0.5;
-  const Red = Color(255, 0, 0);
-  const Green = Color(0, 255, 0);
-  const Blue = Color(0, 0, 255);
-
-  return Group({
-    children: [
-      Box({
-        position: Vector3(Axii_Thickness / 2 + Axii_Length / 2, 0, 0).add(
-          position
-        ),
-        width: Axii_Length,
-        height: Axii_Thickness,
-        depth: Axii_Thickness,
-        fill: Red,
-        stroke: Color(0, 0, 0),
-        strokeWidth,
-      }),
-      Box({
-        position: Vector3(0, Axii_Thickness / 2 + Axii_Length / 2, 0).add(
-          position
-        ),
-        width: Axii_Thickness,
-        height: Axii_Length,
-        depth: Axii_Thickness,
-        fill: Green,
-        stroke: Color(0, 0, 0),
-        strokeWidth,
-      }),
-      Box({
-        position: Vector3(0, 0, Axii_Thickness / 2 + Axii_Length / 2).add(
-          position
-        ),
-        width: Axii_Thickness,
-        height: Axii_Thickness,
-        depth: Axii_Length,
-        fill: Blue,
-        stroke: Color(0, 0, 0),
-        strokeWidth,
-      }),
-    ],
-  });
-}
+import { core } from "skewed";
 
 function createIsometricCamera(zoom: number = 1) {
-  const camera = Camera();
-  const viewport: Viewport = {
+  const camera = core.Camera();
+  const viewport = {
     left: 0,
     top: 0,
     width: window.innerWidth,
@@ -84,7 +22,7 @@ function createIsometricCamera(zoom: number = 1) {
       0,
       viewport.height / zoom,
       0,
-      10000
+      10000,
     );
   }
 
@@ -92,8 +30,8 @@ function createIsometricCamera(zoom: number = 1) {
     const x = Math.sin((rotationDegrees / 180) * Math.PI) * distance;
     const z = Math.cos((rotationDegrees / 180) * Math.PI) * distance;
 
-    const eye = Vector3(x, 20, z);
-    camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+    const eye = core.Vector3(x, 20, z);
+    camera.matrix.lookAt(eye, core.Vector3(0, 0, 0), core.Vector3(0, 1, 0));
     camera.matrix.setPosition(eye.x, eye.y, eye.z);
   }
 
@@ -106,28 +44,35 @@ function createIsometricCamera(zoom: number = 1) {
 export function SkewedStarterScene() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const scene = useMemo<Scene>(() => {
-    const directionalLight = DirectionalLight({
+  const scene = useMemo(() => {
+    const directionalLight = core.DirectionalLight({
       // "Sun-like": from -X, from above, toward -Z.
-      direction: Vector3(-1, -1, -1).normalize(),
-      color: Color(255, 244, 214),
+      direction: core.Vector3(-1, -1, -1).normalize(),
+      color: core.Color(255, 244, 214),
     });
 
     // Half-size spacing for the "behind it on -Z" stacking.
     const zOffsets = [0, -110, -190];
     const scales = [1, 0.5, 0.25] as const;
 
-    const stroke = Color(0, 0, 0, 1);
+    const stroke = core.Color(0, 0, 0, 1);
     const strokeWidth = 3;
 
     // Put half of the shape groups on each side of the axii so everything fits in view.
     // (All 3 size variants share the same X; they step back along -Z.)
-    const gap = 80;
-
     const shapes = [];
 
     // origin reference
-    shapes.push(Axii(Vector3(0, 0, 0)));
+    shapes.push(
+      core.Axii({
+        id: "axii",
+        position: core.Vector3(0, 0, 0),
+        rotation: core.Vector3(0, 0, 0),
+        scale: 0.5,
+        stroke: core.Color(0, 0, 0, 1),
+        strokeWidth: 0.5,
+      }),
+    );
 
     // --- Box (default size) ---
     {
@@ -144,17 +89,17 @@ export function SkewedStarterScene() {
 
       scales.forEach((scale, i) => {
         shapes.push(
-          Box({
+          core.Box({
             id: `box-${scale}`,
-            position: Vector3(x, (heights[i] * scale) / 2, zOffsets[i]),
+            position: core.Vector3(x, (heights[i] * scale) / 2, zOffsets[i]),
             width: widths[i],
             height: heights[i],
             depth: depths[i],
             scale,
-            fill: Color(255, 96, 96),
+            fill: core.Color(255, 96, 96),
             stroke,
             strokeWidth,
-          })
+          }),
         );
       });
     }
@@ -166,15 +111,15 @@ export function SkewedStarterScene() {
 
       scales.forEach((scale, i) => {
         shapes.push(
-          Sphere({
+          core.Sphere({
             id: `sphere-${scale}`,
-            position: Vector3(x, radius * scale, zOffsets[i]),
+            position: core.Vector3(x, radius * scale, zOffsets[i]),
             radius,
             scale,
-            fill: Color(255, 180, 64),
+            fill: core.Color(255, 180, 64),
             stroke,
             strokeWidth,
-          })
+          }),
         );
       });
     }
@@ -186,9 +131,9 @@ export function SkewedStarterScene() {
       const x = 110;
 
       const rotations = [
-        Vector3(0, 0, 0), // up (Y axis)
-        Vector3(0, 0, -90), // axis along +X
-        Vector3(90, 0, 0), // axis along +Z
+        core.Vector3(0, 0, 0), // up (Y axis)
+        core.Vector3(0, 0, -90), // axis along +X
+        core.Vector3(90, 0, 0), // axis along +Z
       ];
 
       scales.forEach((scale, i) => {
@@ -196,17 +141,17 @@ export function SkewedStarterScene() {
         const y = isUpright ? (height * scale) / 2 : radius * scale;
 
         shapes.push(
-          Cylinder({
+          core.Cylinder({
             id: `cylinder-${scale}`,
-            position: Vector3(x, y, zOffsets[i]),
+            position: core.Vector3(x, y, zOffsets[i]),
             radius,
             height,
             scale,
             rotation: rotations[i],
-            fill: Color(140, 160, 255),
+            fill: core.Color(140, 160, 255),
             stroke,
             strokeWidth,
-          })
+          }),
         );
       });
     }
@@ -218,31 +163,31 @@ export function SkewedStarterScene() {
 
       scales.forEach((scale, i) => {
         shapes.push(
-          Text({
+          core.Text({
             id: `text-${scale}`,
             text: "TEXT",
-            position: Vector3(x, fontSize * 0.7 * scale, zOffsets[i]),
+            position: core.Vector3(x, fontSize * 0.7 * scale, zOffsets[i]),
             fontSize,
             scale,
-            fill: Color(220, 255, 220),
+            fill: core.Color(220, 255, 220),
             stroke,
             strokeWidth,
-          })
+          }),
         );
       });
     }
 
     return {
       directionalLight,
-      ambientLightColor: Color(64, 64, 120),
+      ambientLightColor: core.Color(64, 64, 120),
       shapes: [
-        Grid({
+        core.Grid({
           id: "background",
-          rotation: Vector3(0, 0, 0),
+          rotation: core.Vector3(0, 0, 0),
           cellCount: 12,
           cellSize: 100,
-          fill: Color(0, 0, 0, 0),
-          stroke: Color(255, 255, 255, 0.15),
+          fill: core.Color(0, 0, 0, 0),
+          stroke: core.Color(255, 255, 255, 0.15),
           strokeWidth: 2,
         }),
         ...shapes,
@@ -255,13 +200,14 @@ export function SkewedStarterScene() {
     if (!container) return;
 
     // Slight zoom-out so the full lineup fits comfortably across viewports.
-    const { camera, viewport, updateCamera, resize } = createIsometricCamera(0.85);
+    const { camera, viewport, updateCamera, resize } =
+      createIsometricCamera(0.85);
 
     // Ensure a stable baseline view.
     updateCamera(45, 20);
 
     const paint = () => {
-      render(container, scene, viewport, camera);
+      core.render(container, scene, viewport, camera);
     };
 
     const onResize = () => {
@@ -286,5 +232,3 @@ export function SkewedStarterScene() {
     </div>
   );
 }
-
-
