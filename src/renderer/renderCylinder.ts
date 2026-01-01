@@ -49,11 +49,20 @@ export function renderCylinder(
 
   const cylinderYAxisWorldSpace = Vector3(0, 0, 0);
   worldTransform.extractBasis(undefined, cylinderYAxisWorldSpace, undefined);
+  // `extractBasis` includes scaling. For visibility + cap foreshortening math we
+  // want a direction vector, not a scaled vector, otherwise small cylinders get
+  // squashed incorrectly (scale^2 effect).
+  if (cylinderYAxisWorldSpace.lengthSquared() > 0) {
+    cylinderYAxisWorldSpace.normalize();
+  }
 
   const cylinderYAxisCameraSpace = cylinderYAxisWorldSpace.clone();
   inverseCameraMatrix
     .extractRotation()
     .applyToVector3(cylinderYAxisCameraSpace);
+  if (cylinderYAxisCameraSpace.lengthSquared() > 0) {
+    cylinderYAxisCameraSpace.normalize();
+  }
 
   // DebugLine2D(
   //   svg,
