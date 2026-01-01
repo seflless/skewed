@@ -1,6 +1,6 @@
 {
   "name": "skewed",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Skewed React-first SVG 3D renderer (meta-package)",
   "license": "MIT",
   "sideEffects": false,
