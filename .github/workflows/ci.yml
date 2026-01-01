@@ -1,11 +1,13 @@
-name: CI
+name: CI (pnpm)
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
-  test:
+  build_test_storybook:
+    name: Build + Test + Storybook
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
