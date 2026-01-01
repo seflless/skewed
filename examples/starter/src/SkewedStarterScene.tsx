@@ -120,13 +120,9 @@ export function SkewedStarterScene() {
     const stroke = Color(0, 0, 0, 1);
     const strokeWidth = 3;
 
-    // Lay groups out along X with a "natural" amount of spacing based on footprint.
+    // Put half of the shape groups on each side of the axii so everything fits in view.
     // (All 3 size variants share the same X; they step back along -Z.)
-    // Keep the origin visible for the axii; shift the whole lineup away from (0,0,0).
-    const contentXOffset = 240;
-    const xStart = contentXOffset;
     const gap = 80;
-    let xCursor = xStart;
 
     const shapes = [];
 
@@ -143,8 +139,7 @@ export function SkewedStarterScene() {
       const widths = [baseWidth, 120, baseWidth];
       const depths = [baseDepth, baseDepth, 120];
 
-      const x = xCursor;
-      xCursor += Math.max(...widths) + gap;
+      const x = -260;
 
       scales.forEach((scale, i) => {
         shapes.push(
@@ -166,8 +161,7 @@ export function SkewedStarterScene() {
     // --- Sphere (default size) ---
     {
       const radius = 35;
-      const x = xCursor;
-      xCursor += radius * 2 + gap;
+      const x = -110;
 
       scales.forEach((scale, i) => {
         shapes.push(
@@ -188,8 +182,7 @@ export function SkewedStarterScene() {
     {
       const radius = 30;
       const height = 80;
-      const x = xCursor;
-      xCursor += Math.max(radius * 2, height) + gap;
+      const x = 110;
 
       const rotations = [
         Vector3(0, 0, 0), // up (Y axis)
@@ -220,9 +213,7 @@ export function SkewedStarterScene() {
     // --- Text (default size) ---
     {
       const fontSize = 60;
-      const x = xCursor;
-      // crude estimate of footprint for spacing; good enough to avoid overlap
-      xCursor += fontSize * 2.2 + gap;
+      const x = 260;
 
       scales.forEach((scale, i) => {
         shapes.push(
@@ -262,7 +253,8 @@ export function SkewedStarterScene() {
     const container = containerRef.current;
     if (!container) return;
 
-    const { camera, viewport, updateCamera, resize } = createIsometricCamera(1);
+    // Slight zoom-out so the full lineup fits comfortably across viewports.
+    const { camera, viewport, updateCamera, resize } = createIsometricCamera(0.85);
 
     // Ensure a stable baseline view.
     updateCamera(45, 20);
