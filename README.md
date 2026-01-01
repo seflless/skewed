@@ -16,9 +16,9 @@ npm install skewed
 
 # Usage
 
-See [examples/starter/SkewestStartScene.tsx]() for more a more complex example.
+See [`examples/starter/src/SkewedStarterScene.tsx`](./examples/starter/src/SkewedStarterScene.tsx) for a more complete example.
 
-```ts
+```tsx
 import React from "react";
 import {
   Skewed,
@@ -70,22 +70,18 @@ export function ReactScene() {
 
 #### Setup
 
-1. Install dependencies
-   1. Node.js
-   1. pnpm
-1. Clone and go into the folder
-   ```
-   git clone git@github.com:seflless/skewed.git
-   cd skewed
-   ```
+```bash
+git clone git@github.com:seflless/skewed.git
+cd skewed
+pnpm install
+```
 
 #### Dev
 
 To serve up the workbench web-page and rebuild on code changes run the following.
 
-```
+```bash
 pnpm dev
-# Open the workbench page at http://localhost:3000/
 ```
 
 #### Examples
@@ -94,7 +90,7 @@ Starter example projects live under `examples/`.
 
 #### Building
 
-```
+```bash
 pnpm build
 ```
 
@@ -126,9 +122,9 @@ pnpm test
 
 TODO: Do we need to put in a difference command for the CLI?
 
-# Prio Art
+# Prior Art
 
-Here are some cool existing project I found after starting this. In no particular order:
+Here are some cool existing projects I found after starting this. In no particular order:
 
 ## ZDog
 
@@ -137,7 +133,7 @@ Here are some cool existing project I found after starting this. In no particula
 - Great article covering it: https://css-tricks.com/zdog/
 - I found this one when looking for ideas about how to light 3D spheres.
 - Love the cool art style in the demos that it's well suited too.
-- Finding a good artist/art-style to use as guodance (and demos) will go really far. The homepage demo is based on this 2D art: https://www.robindavey.co.uk/#/nippu/
+- Finding a good artist/art-style to use as guidance (and demos) will go really far. The homepage demo is based on this 2D art: https://www.robindavey.co.uk/#/nippu/
 - There's no lighting support, but that really simplifies things for this art style.
   - Here's an example [mini town](https://codepen.io/desandro/pen/vdwMyW) where stylistic lighting (really just contrasting planes) is used
 - This influenced me into focusing on toon shading style lighting/graphics too (As allow specifying an amount of shades gradients)
