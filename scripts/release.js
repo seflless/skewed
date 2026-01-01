@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 
 /**
  * Release/publish automation for the single-package library (`packages/skewed`).

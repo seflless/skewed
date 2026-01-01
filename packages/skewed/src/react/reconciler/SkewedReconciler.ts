@@ -346,7 +346,6 @@ export function createSkewedContainer(
     "", // identifierPrefix
     (error: unknown) => {
       // Keep default behavior simple; consumers can wrap errors at the component level.
-      // eslint-disable-next-line no-console
       console.error(error);
     },
     null, // transitionCallbacks
