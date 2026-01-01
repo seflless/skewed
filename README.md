@@ -37,6 +37,10 @@ pnpm dev
 # Open the workbench page at http://localhost:3000/
 ```
 
+#### Examples
+
+Starter example projects live under `examples/`.
+
 #### Building
 
 ```
