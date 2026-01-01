@@ -1,0 +1,59 @@
+{
+  "name": "skewed",
+  "version": "0.7.0",
+  "description": "Generate 3D isometric SVGs",
+  "author": "Francois Laberge",
+  "license": "MIT",
+  "homepage": "https://github.com/seflless/skewed",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seflless/skewed.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seflless/skewed/issues"
+  },
+  "keywords": [
+    "svg",
+    "infographics",
+    "vector graphics",
+    "3D"
+  ],
+  "type": "module",
+  "main": "./dist/skewed.umd.cjs",
+  "module": "./dist/skewed.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/skewed.js",
+      "require": "./dist/skewed.umd.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "cli-test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/invariant": "^2.2.35",
+    "@types/node": "^18.11.3",
+    "@vitejs/plugin-react": "^3.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3",
+    "vite": "^4.0.0",
+    "vite-plugin-dts": "^1.7.1",
+    "vitest": "^0.26.3"
+  },
+  "dependencies": {
+    "invariant": "^2.2.4"
+  }
+}

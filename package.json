@@ -1,62 +1,38 @@
 {
-  "name": "skewed",
-  "version": "0.7.0",
-  "description": "Generate 3D isometric SVGs",
-  "author": "Francois Laberge",
-  "license": "MIT",
-  "homepage": "https://github.com/seflless/skewed",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/seflless/skewed.git"
-  },
-  "bugs": {
-    "url": "https://github.com/seflless/skewed/issues"
-  },
-  "keywords": [
-    "svg",
-    "infographics",
-    "vector graphics",
-    "3D"
-  ],
-  "type": "module",
-  "main": "./dist/skewed.umd.cjs",
-  "module": "./dist/skewed.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/skewed.js",
-      "require": "./dist/skewed.umd.cjs"
-    }
-  },
-  "files": [
-    "dist"
+  "name": "skewed-monorepo",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
-    "dev": "vite --port 3000",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "cli-test": "vitest run",
-    "coverage": "vitest run --coverage",
-    "link:examples": "pnpm link --global && pnpm -C examples/starter link --global skewed && pnpm -C examples/starter install",
+    "build": "pnpm -r --filter \"./packages/**\" build",
+    "test": "pnpm -r --filter \"./packages/**\" test",
+    "test:watch": "pnpm -r --filter \"./packages/**\" test:watch",
+    "test:browser": "pnpm -r --filter \"./packages/**\" --if-present test:browser",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
+    "typecheck": "pnpm -r --filter \"./packages/**\" typecheck",
+    "storybook": "pnpm --filter @skewed/storybook storybook",
+    "storybook:build": "pnpm --filter @skewed/storybook build-storybook",
+    "dev:workbench": "pnpm --filter @skewed/workbench dev",
+    "release": "node scripts/release.js",
+    "publish:release": "node scripts/release.js",
+    "link:examples": "pnpm -C packages/skewed link --global && pnpm -C examples/starter link --global skewed && pnpm -C examples/starter install",
     "unlink:examples": "pnpm -C examples/starter unlink --global skewed && pnpm -C examples/starter install",
-    "publish:release": "node scripts/release.cjs"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "devDependencies": {
-    "@types/invariant": "^2.2.35",
-    "@types/node": "^18.11.3",
-    "@vitejs/plugin-react": "^3.0.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.3",
-    "vite": "^4.0.0",
-    "vite-plugin-dts": "^1.7.1",
-    "vitest": "^0.26.3"
-  },
-  "dependencies": {
-    "invariant": "^2.2.4"
+    "@eslint/js": "^9.19.0",
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.22.0",
+    "typescript": "^5.6.3"
   }
 }

@@ -12,9 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Build-time generated sources for the single-package publish flow
+packages/skewed/src/__bundled/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
