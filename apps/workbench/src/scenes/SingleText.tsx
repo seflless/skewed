@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Group, Html, Text } from "@skewed/react";
-import { Color, Vector3 } from "@skewed/core";
+import { Group, Html, Text } from "skewed";
+import { Color, Vector3 } from "skewed";
 
 export function SingleTextScene({ now }: { now: number }) {
   const position = Vector3(0, 200, 0);

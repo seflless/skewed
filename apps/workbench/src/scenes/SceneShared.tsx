@@ -1,6 +1,6 @@
 import * as React from "react";
-import { AmbientLight, DirectionalLight, Grid } from "@skewed/react";
-import { Color, Vector3 } from "@skewed/core";
+import { AmbientLight, DirectionalLight, Grid } from "skewed";
+import { Color, Vector3 } from "skewed";
 
 export type LightingChoice = "reference" | "blackAndWhite" | "moonlit" | "underwater" | "none";
 export type EnvironmentChoice = "none" | "underwater" | "grid" | "whiteFloor";

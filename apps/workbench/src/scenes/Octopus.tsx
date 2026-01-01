@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Cylinder, Group, Sphere } from "@skewed/react";
-import { Color, Vector3 } from "@skewed/core";
+import { Cylinder, Group, Sphere } from "skewed";
+import { Color, Vector3 } from "skewed";
 
 const BodyColor = Color(180, 120, 180);
 

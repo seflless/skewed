@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Box, Cylinder, Group, Html, Mesh, Sphere, Text } from "@skewed/react";
-import { BoxMesh, Color, Vector3 } from "@skewed/core";
+import { Box, Cylinder, Group, Html, Mesh, Sphere, Text } from "skewed";
+import { BoxMesh, Color, Vector3 } from "skewed";
 
 export function KitchenSinkScene({ now }: { now: number }) {
   const mesh = React.useMemo(() => BoxMesh(120, 80, 60), []);

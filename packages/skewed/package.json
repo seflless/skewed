@@ -18,7 +18,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "node ./scripts/bundle-local.js prepare && tsdx build && node ./scripts/bundle-local.js clean",
+    "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -31,8 +31,6 @@
     "react-reconciler": "^0.29.0"
   },
   "devDependencies": {
-    "@skewed/core": "workspace:*",
-    "@skewed/react": "workspace:*",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/react-reconciler": "^0.28.9",

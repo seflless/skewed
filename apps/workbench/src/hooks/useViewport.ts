@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { Viewport } from "@skewed/core";
+import type { Viewport } from "skewed";
 
 export function useViewport(): Viewport {
   const [vp, setVp] = React.useState<Viewport>(() => ({

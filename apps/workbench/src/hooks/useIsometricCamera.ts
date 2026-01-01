@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Camera, Vector3 } from "@skewed/core";
-import type { Viewport } from "@skewed/core";
+import { Camera, Vector3 } from "skewed";
+import type { Viewport } from "skewed";
 
 export function useIsometricCamera(viewport: Viewport, zoom: number = 1) {
   const camera = React.useMemo(() => Camera(), []);

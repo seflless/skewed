@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Camera, Vector3 } from "@skewed/core";
-import type { Viewport } from "@skewed/core";
-import { Skewed } from "@skewed/react";
+import { Camera, Vector3 } from "skewed";
+import type { Viewport } from "skewed";
+import { Skewed } from "skewed";
 
 export function StorySkewed(props: { children: React.ReactNode; width?: number; height?: number }) {
   const width = props.width ?? 600;

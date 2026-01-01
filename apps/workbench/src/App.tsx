@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Skewed } from "@skewed/react";
+import { Skewed } from "skewed";
 import { useIsometricCamera } from "./hooks/useIsometricCamera";
 import { useViewport } from "./hooks/useViewport";
 import { Environment, Lighting } from "./scenes/SceneShared";

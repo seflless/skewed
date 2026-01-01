@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Cylinder, Group } from "@skewed/react";
-import { Color, Vector3 } from "@skewed/core";
+import { Cylinder, Group } from "skewed";
+import { Color, Vector3 } from "skewed";
 
 export function SingleCylinderScene({ now }: { now: number }) {
   return (

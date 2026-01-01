@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
+/**
+ * Release/publish automation for the single-package library (`packages/skewed`).
+ *
+ * Usage:
+ *   pnpm release --version major|minor|patch
+ */
+
 const fs = require("fs");
 const path = require("path");
 const cp = require("child_process");
@@ -71,10 +78,13 @@ function bumpVersion(current, kind) {
   return `${major}.${minor}.${patch}`;
 }
 
-function getDefaultBaseBranch() {
-  // returns like: "origin/main" -> "main"
+function getDefaultBaseBranch(repoRoot) {
   try {
-    const ref = sh("git", ["symbolic-ref", "--short", "refs/remotes/origin/HEAD"]);
+    const ref = sh(
+      "git",
+      ["symbolic-ref", "--short", "refs/remotes/origin/HEAD"],
+      { cwd: repoRoot }
+    );
     const parts = ref.split("/");
     return parts[1] || "main";
   } catch {
@@ -92,8 +102,7 @@ function main() {
   const porcelain = sh("git", ["status", "--porcelain"], { cwd: repoRoot });
   if (porcelain) die("Working tree is not clean. Commit/stash your changes first.");
 
-  // Fail fast on npm auth, instead of halfway through publishing.
-  // (If your org enforces OTP, npm may still prompt during publish.)
+  // Fail fast on npm auth. (If your org enforces OTP, publish may still prompt.)
   try {
     sh("npm", ["whoami"], { cwd: repoRoot });
   } catch {
@@ -109,28 +118,22 @@ function main() {
   const currentVersion = publishPkg.version;
   const newVersion = bumpVersion(currentVersion, args.version);
   const releaseBranch = `release/${newVersion}`;
-  const baseBranch = getDefaultBaseBranch();
+  const baseBranch = getDefaultBaseBranch(repoRoot);
 
   console.log(`Releasing v${newVersion}`);
   console.log(`- base: ${baseBranch}`);
   console.log(`- branch: ${releaseBranch}`);
 
-  // Create and switch to release branch.
   sh("git", ["checkout", "-b", releaseBranch], { cwd: repoRoot });
 
-  // Bump version for the single publishable package.
   publishPkg.version = newVersion;
   writeJson(publishPkgPath, publishPkg);
 
-  // Commit the bump.
   sh("git", ["add", path.relative(repoRoot, publishPkgPath)], { cwd: repoRoot });
   sh("git", ["commit", "-m", `chore(release): v${newVersion}`], { cwd: repoRoot });
 
-  // Push release branch.
   sh("git", ["push", "-u", "origin", releaseBranch], { cwd: repoRoot });
 
-  // Create PR.
-  // gh must be authenticated already (user said it is installed and configured).
   sh(
     "gh",
     [
@@ -139,7 +142,7 @@ function main() {
       "--title",
       `Release v${newVersion}`,
       "--body",
-      `Automated release PR for v${newVersion}.\n\n- Bumps versions\n- Publishes packages to npm`,
+      `Automated release PR for v${newVersion}.`,
       "--base",
       baseBranch,
       "--head",
@@ -148,25 +151,12 @@ function main() {
     { cwd: repoRoot }
   );
 
-  // Build packages before publish (safer for tsdx outputs).
-  // We only publish `skewed`, but it bundles code from core/react, so build those first.
-  sh("pnpm", ["--filter", "@skewed/core", "build"], { cwd: repoRoot });
-  sh("pnpm", ["--filter", "@skewed/react", "build"], { cwd: repoRoot });
   sh("pnpm", ["--filter", "skewed", "build"], { cwd: repoRoot });
 
-  // Publish ONLY the top-level package. `--no-git-checks` because we are intentionally
-  // publishing from a release branch.
-  // NOTE: This may prompt for OTP if the npm account enforces it.
+  // NOTE: may require OTP; this will prompt.
   sh(
     "pnpm",
-    [
-      "--filter",
-      "skewed",
-      "publish",
-      "--no-git-checks",
-      "--access",
-      "public",
-    ],
+    ["--filter", "skewed", "publish", "--no-git-checks", "--access", "public"],
     { cwd: repoRoot, stdio: "inherit" }
   );
 

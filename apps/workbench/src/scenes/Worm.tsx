@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Group, Sphere } from "@skewed/react";
-import { Color, Vector3 } from "@skewed/core";
+import { Group, Sphere } from "skewed";
+import { Color, Vector3 } from "skewed";
 
 export function WormScene({ now }: { now: number }) {
   const segments = 14;

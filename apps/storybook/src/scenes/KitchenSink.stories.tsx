@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { Box, Cylinder, Html, Mesh, Sphere, Text } from "@skewed/react";
-import { AmbientLight, DirectionalLight } from "@skewed/react";
-import { BoxMesh, Color, Vector3 } from "@skewed/core";
+import { Box, Cylinder, Html, Mesh, Sphere, Text } from "skewed";
+import { AmbientLight, DirectionalLight } from "skewed";
+import { BoxMesh, Color, Vector3 } from "skewed";
 import { StorySkewed } from "../StorySkewed";
 
 const meta: Meta = {

@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Box, Group, Sphere, Text } from "@skewed/react";
-import { Color, Vector3 } from "@skewed/core";
+import { Box, Group, Sphere, Text } from "skewed";
+import { Color, Vector3 } from "skewed";
 
 export function TransformsScene({ now }: { now: number }) {
   return (
