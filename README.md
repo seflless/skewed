@@ -1,102 +1,132 @@
 # Skewed
 
-Skewed is a Typescript package for generating SVG of 3D graphics in real-time. It has basic dynamic lighting, orthographic cameras, a set of built in shapes, and supports arbitrary meshes too.
+Skewed is a **React-first SVG 3D renderer**. It lets you build a small “scene graph” of 3D-ish primitives (boxes, spheres, cylinders, text, meshes, etc.) and renders it into **SVG** with simple lighting + orthographic projection.
 
-Use it to make simple 3D infographics, 3D web-games, or generate 3D SVG files for importing into vector editors like Figma/Illustrator (Ie. make 3D icons).
+It also supports rendering real React DOM “inside” the scene via an `<Html>` component (implemented with SVG `<foreignObject>`), so DOM content can participate in the draw order.
 
-Here's a [Live demo](https://vgyf3c.csb.app/). Docs coming soon.
+<p>
+  <img width="49%" src="https://raw.githubusercontent.com/seflless/skewed/main/old/docs/images/octopus.gif" />
+  <img width="49%" src="https://raw.githubusercontent.com/seflless/skewed/main/old/docs/images/worm.gif" />
+</p>
+<p>
+  <img width="49%" src="https://raw.githubusercontent.com/seflless/skewed/main/old/docs/images/rotating-text.gif" />
+  <img width="49%" src="https://raw.githubusercontent.com/seflless/skewed/main/old/docs/images/light-spinning-around-shapes.gif" />
+</p>
 
-<!-- <img width="150px" src="./docs/images/octopus.gif"/><img width="155px" src="./docs/images/worm.gif"/><img width="176px" src="./docs/images/light-spinning-around-shapes.gif"/><img width="156 px" src="./docs/images/rotating-text.gif"/> -->
+### Install
 
-<img width="50%" src="./docs/images/octopus.gif"/><img width="50%" src="./docs/images/worm.gif"/><img width="50%" src="./docs/images/rotating-text.gif"/><img width="50%" src="./docs/images/light-spinning-around-shapes.gif"/>
-
-# Usage
-
-1.  `npm install skewed`
-1.  Reference the [live demo](https://vgyf3c.csb.app/)'s [source code](https://codesandbox.io/s/skewed-demo-vgyf3c?file=/src/index.ts). More API examples coming soon. In the meantime
-
-## Contributing
-
-#### Setup
-
-1. Install dependencies
-   1. Node.js
-   1. pnpm
-1. Clone and go into the folder
-   ```
-   git clone git@github.com:seflless/skewed.git
-   cd skewed
-   ```
-
-#### Dev
-
-To serve up the workbench web-page and rebuild on code changes run the following.
-
-```
-pnpm dev
-# Open the workbench page at http://localhost:3000/
+```bash
+npm install skewed
 ```
 
-#### Building
+`skewed` has **peer dependencies** on `react` and `react-dom`.
 
+### Quickstart (React)
+
+```tsx
+import * as React from "react";
+import { createRoot } from "react-dom/client";
+import {
+  Skewed,
+  AmbientLight,
+  DirectionalLight,
+  Box,
+  Axii,
+  Camera,
+  Vector3,
+  Color,
+} from "skewed";
+import type { Viewport } from "skewed";
+
+function App() {
+  const viewport: Viewport = { left: 0, top: 0, width: 900, height: 600 };
+
+  const camera = React.useMemo(() => {
+    const c = Camera();
+    c.projectionMatrix.makeOrthographic(
+      0,
+      viewport.width,
+      0,
+      viewport.height,
+      0,
+      10000,
+    );
+    const eye = Vector3(20, 20, 20);
+    c.matrix.makeTranslation(eye.x, eye.y, eye.z);
+    c.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+    return c;
+  }, []);
+
+  return (
+    <Skewed
+      camera={camera}
+      viewport={viewport}
+      style={{ width: viewport.width, height: viewport.height }}
+    >
+      <AmbientLight color={Color(64, 64, 64)} />
+      <DirectionalLight
+        direction={Vector3(-0.25, -1, -0.25).normalize()}
+        color={Color(255, 252, 255)}
+      />
+
+      <Axii />
+
+      <Box
+        position={Vector3(40, 0, 0)}
+        width={120}
+        height={80}
+        depth={80}
+        fill={Color(255, 180, 0)}
+        stroke={Color(0, 0, 0)}
+        strokeWidth={2}
+      />
+    </Skewed>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(<App />);
 ```
-pnpm build
+
+### `<Html>` (DOM in the scene)
+
+```tsx
+import { Html, Vector3 } from "skewed";
+
+export function Label() {
+  return (
+    <Html position={Vector3(0, 40, 0)} width={220} height={80}>
+      <div
+        style={{
+          background: "white",
+          border: "2px solid black",
+          borderRadius: 8,
+          padding: 8,
+        }}
+      >
+        Hello from &lt;Html&gt;
+      </div>
+    </Html>
+  );
+}
 ```
 
-#### Testing
+### Core API (optional)
 
-**TBD**
+The package also exposes the “core” (math/meshes/renderer/etc.) under a namespace:
 
-#### Publishing to NPM
+```ts
+import { core } from "skewed";
 
-Do the usual npm version bump then publish.
-
-```
-# Make sure tests pass. `pnpm test` (we should automate this in a publish command)
-pnpm build
-npm version <major|minor|patch>
-git push; git push --tags
-npm publish
+const v = core.Vector3(1, 2, 3);
 ```
 
-#### Test
+### Development
 
-Using vitest, the test are rerun whenever you change related code.
+- **Workbench** (interactive demos):
+  - `pnpm dev:workbench`
+- **Storybook** (component sandbox):
+  - `pnpm storybook`
 
-```
-pnpm test
-```
+### Legacy references
 
-#### Watch Tests
-
-TODO: Do we need to put in a difference command for the CLI?
-
-# Prio Art
-
-Here are some cool existing project I found after starting this. In no particular order:
-
-## ZDog
-
-- [Project Website](https://zzz.dog/)
-- [Github repo](https://github.com/metafizzy/zdog)
-- Great article covering it: https://css-tricks.com/zdog/
-- I found this one when looking for ideas about how to light 3D spheres.
-- Love the cool art style in the demos that it's well suited too.
-- Finding a good artist/art-style to use as guodance (and demos) will go really far. The homepage demo is based on this 2D art: https://www.robindavey.co.uk/#/nippu/
-- There's no lighting support, but that really simplifies things for this art style.
-  - Here's an example [mini town](https://codepen.io/desandro/pen/vdwMyW) where stylistic lighting (really just contrasting planes) is used
-- This influenced me into focusing on toon shading style lighting/graphics too (As allow specifying an amount of shades gradients)
-- The documentation is great
-  - The style is fun and matches the engines aesthetic
-  - Love the coverage of topics like [z-fighting, how it works, and how to work with it](https://zzz.dog/extras#z-fighting)
-- It's making me consider supporting a canvas renderer
-  - Would be better for mixing into other canvas rendering (Is this true for WebGL, or is copying from canvas to WebGL textures slow?)
-  - Read: [Canvas or SVG?](https://zzz.dog/extras#canvas-or-svg)
-- [Rendering with SVG without Illustration](https://zzz.dog/extras#rendering-without-illustration-rendering-with-svg-without-illustration)
-  - I'd been thinking about doing this same approach, allowing people to take control of rendering order to mix
-    compositions into other HTML/SVG
-- See some of the [Feature Requests and discussions](https://zzz.dog/extras#feature-requests)
-  - [Supporting Perspective cameras, not just ortho](https://github.com/metafizzy/zdog/issues/2)
-    - I like encouraging ortho only (and variants like oblique/cabinet)
-    - It should be more performant when only translating camera and objects, that's a good thing
-    - I'm with this [comment](https://github.com/metafizzy/zdog/issues/2#issuecomment-497310823), it doesn't play well with SVG curve capabilities.
+Older notes + images are preserved under `old/` (and the animations above are sourced from there).
