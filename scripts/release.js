@@ -149,6 +149,9 @@ function main() {
   );
 
   // Build packages before publish (safer for tsdx outputs).
+  // We only publish `skewed`, but it bundles code from core/react, so build those first.
+  sh("pnpm", ["--filter", "@skewed/core", "build"], { cwd: repoRoot });
+  sh("pnpm", ["--filter", "@skewed/react", "build"], { cwd: repoRoot });
   sh("pnpm", ["--filter", "skewed", "build"], { cwd: repoRoot });
 
   // Publish ONLY the top-level package. `--no-git-checks` because we are intentionally
@@ -157,6 +160,7 @@ function main() {
   sh(
     "pnpm",
     [
+      "--filter",
       "skewed",
       "publish",
       "--no-git-checks",

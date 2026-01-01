@@ -143,19 +143,31 @@ importers:
 
   packages/skewed:
     dependencies:
-      '@skewed/core':
-        specifier: workspace:*
-        version: link:../core
-      '@skewed/react':
-        specifier: workspace:*
-        version: link:../react
       react:
         specifier: ^18.2.0
         version: 18.3.1
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+      react-reconciler:
+        specifier: ^0.29.0
+        version: 0.29.2(react@18.3.1)
     devDependencies:
+      '@skewed/core':
+        specifier: workspace:*
+        version: link:../core
+      '@skewed/react':
+        specifier: workspace:*
+        version: link:../react
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.3.1
+        version: 18.3.7(@types/react@18.3.27)
+      '@types/react-reconciler':
+        specifier: ^0.28.9
+        version: 0.28.9(@types/react@18.3.27)
       tsdx:
         specifier: ^0.14.1
         version: 0.14.1(@types/babel__core@7.20.5)(@types/node@25.0.3)

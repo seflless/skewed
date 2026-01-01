@@ -1,4 +1,4 @@
-export * from "@skewed/react";
-export * as core from "@skewed/core";
+export * from "./__bundled/react";
+export * as core from "./__bundled/core";
 
 

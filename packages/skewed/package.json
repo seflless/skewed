@@ -18,7 +18,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdx build",
+    "build": "node ./scripts/bundle-local.js prepare && tsdx build && node ./scripts/bundle-local.js clean",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -28,10 +28,14 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@skewed/core": "workspace:*",
-    "@skewed/react": "workspace:*"
+    "react-reconciler": "^0.29.0"
   },
   "devDependencies": {
+    "@skewed/core": "workspace:*",
+    "@skewed/react": "workspace:*",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/react-reconciler": "^0.28.9",
     "tsdx": "^0.14.1",
     "typescript": "^5.6.3"
   }
