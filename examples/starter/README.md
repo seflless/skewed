@@ -4,15 +4,37 @@ Renders one of each built-in shape (`Grid`, `Axii`, `Box`, `Sphere`, `Cylinder`,
 
 ## Dev
 
-From repo root:
+From this folder:
 
 ```bash
-pnpm -C examples/starter install
-pnpm -C examples/starter dev
+pnpm install
+pnpm dev
 ```
 
 ## Notes
 
-- This example aliases the module name `skewed` to the repo’s source (`../../src/index.ts`) in `vite.config.ts`, so it works without building `dist/`.
+- By default this starter installs `skewed` from npm.
 
+## Local development (optional)
 
+If you’re iterating on `skewed` locally and want this starter to use your working copy:
+
+- **Option A (recommended): `pnpm link`**
+
+```bash
+# In your local skewed repo root:
+pnpm link --global
+
+# In this starter folder:
+pnpm link --global skewed
+pnpm install
+pnpm dev
+```
+
+- **Option B: local folder dependency**
+
+```bash
+# In this starter folder, pointing to a local clone:
+pnpm add file:../path/to/local/skewed
+pnpm dev
+```
