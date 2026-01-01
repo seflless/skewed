@@ -96,7 +96,9 @@ pnpm build
 
 #### Testing
 
-**TBD**
+```bash
+pnpm test
+```
 
 #### Publishing to NPM
 
