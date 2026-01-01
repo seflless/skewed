@@ -91,12 +91,9 @@ function createIsometricCamera(zoom: number = 1) {
     const x = Math.sin((rotationDegrees / 180) * Math.PI) * distance;
     const z = Math.cos((rotationDegrees / 180) * Math.PI) * distance;
 
-    camera.matrix.makeTranslation(x, 20, z);
     const eye = Vector3(x, 20, z);
-    camera.matrix[3] = eye.x;
-    camera.matrix[7] = eye.y;
-    camera.matrix[11] = eye.z;
     camera.matrix.lookAt(eye, Vector3(0, 0, 0), Vector3(0, 1, 0));
+    camera.matrix.setPosition(eye.x, eye.y, eye.z);
   }
 
   resize();
