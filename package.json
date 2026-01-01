@@ -39,7 +39,8 @@
     "cli-test": "vitest run",
     "coverage": "vitest run --coverage",
     "link:examples": "pnpm link --global && pnpm -C examples/starter link --global skewed && pnpm -C examples/starter install",
-    "unlink:examples": "pnpm -C examples/starter unlink --global skewed && pnpm -C examples/starter install"
+    "unlink:examples": "pnpm -C examples/starter unlink --global skewed && pnpm -C examples/starter install",
+    "publish:release": "node scripts/release.cjs"
   },
   "peerDependencies": {
     "react": "^18.2.0",

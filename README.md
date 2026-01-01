@@ -100,20 +100,11 @@ pnpm build
 
 #### Publishing to NPM
 
-Suggested workflow (pnpm-first, safer):
+Suggested workflow:
 
 ```bash
-pnpm test
-pnpm build
-
-# Bump version + create a git tag
-pnpm version <major|minor|patch>
-
-# Push commit + tag
-git push --follow-tags
-
-# Publish (use --tag next for pre-releases)
-pnpm publish --access public
+# Create a release branch + bump version + build/test + publish
+pnpm publish:release --version <major|minor|patch>
 ```
 
 #### Test
@@ -123,7 +114,6 @@ Using vitest:
 ```bash
 pnpm test
 ```
-
 
 # Prior Art
 
