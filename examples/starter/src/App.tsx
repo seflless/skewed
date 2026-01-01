@@ -20,7 +20,7 @@ export function App() {
         </div>
       </header>
 
-      <main className="relative flex-1">
+      <main className="relative flex-1 overflow-hidden">
         <SkewedStarterScene />
       </main>
     </div>

@@ -131,13 +131,14 @@ export function SkewedStarterScene() {
 
     // --- Box (default size) ---
     {
-      // Always 2x taller; then make each successive one "longer" in a different axis.
-      const baseWidth = 60;
-      const baseHeight = 120;
-      const baseDepth = 60;
-
-      const widths = [baseWidth, 120, baseWidth];
-      const depths = [baseDepth, baseDepth, 120];
+      // Keep a 1:1:2 ratio for all variants (just pick which axis is the "2").
+      // - biggest: tall (Y is 2x)
+      // - next: long in X
+      // - last: long in Z
+      const unit = 60;
+      const widths = [unit, unit * 2, unit];
+      const heights = [unit * 2, unit, unit];
+      const depths = [unit, unit, unit * 2];
 
       const x = -260;
 
@@ -145,9 +146,9 @@ export function SkewedStarterScene() {
         shapes.push(
           Box({
             id: `box-${scale}`,
-            position: Vector3(x, (baseHeight * scale) / 2, zOffsets[i]),
+            position: Vector3(x, (heights[i] * scale) / 2, zOffsets[i]),
             width: widths[i],
-            height: baseHeight,
+            height: heights[i],
             depth: depths[i],
             scale,
             fill: Color(255, 96, 96),
@@ -278,7 +279,7 @@ export function SkewedStarterScene() {
 
   return (
     <div className="absolute inset-0">
-      <div ref={containerRef} className="h-full w-full" />
+      <div ref={containerRef} className="h-full w-full overflow-hidden" />
       <div className="pointer-events-none absolute left-4 top-4 rounded border border-white/10 bg-zinc-950/60 px-3 py-2 text-xs text-zinc-300 backdrop-blur">
         Dragging is not wired in this starter; the camera is default isometric.
       </div>
