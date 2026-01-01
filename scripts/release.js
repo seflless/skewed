@@ -119,11 +119,13 @@ function main() {
   const currentVersion = publishPkg.version;
   const newVersion = bumpVersion(currentVersion, args.version);
   const releaseBranch = `release/${newVersion}`;
+  const tagName = `v${newVersion}`;
   const baseBranch = getDefaultBaseBranch(repoRoot);
 
   console.log(`Releasing v${newVersion}`);
   console.log(`- base: ${baseBranch}`);
   console.log(`- branch: ${releaseBranch}`);
+  console.log(`- tag: ${tagName}`);
 
   sh("git", ["checkout", "-b", releaseBranch], { cwd: repoRoot });
 
@@ -137,7 +139,26 @@ function main() {
     cwd: repoRoot,
   });
 
+  // Tag the version-bump commit (fail fast if tag already exists).
+  try {
+    sh("git", ["rev-parse", "--verify", "--quiet", tagName], { cwd: repoRoot });
+    die(`Tag already exists locally: ${tagName}`);
+  } catch {
+    // ok: tag doesn't exist locally
+  }
+  try {
+    sh("git", ["ls-remote", "--exit-code", "--tags", "origin", tagName], {
+      cwd: repoRoot,
+    });
+    die(`Tag already exists on origin: ${tagName}`);
+  } catch {
+    // ok: tag doesn't exist on origin
+  }
+
+  sh("git", ["tag", "-a", tagName, "-m", tagName], { cwd: repoRoot });
+
   sh("git", ["push", "-u", "origin", releaseBranch], { cwd: repoRoot });
+  sh("git", ["push", "origin", tagName], { cwd: repoRoot });
 
   sh(
     "gh",
