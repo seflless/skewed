@@ -153,5 +153,3 @@ pnpm publish:release --version <major|minor|patch>
 ### Legacy references
 
 Older notes + images are preserved under `old/` (and the animations above are sourced from there).
-
-
