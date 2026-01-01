@@ -112,3 +112,24 @@ jobs:
       # Storybook imports the workspace `skewed` package via its package.json exports, which point to dist.
       - run: pnpm build
       - run: pnpm storybook:build
+
+  install-latest-release:
+    name: Smoke test (install skewed@latest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Create temp project
+        run: |
+          mkdir temp-install-test
+          cd temp-install-test
+          npm init -y
+      - name: Install latest release from npm
+        run: |
+          cd temp-install-test
+          npm install skewed@latest
+      - name: Smoke import
+        run: |
+          cd temp-install-test
+          node --input-type=module -e "const m = await import('skewed'); console.log('skewed exports:', Object.keys(m).slice(0, 20));"

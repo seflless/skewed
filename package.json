@@ -19,6 +19,8 @@
     "dev:workbench": "pnpm --filter @skewed/workbench dev",
     "release": "node scripts/release.js",
     "publish:release": "node scripts/release.js",
+    "link:examples": "pnpm -C packages/skewed link --global && pnpm -C examples/starter link --global skewed && pnpm -C examples/starter install",
+    "unlink:examples": "pnpm -C examples/starter unlink --global skewed && pnpm -C examples/starter install",
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },

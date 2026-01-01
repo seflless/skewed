@@ -21,6 +21,23 @@ npm install skewed
 
 `skewed` has **peer dependencies** on `react` and `react-dom`.
 
+### Examples
+
+- **Starter (Vite + React + TS + Tailwind)**: [`examples/starter`](./examples/starter)
+
+```bash
+pnpm -C examples/starter install
+pnpm -C examples/starter dev
+```
+
+If you’re iterating on the local workspace package in `packages/skewed`:
+
+```bash
+pnpm link:examples
+# ...
+pnpm unlink:examples
+```
+
 ### Quickstart (React)
 
 ```tsx
@@ -126,6 +143,12 @@ const v = core.Vector3(1, 2, 3);
   - `pnpm dev:workbench`
 - **Storybook** (component sandbox):
   - `pnpm storybook`
+
+### Publishing
+
+```bash
+pnpm publish:release --version <major|minor|patch>
+```
 
 ### Legacy references
 
