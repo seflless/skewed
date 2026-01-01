@@ -6,6 +6,7 @@ import {
   Cylinder,
   DirectionalLight,
   Grid,
+  Group,
   Scene,
   Sphere,
   Text,
