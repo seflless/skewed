@@ -6,7 +6,6 @@ import {
   Cylinder,
   DirectionalLight,
   Grid,
-  Group,
   Scene,
   Sphere,
   Text,
@@ -111,7 +110,114 @@ export function SkewedStarterScene() {
       color: Color(255, 252, 181),
     });
 
-    const spacing = 260;
+    const zOffsets = [0, -220, -380];
+    const scales = [1, 0.5, 0.25] as const;
+
+    const stroke = Color(0, 0, 0, 1);
+    const strokeWidth = 3;
+
+    // Lay groups out along X with a "natural" amount of spacing based on footprint.
+    // (All 3 size variants share the same X; they step back along -Z.)
+    const xStart = -650;
+    const gap = 140;
+    let xCursor = xStart;
+
+    const shapes = [];
+
+    // origin reference
+    shapes.push(Axii(Vector3(0, 0, 0)));
+
+    // --- Box (default size) ---
+    {
+      const width = 120;
+      const height = 120;
+      const depth = 120;
+      const x = xCursor;
+      xCursor += width + gap;
+
+      scales.forEach((scale, i) => {
+        shapes.push(
+          Box({
+            id: `box-${scale}`,
+            position: Vector3(x, (height * scale) / 2, zOffsets[i]),
+            width,
+            height,
+            depth,
+            scale,
+            fill: Color(255, 96, 96),
+            stroke,
+            strokeWidth,
+          })
+        );
+      });
+    }
+
+    // --- Sphere (default size) ---
+    {
+      const radius = 70;
+      const x = xCursor;
+      xCursor += radius * 2 + gap;
+
+      scales.forEach((scale, i) => {
+        shapes.push(
+          Sphere({
+            id: `sphere-${scale}`,
+            position: Vector3(x, radius * scale, zOffsets[i]),
+            radius,
+            scale,
+            fill: Color(255, 180, 64),
+            stroke,
+            strokeWidth,
+          })
+        );
+      });
+    }
+
+    // --- Cylinder (default size) ---
+    {
+      const radius = 60;
+      const height = 160;
+      const x = xCursor;
+      xCursor += radius * 2 + gap;
+
+      scales.forEach((scale, i) => {
+        shapes.push(
+          Cylinder({
+            id: `cylinder-${scale}`,
+            position: Vector3(x, (height * scale) / 2, zOffsets[i]),
+            radius,
+            height,
+            scale,
+            fill: Color(140, 160, 255),
+            stroke,
+            strokeWidth,
+          })
+        );
+      });
+    }
+
+    // --- Text (default size) ---
+    {
+      const fontSize = 120;
+      const x = xCursor;
+      // crude estimate of footprint for spacing; good enough to avoid overlap
+      xCursor += fontSize * 2.2 + gap;
+
+      scales.forEach((scale, i) => {
+        shapes.push(
+          Text({
+            id: `text-${scale}`,
+            text: "TEXT",
+            position: Vector3(x, fontSize * 0.7 * scale, zOffsets[i]),
+            fontSize,
+            scale,
+            fill: Color(220, 255, 220),
+            stroke,
+            strokeWidth,
+          })
+        );
+      });
+    }
 
     return {
       directionalLight,
@@ -126,76 +232,7 @@ export function SkewedStarterScene() {
           stroke: Color(255, 255, 255, 0.15),
           strokeWidth: 2,
         }),
-
-        // origin reference
-        Axii(Vector3(0, 0, 0)),
-
-        Box({
-          id: "box",
-          position: Vector3(-spacing, 60, 0),
-          width: 120,
-          height: 120,
-          depth: 120,
-          fill: Color(255, 96, 96),
-          stroke: Color(0, 0, 0, 1),
-          strokeWidth: 3,
-        }),
-
-        Sphere({
-          id: "sphere",
-          position: Vector3(0, 70, 0),
-          radius: 70,
-          fill: Color(255, 180, 64),
-          stroke: Color(0, 0, 0, 1),
-          strokeWidth: 3,
-        }),
-
-        Cylinder({
-          id: "cylinder",
-          position: Vector3(spacing, 80, 0),
-          radius: 60,
-          height: 160,
-          fill: Color(140, 160, 255),
-          stroke: Color(0, 0, 0, 1),
-          strokeWidth: 3,
-        }),
-
-        Text({
-          id: "text",
-          text: "Skewed",
-          position: Vector3(0, 230, -spacing),
-          fontSize: 110,
-          scale: 1,
-          fill: Color(220, 255, 220),
-          stroke: Color(0, 0, 0, 1),
-          strokeWidth: 3,
-        }),
-
-        // a small group example (optional, but useful for showcasing hierarchy)
-        Group({
-          id: "group",
-          position: Vector3(-spacing, 0, -spacing),
-          children: [
-            Sphere({
-              id: "group-sphere",
-              position: Vector3(0, 40, 0),
-              radius: 40,
-              fill: Color(255, 255, 255),
-              stroke: Color(0, 0, 0, 1),
-              strokeWidth: 2,
-            }),
-            Box({
-              id: "group-box",
-              position: Vector3(90, 30, 0),
-              width: 60,
-              height: 60,
-              depth: 60,
-              fill: Color(255, 255, 255),
-              stroke: Color(0, 0, 0, 1),
-              strokeWidth: 2,
-            }),
-          ],
-        }),
+        ...shapes,
       ],
     };
   }, []);
