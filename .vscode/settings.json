@@ -13,7 +13,8 @@
 
   "prettier.requireConfig": true,
   "prettier.configPath": ".prettierrc",
-  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.prettierPath": "${workspaceFolder}/node_modules/prettier",
+  "prettier.resolveGlobalModules": false,
 
   "files.eol": "\n",
   "files.insertFinalNewline": true,
