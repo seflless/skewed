@@ -16,8 +16,9 @@ import {
 } from "skewed";
 
 function Axii(position: Vector3 = Vector3(0, 0, 0)) {
-  const Axii_Thickness = 4;
-  const Axii_Length = 100;
+  // Half-size starter scene: keep the axii readable but smaller.
+  const Axii_Thickness = 2;
+  const Axii_Length = 50;
   const strokeWidth = 0.5;
   const Red = Color(255, 0, 0);
   const Green = Color(0, 255, 0);
@@ -112,7 +113,8 @@ export function SkewedStarterScene() {
       color: Color(255, 244, 214),
     });
 
-    const zOffsets = [0, -220, -380];
+    // Half-size spacing for the "behind it on -Z" stacking.
+    const zOffsets = [0, -110, -190];
     const scales = [1, 0.5, 0.25] as const;
 
     const stroke = Color(0, 0, 0, 1);
@@ -120,8 +122,10 @@ export function SkewedStarterScene() {
 
     // Lay groups out along X with a "natural" amount of spacing based on footprint.
     // (All 3 size variants share the same X; they step back along -Z.)
-    const xStart = -650;
-    const gap = 140;
+    // Keep the origin visible for the axii; shift the whole lineup away from (0,0,0).
+    const contentXOffset = 240;
+    const xStart = contentXOffset;
+    const gap = 80;
     let xCursor = xStart;
 
     const shapes = [];
@@ -132,12 +136,12 @@ export function SkewedStarterScene() {
     // --- Box (default size) ---
     {
       // Always 2x taller; then make each successive one "longer" in a different axis.
-      const baseWidth = 120;
-      const baseHeight = 240;
-      const baseDepth = 120;
+      const baseWidth = 60;
+      const baseHeight = 120;
+      const baseDepth = 60;
 
-      const widths = [baseWidth, 240, baseWidth];
-      const depths = [baseDepth, baseDepth, 240];
+      const widths = [baseWidth, 120, baseWidth];
+      const depths = [baseDepth, baseDepth, 120];
 
       const x = xCursor;
       xCursor += Math.max(...widths) + gap;
@@ -161,7 +165,7 @@ export function SkewedStarterScene() {
 
     // --- Sphere (default size) ---
     {
-      const radius = 70;
+      const radius = 35;
       const x = xCursor;
       xCursor += radius * 2 + gap;
 
@@ -182,8 +186,8 @@ export function SkewedStarterScene() {
 
     // --- Cylinder (default size) ---
     {
-      const radius = 60;
-      const height = 160;
+      const radius = 30;
+      const height = 80;
       const x = xCursor;
       xCursor += Math.max(radius * 2, height) + gap;
 
@@ -215,7 +219,7 @@ export function SkewedStarterScene() {
 
     // --- Text (default size) ---
     {
-      const fontSize = 120;
+      const fontSize = 60;
       const x = xCursor;
       // crude estimate of footprint for spacing; good enough to avoid overlap
       xCursor += fontSize * 2.2 + gap;
