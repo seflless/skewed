@@ -106,8 +106,9 @@ export function SkewedStarterScene() {
 
   const scene = useMemo<Scene>(() => {
     const directionalLight = DirectionalLight({
-      direction: Vector3(-0.25, -1, -0.25).normalize(),
-      color: Color(255, 252, 181),
+      // "Sun-like": from -X, from above, toward -Z.
+      direction: Vector3(-1, -1, -1).normalize(),
+      color: Color(255, 244, 214),
     });
 
     const zOffsets = [0, -220, -380];
@@ -129,20 +130,25 @@ export function SkewedStarterScene() {
 
     // --- Box (default size) ---
     {
-      const width = 120;
-      const height = 120;
-      const depth = 120;
+      // Always 2x taller; then make each successive one "longer" in a different axis.
+      const baseWidth = 120;
+      const baseHeight = 240;
+      const baseDepth = 120;
+
+      const widths = [baseWidth, 240, baseWidth];
+      const depths = [baseDepth, baseDepth, 240];
+
       const x = xCursor;
-      xCursor += width + gap;
+      xCursor += Math.max(...widths) + gap;
 
       scales.forEach((scale, i) => {
         shapes.push(
           Box({
             id: `box-${scale}`,
-            position: Vector3(x, (height * scale) / 2, zOffsets[i]),
-            width,
-            height,
-            depth,
+            position: Vector3(x, (baseHeight * scale) / 2, zOffsets[i]),
+            width: widths[i],
+            height: baseHeight,
+            depth: depths[i],
             scale,
             fill: Color(255, 96, 96),
             stroke,
@@ -178,16 +184,26 @@ export function SkewedStarterScene() {
       const radius = 60;
       const height = 160;
       const x = xCursor;
-      xCursor += radius * 2 + gap;
+      xCursor += Math.max(radius * 2, height) + gap;
+
+      const rotations = [
+        Vector3(0, 0, 0), // up (Y axis)
+        Vector3(0, 0, -90), // axis along +X
+        Vector3(90, 0, 0), // axis along +Z
+      ];
 
       scales.forEach((scale, i) => {
+        const isUpright = i === 0;
+        const y = isUpright ? (height * scale) / 2 : radius * scale;
+
         shapes.push(
           Cylinder({
             id: `cylinder-${scale}`,
-            position: Vector3(x, (height * scale) / 2, zOffsets[i]),
+            position: Vector3(x, y, zOffsets[i]),
             radius,
             height,
             scale,
+            rotation: rotations[i],
             fill: Color(140, 160, 255),
             stroke,
             strokeWidth,
