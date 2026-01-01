@@ -13,7 +13,7 @@ It also supports rendering real React DOM “inside” the scene via an `<Html>`
   <img width="49%" src="https://raw.githubusercontent.com/seflless/skewed/main/old/docs/images/light-spinning-around-shapes.gif" />
 </p>
 
-### Install
+## Install
 
 ```bash
 npm install skewed
@@ -21,7 +21,7 @@ npm install skewed
 
 `skewed` has **peer dependencies** on `react` and `react-dom`.
 
-### Quickstart (React)
+## Quickstart (React)
 
 ```tsx
 import * as React from "react";
@@ -73,7 +73,7 @@ function App() {
 createRoot(document.getElementById("root")!).render(<App />);
 ```
 
-### `<Html>` (DOM in the scene)
+## `<Html>` (DOM in the scene)
 
 ```tsx
 import { Html, Vector3 } from "skewed";
@@ -89,7 +89,7 @@ export function Label() {
 }
 ```
 
-### Core API (optional)
+## Core API (optional)
 
 The package also exposes the “core” (math/meshes/renderer/etc.) under a namespace:
 
@@ -99,13 +99,4 @@ import { core } from "skewed";
 const v = core.Vector3(1, 2, 3);
 ```
 
-### Development
 
-- **Workbench** (interactive demos):
-  - `pnpm dev:workbench`
-- **Storybook** (component sandbox):
-  - `pnpm storybook`
-
-### Legacy references
-
-Older notes + images are preserved under `old/` (and the animations above are sourced from there).
