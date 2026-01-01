@@ -15,6 +15,7 @@ npm install skewed
 ```
 
 # Usage
+
 See [examples/starter/SkewestStartScene.tsx]() for more a more complex example.
 
 ```ts
@@ -29,7 +30,7 @@ import {
   Vector3,
 } from "skewed";
 
-export function MinimalSkewedExample() {
+export function ReactScene() {
   return (
     <Skewed className="h-[420px] w-full">
       <DirectionalLight direction={Vector3(-1, -1, -1).normalize()} />
@@ -64,7 +65,6 @@ export function MinimalSkewedExample() {
   );
 }
 ```
-
 
 ## Contributing
 
