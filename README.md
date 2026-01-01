@@ -100,27 +100,30 @@ pnpm build
 
 #### Publishing to NPM
 
-Do the usual npm version bump then publish.
+Suggested workflow (pnpm-first, safer):
 
-```
-# Make sure tests pass. `pnpm test` (we should automate this in a publish command)
+```bash
+pnpm test
 pnpm build
-npm version <major|minor|patch>
-git push; git push --tags
-npm publish
+
+# Bump version + create a git tag
+pnpm version <major|minor|patch>
+
+# Push commit + tag
+git push --follow-tags
+
+# Publish (use --tag next for pre-releases)
+pnpm publish --access public
 ```
 
 #### Test
 
-Using vitest, the test are rerun whenever you change related code.
+Using vitest:
 
-```
+```bash
 pnpm test
 ```
 
-#### Watch Tests
-
-TODO: Do we need to put in a difference command for the CLI?
 
 # Prior Art
 
